@@ -1,0 +1,54 @@
+/* 
+  Message.strings
+  SharingCharger_V2
+ 
+  Created by KJ on 2021/08/09.
+  
+*/
+
+//MARK: - 서버 관련 메시지
+"server.error" = "일시적인 서버 또는 네트워크 오류로 이용이 불가능합니다.\n잠시 후 다시 시도하세요.";
+//"server.error" = "일시적인 서버 또는 네트워크 오류로 이용하실 수 없습니다.\n잠시 후 다시 시도하세요.";
+//"server.error" = "서버와의 통신이 원활하지 않습니다.\n잠시 후 다시 시도 바랍니다.";
+
+//MARK: - 로그인 메시지
+"success.signin" = "로그인 완료되었습니다.";
+"fail.signin" = "가입되지 않은 아이디이거나,\n아이디 또는 비밀번호가 일치하지 않습니다.";
+"fail.signin.auto" = "자동 로그인이 실패하였습니다.\n탈퇴된 아이디이거나 변경된 비밀번호를 확인하세요.";
+
+//MARK: - 회원가입 메시지
+"success.signup" = "회원가입이 완료되었습니다.";
+"fail.signup" = "회원가입에 실패하였습니다.";
+"policy.disagree.terms" = "서비스 이용약관에 동의히지 않았습니다.";
+"policy.disagree.privacy" = "개인정보 처리방침에 동의하지 않았습니다.";
+"no.duplicate.check" = "아이디(이메일) 중복 확인을 하지 않았습니다.";
+"mismatch.check.id" = "입력하신 아이디(이메일)와 중복 확인된 아이디가 일치하지 않습니다.\n아이디(이메일) 중복을 다시 확인하세요.";
+"non.duplicate.id" = "사용 가능한 아이디(이메일)입니다.";
+"duplicate.id" = "이미 사용중인 아이디(이메일)입니다.";
+
+//MARK: - 비밀번호 메시지
+"mismatch.password" = "비밀번호가 일치하지 않습니다.\n확인 후 다시 입력하세요.";
+"mismatch.current.password" = "현재 비밀번호가 일치하지 않습니다.\n확인 후 다시 입력하세요.";
+"sucess.change.password" = "비밀번호 변경이 완료되었습니다.";
+"fial.change.password" = "비밀번호 변경이 실패하였습니다.";
+
+//MARK: - 인증 메시지
+"auth.complete" = "인증이 완료되었습니다.";
+"auth.fail" = "인증이 실패하였습니다.\n인증 재요청하세요.";
+"auth.not.complete" = "인증이 완료되지 않았습니다.";
+"auth.mismatch.number" = "입력하신 인증번호가 일치하지 않습니다.\n확인 후 다시 입력하세요.";
+"auth.in.progress" = "인증 진행 중입니다. \n인증 진행이 끝난 뒤 확인해 주세요.";
+
+//MARK: - 입력 항목 메시지
+"input.empty.name" = "이름을 입력하지 않았습니다.";
+"input.empty.email" = "아이디(이메일)를 입력하지 않았습니다.";
+"input.empty.password" = "비밀번호를 입력하지 않았습니다.";
+"input.empty.confirm.password" = "비밀번호 확인을 입력하지 않았습니다.";
+"input.empty.phone" = "휴대전화번호를 입력하지 않았습니다.";
+"input.empty.auth.number" = "인증번호를 입력하지 않았습니다.";
+
+"input.invalid.name" = "잘못된 이름입니다.\n올바른 이름을 입력하세요.";
+"input.invalid.email" = "잘못된 아이디(이메일)입니다.\n올바른 아이디(이메일)를 입력하세요.";
+"input.invalid.password" = "잘못된 비밀번호입니다.\n올바른 비밀번호를 입력하세요.";
+"input.invalid.phone" = "잘못된 휴대전화번호입니다.\n올바른 휴대전화번호를 입력하세요.";
+"input.invalid.auth.number" = "잘못된 인증번호입니다.\n올바른 인증번호를 입력하세요.";

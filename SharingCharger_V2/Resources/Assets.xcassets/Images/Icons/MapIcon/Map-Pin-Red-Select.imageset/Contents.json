@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "Map-Pin-Red-Select.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

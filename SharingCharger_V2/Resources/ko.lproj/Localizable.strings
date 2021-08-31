@@ -1,0 +1,59 @@
+/* 
+  Localizable.strings (Korean)
+  SharingCharger_V2
+
+  Created by KJ on 2021/08/09.
+  
+*/
+
+//MARK: - Title Label
+"title.sign.up" = "회원가입";
+"title.privacy.consent" = "개인정보 동의여부";
+"title.terms" = "서비스 이용약관";
+"title.terms.agree" = "서비스 이용약관 동의";
+"title.privacy" = "개인정보 처리방침";
+"title.privacy.agree" = "개인정보 처리방침 동의";
+"title.password.change" = "비밀번호 변경";
+"title.password.step.one" = "비밀번호 변경(1/2)";
+"title.password.step.two" = "비밀번호 변경(2/2)";
+"title.favorites" = "즐겨찾기";
+"title.point.history" = "포인트 이력";
+
+//MARK: - Button Label
+"button.sign.in" = "로그인";
+"button.sign.up" = "회원가입";
+"button.regist" = "등록";
+"button.change.password" = "비밀번호 변경";
+"button.password.next.step" = "비밀번호 변경하기";
+"button.password.complete" = "비밀번호 변경 완료";
+"button.duplicate.check" = "중복 확인";
+"button.auth.request" = "인증 요청";
+"button.auth.re.request" = "재요청";
+"button.auth.check" = "인증 확인";
+"button.content" = "내용 확인";
+"button.agree" = "동의";
+
+//MARK: - Text Label
+"label.email" = "아이디(이메일)";
+"label.name" = "이름";
+"label.phone.number" = "휴대전화번호";
+"label.auth.number" = "인증번호";
+"label.auth.complete" = "인증 완료";
+"label.password" = "비밀번호";
+"label.password.confirm" = "비밀번호 확인";
+"label.new.password" = "새 비밀번호";
+"label.new.password.confirm" = "새 비밀번호 확인";
+"label.current.password" = "현재 비밀번호";
+"label.agree" = "동의 함 ";
+"label.disagree" = "동의 안함";
+"label.available" = "사용 가능";
+"label.not.available" = "사용 불가";
+
+//MARK: - Text Comment Label
+"comment.email" = "example@example.com";
+"comment.name" = "실명 입력";
+"comment.phone.number" = "- 제외하고 숫자만 입력";
+"comment.auth.number" = "인증번호 입력";
+"comment.password" = "영문, 숫자, 특수문자 조합(6자 이상)";
+"comment.password.confirm" = "비밀번호 재 입력";
+"comment.password.current" = "현재 비밀번호 입력";

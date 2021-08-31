@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "Map-Navigation.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
