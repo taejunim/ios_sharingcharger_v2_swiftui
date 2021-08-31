@@ -23,7 +23,7 @@ struct PointHistoryView: View {
             .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
         }
         .onAppear {
-            //pointViewModel.getCurrentPoint()
+            pointViewModel.getCurrentPoint()
             pointViewModel.getPointHistory()
         }
     }
