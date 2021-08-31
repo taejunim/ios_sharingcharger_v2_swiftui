@@ -20,7 +20,6 @@ class PointViewModel: ObservableObject {
     //MARK: - 현재 사용자 포인트 조회
     func getCurrentPoint() {
         let userIdNo: String = UserDefaults.standard.string(forKey: "userIdNo") ?? ""   //저장된 사용자 ID 번호
-        
         //현재 사용자 포인트 API 호출
         let request = pointAPI.requestCurrentDate(userIdNo: userIdNo)
         request.execute(

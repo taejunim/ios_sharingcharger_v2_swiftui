@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PointHistoryView: View {
     @Environment(\.presentationMode) var presentationMode
-    
+    @ObservedObject var pointViewModel = PointViewModel()
     var body: some View {
         ScrollView{
             VStack {
@@ -21,6 +21,10 @@ struct PointHistoryView: View {
             .navigationBarTitle(Text("title.point.history".localized()), displayMode: .inline) //Navigation Bar 타이틀
             .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
             .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
+        }
+        .onAppear {
+            //pointViewModel.getCurrentPoint()
+            pointViewModel.getPointHistory()
         }
     }
 }

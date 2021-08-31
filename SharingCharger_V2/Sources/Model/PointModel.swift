@@ -9,35 +9,35 @@ import Foundation
 
 //MARK: - 포인트 이력
 struct PointHistory: Codable {
-    let content: [chargerIDContent?]
-    let pageable: chargerIDPageable
+    let content: [PointContent?]
+    let pageable: PointPageable
     let totalPages, totalElements: Int
     let last: Bool
     let numberOfElements: Int
     let first: Bool
-    let sort: chargerIDSort
+    let sort: PointSort
     let size, number: Int
     let empty: Bool
 }
 
-//MARK: - chargerIDContent
-struct chargerIDContent: Codable {
+//MARK: - Content
+struct PointContent: Codable {
     let id: Int
     let username: String
     let point: Int
     let type, created: String
-    let pointTargetID: Int
+    let pointTargetId: Int
     let targetName: String
 }
 
-//MARK: - chargerIDPageable
-struct chargerIDPageable: Codable {
-    let sort: chargerIDSort
+//MARK: - Pageable
+struct PointPageable: Codable {
+    let sort: PointSort
     let pageNumber, pageSize, offset: Int
     let unpaged, paged: Bool
 }
 
-//MARK: - chargerIDSort
-struct chargerIDSort: Codable {
+//MARK: - Sort
+struct PointSort: Codable {
     let sorted, unsorted, empty: Bool
 }
