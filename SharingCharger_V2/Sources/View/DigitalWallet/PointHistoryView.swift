@@ -10,28 +10,31 @@ import SwiftUI
 struct PointHistoryView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var pointViewModel = PointViewModel()
+    
     var body: some View {
         ScrollView{
             VStack {
-                remainPoints()
-                Divider()
-                pointHistory()
+                remainPoints(pointViewModel: pointViewModel)
             }
             .padding(.horizontal)
             .navigationBarTitle(Text("title.point.history".localized()), displayMode: .inline) //Navigation Bar 타이틀
             .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
-            .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
+                        .navigationBarItems(leading: BackButton(), trailing: NavigationLink("검색 조건", destination: FavoritesView()))  //커스텀 Back 버튼 추가
         }
         .onAppear {
             pointViewModel.getCurrentPoint()
             pointViewModel.getPointHistory()
+            print(pointViewModel.getPointHistory())
         }
     }
 }
 
 //MARK: - 현재 잔여 포인트
 struct remainPoints: View {
+    @ObservedObject var pointViewModel: PointViewModel
+    
     var body: some View  {
+        
         VStack {
             
             HStack {
@@ -39,9 +42,9 @@ struct remainPoints: View {
                     .font(.title2)
                     .fontWeight(.bold)
                 
-                
                 Spacer()
-                Text("50,000"+"p")
+                
+                Text(numberFormatter(number: pointViewModel.currentPoint) + "p")
                     .foregroundColor(.white)
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                     .frame(width: 100, height: 40)
@@ -51,16 +54,12 @@ struct remainPoints: View {
             }
             .padding((EdgeInsets(top: 20, leading: 0, bottom: 35, trailing: 0)))
         }
-    }
-}
-
-struct pointHistory: View {
-    var body: some View  {
+        Divider()
         VStack(spacing: 10) {
             
             HStack {
                 VStack(alignment: .leading){
-                    Text("2020-07-23 18:00 ")
+                    Text("2020-07-23 18:00")
                         .font(.caption)
                         .foregroundColor(.gray)
                     Spacer()
@@ -102,6 +101,7 @@ struct pointHistory: View {
             HStack {
                 VStack(alignment: .leading){
                     Text("2020-07-23 18:00 ")
+//                    Text(pointViewModel)
                         .font(.caption)
                         .foregroundColor(.gray)
                     
@@ -120,6 +120,12 @@ struct pointHistory: View {
             }
             Divider()
         }
+    }
+    func numberFormatter(number: Int) -> String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        
+        return numberFormatter.string(from: NSNumber(value: number))!
     }
 }
 
