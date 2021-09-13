@@ -7,84 +7,87 @@
 
 import Foundation
 
+//MARK: - 충전기 정보
 struct Charger: Codable {
-    let id: Int?
-    let name: String?
-    let address: String?
-    let detailAddress: String?
-    let gpsX: Double?
-    let gpsY: Double?
-    let description: String?
+    let id: Int?    //충전기 ID
+    let name: String?   //충전기 명
+    let address: String?    //충전기 주소
+    let detailAddress: String?  //충전기 상세주소
+    let gpsX: Double?   //X좌표(경도)
+    let gpsY: Double?   //Y좌표(위도)
+    let description: String?    //설명
     
-    let sharedType: String?
-    let bleNumber: String?
-    let currentStatusType: String?
-    let cableFlag: Bool?
-    let rangeOfFee: String?
+    let sharedType: String? //공유 유형
+    let bleNumber: String?  //BLE 번호
+    let currentStatusType: String?  //현재 충전기 상태
+    let cableFlag: Bool?    //케이블 유무
+    let rangeOfFee: String? //충전 단가
     
-    let parkingFeeFlag: Bool?
-    let parkingFeeDescription: String?
+    let parkingFeeFlag: Bool?   //주차 요금 유무
+    let parkingFeeDescription: String?  //주차 요금 설명
     
-    let ownerType: String?
-    let ownerName: String?
-    let providerCompanyId: Int?
+    let ownerType: String?  //소유자 유형
+    let ownerName: String?  //소유자 명
+    let providerCompanyId: Int? //충전기 업체 ID
     
     let searchDateFlag: Bool?
-    let created: String?
-    let updated: String?
+    let created: String?    //등록 일자
+    let updated: String?    //수정 일자
 }
 
-// MARK: - Welcome
+//MARK: - 충전기 예약 정보
 struct ChargerReservation: Codable {
-    let chargerAllowTime: ChargerAllowTime
-    let reservations: Reservations
+    let chargerAllowTime: ChargerAllowTime  //충전기 이용 가능 시간
+    let reservations: Reservations  //예약 정보
 }
 
-// MARK: - ChargerAllowTime
+//MARK: - 충전기 이용 가능 시간
 struct ChargerAllowTime: Codable {
-    let chargerId: Int
-    let todayOpenTime: String
-    let todayCloseTime: String
-    let tomorrowOpenTime: String
-    let tomorrowCloseTime: String
+    let chargerId: Int  //충전기 ID
+    let todayOpenTime: String   //당일 오픈 시간
+    let todayCloseTime: String  //당일 클로즈 시간
+    let tomorrowOpenTime: String    //명일 오픈 시간
+    let tomorrowCloseTime: String   //명일 클로즈 시간
 }
 
-// MARK: - Reservations
+//MARK: - 예약 정보
 struct Reservations: Codable {
-    let content: [ReservationContent?]
-    let pageable: Pageable
-    let totalPages: Int?
-    let totalElements: Int?
-    let last: Bool?
-    let numberOfElements: Int?
+    let content: [ReservationContent?]  //예약 정보 내용
+    let pageable: Pageable  //페이징 정보
+    let totalPages: Int?    //총 페이지 수
+    let totalElements: Int? //총 예약 수
+    let numberOfElements: Int?  //예약 번호
     let first: Bool?
+    let last: Bool?
     let sort: Sort
-    let size, number: Int?
+    let size: Int?
+    let number: Int?
     let empty: Bool?
 }
 
-// MARK: - Content
+//MARK: - 예약 정보 내용
 struct ReservationContent: Codable {
-    let id: Int?
-    let userId: Int?
-    let username: String?
-    let chargerId: Int?
-    let chargerName: String?
-    let chargerAddress: String?
-    let chargerDetailAddress: String?
-    let rangeOfFee: String?
-    let expectPoint: Int?
-    let startDate, endDate: String?
-    let cancelDate: String?
-    let state: String?
-    let created: String?
-    let updated: String?
-    let gpsX: Double?
-    let gpsY: Double?
-    let bleNumber: String?
+    let id: Int?    //예약 ID
+    let userId: Int?    //사용자 ID
+    let username: String?   //사용자 명
+    let chargerId: Int? //충전기 ID
+    let chargerName: String?    //충전기 명
+    let bleNumber: String?  //BLE 번호
+    let chargerAddress: String? //충전기 주소
+    let chargerDetailAddress: String?   //충전기 상세주소
+    let gpsX: Double?   //X좌표(경도)
+    let gpsY: Double?   //Y좌표(위도)
+    let rangeOfFee: String? //충전 단가
+    let expectPoint: Int?   //예상 포인트
+    let startDate: String?  //시작 일자
+    let endDate: String?    //종료 일자
+    let cancelDate: String? //취소 일자
+    let state: String?  //상태
+    let created: String?    //등록 일자
+    let updated: String?    //수정 일자
 }
 
-// MARK: - Pageable
+// MARK: - 페이징 정보
 struct Pageable: Codable {
     let sort: Sort
     let pageNumber: Int?
@@ -94,7 +97,7 @@ struct Pageable: Codable {
     let paged: Bool?
 }
 
-// MARK: - Sort
+// MARK: - 정렬 정보
 struct Sort: Codable {
     let sorted: Bool?
     let unsorted: Bool?

@@ -7,27 +7,29 @@
 
 import SwiftUI
 
+//MARK: - 충전기 정보 Modal 화면
 struct ChargerInfoModal: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var chargerSearch: ChargerSearchViewModel   //충전기 검색 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     
     var body: some View {
         GeometryReader { (geometry) in
             SlideOverModal(
-                isShown: $chargerMap.isShowInfoView,
+                isShown: $chargerMap.isShowInfoView,    //충전기 정보 Modal 활성화
                 modalHeight: geometry.size.height/2.5,
                 content: {
                     VStack {
-                        VStack(spacing: 15) {
-                            
-                            ChargerSummaryInfo(chargerMap: chargerMap)
-                            
-                            ChargerAvailableTime(chargerMap: chargerMap)
+                        VStack(spacing: 5) {
+                            ChargerSummaryInfo(chargerMap: chargerMap)  //충전기 요약 정보 화면
+                            ChargeUnitPrice(chargerMap: chargerMap) //충전 단가 정보
+                            ChargerAvailableTime(chargerMap: chargerMap, reservation: reservation)  //충전이 이용 가능 시간 정보
                         }
                         .padding(.horizontal)
                         
                         Spacer()
                         
-                        ChargingProgressButton(chargerMap: chargerMap)
+                        ChargingProgressButton(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)  //충전 진행 버튼
                     }
                     .padding(.top, 30)
                 }
@@ -36,6 +38,7 @@ struct ChargerInfoModal: View {
     }
 }
 
+//MARK: - 충전기 요약 정보 화면
 struct ChargerSummaryInfo: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     
@@ -43,25 +46,26 @@ struct ChargerSummaryInfo: View {
         HStack {
             VStack(alignment: .leading, spacing: 5) {
                 HStack {
+                    //충전기 명
                     Text(chargerMap.chargerName)
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    ChargerFavoritesButton(chargerMap: chargerMap)
+                    ChargerFavoritesButton(chargerMap: chargerMap)  //충전기 즐겨찾기 버튼
                 }
                 
-                Text(chargerMap.chargerAddress)
-                
-                Text("충전 요금 : 시간 당 " + chargerMap.chargerUnitPrice)
+                Text(chargerMap.chargerAddress) //충전기 주소
+                Text(chargerMap.chargerDetailAddress) //충전기 상세주소
             }
             
             Spacer()
             
-            ChargerNavigationButton(chargerMap: chargerMap)
+            ChargerNavigationButton(chargerMap: chargerMap) //충전기 내비게이션 버튼 - 카카오 내비게이션 연동
         }
     }
 }
 
+//MARK: - 충전기 즐겨찾기 버튼
 struct ChargerFavoritesButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     
@@ -83,6 +87,7 @@ struct ChargerFavoritesButton: View {
     }
 }
 
+//MARK: - 충전기 내비게이션 연동
 struct ChargerNavigationButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     
@@ -107,41 +112,102 @@ struct ChargerNavigationButton: View {
     }
 }
 
-struct ChargerAvailableTime: View {
+//MARK: - 충전 단가 정보
+struct ChargeUnitPrice: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     
     var body: some View {
         HStack {
-            Text("이용 가능 시간")
+            Text("충전 요금 :")
                 .font(.headline)
                 .fontWeight(.bold)
-            Text("- 항시 충전 가능")
+            
+            Text("시간 당 " + chargerMap.chargeUnitPrice)
+            
             Spacer()
         }
     }
 }
 
+//MARK: - 충전기 이용 가능 시간 정보
+struct ChargerAvailableTime: View {
+    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var reservation: ReservationViewModel
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Text("이용 가능 시간")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                Spacer()
+            }
+            
+            //Text("항시 충전 가능")
+            
+            //이용 가능 시간 라벨
+            LazyHStack {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 20)
+                        .frame(width: 150, height: 25)
+                        .foregroundColor(Color("#1ABC9C"))
+                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                    
+                    Text("16:30 ~ 23:59")
+                        .foregroundColor(Color.white)
+                        .font(.footnote)
+                        .fontWeight(.bold)
+                }
+                ZStack {
+                    RoundedRectangle(cornerRadius: 20)
+                        .frame(width: 150, height: 25)
+                        .foregroundColor(Color("#1ABC9C"))
+                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                    
+                    Text("00:00 ~ 23:59")
+                        .foregroundColor(Color.white)
+                        .font(.footnote)
+                        .fontWeight(.bold)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            
+            Text("위 시간대 이용 가능")
+                .font(.footnote)
+        }
+    }
+}
+
+//MARK: - 충전 진행 버튼
+///검색 조건의 충전 유형에 따라 '즉시 충전', '예약 충전' 단계로 진행
 struct ChargingProgressButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var chargerSearch: ChargerSearchViewModel
+    @ObservedObject var reservation: ReservationViewModel
     
     var body: some View {
         Button(
             action: {
-                if chargerMap.selectChargeType == "Instant" {
+                reservation.chargeType = chargerSearch.searchType   //충전 유형
+                
+                //선택한 충전 유형에 따라 충전 단계 변경 - 즉시 충전
+                if chargerSearch.searchType == "Instant" {
                     
                 }
-                else if chargerMap.selectChargeType == "Reservation" {
-                    
+                //선택한 충전 유형에 따라 충전 단계 변경 - 예약 충전
+                else if chargerSearch.searchType == "Scheduled" {
+                    reservation.reservation()   //예약 진행
                 }
             },
             label: {
-                Text(chargerMap.selectChargeType == "Instant" ? "충전하기" : "예약하기")
+                //선택한 충전 유형에 따라 버튼 라벨 변경
+                Text(chargerSearch.searchType == "Instant" ? "충전하기" : "예약하기")
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, maxHeight: 40)
-                    .background(Color("#3498DB"))   //회원가입 정보 입력에 따른 배경색상 변경
+                    .background(Color("#3498DB"))
             }
         )
     }
@@ -149,6 +215,6 @@ struct ChargingProgressButton: View {
 
 struct ChargerInfoModal_Previews: PreviewProvider {
     static var previews: some View {
-        ChargerInfoModal(chargerMap: ChargerMapViewModel())
+        ChargerInfoModal(chargerMap: ChargerMapViewModel(), chargerSearch: ChargerSearchViewModel(), reservation: ReservationViewModel())
     }
 }

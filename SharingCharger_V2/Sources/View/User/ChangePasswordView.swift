@@ -11,7 +11,7 @@ import SwiftUI
 struct ChangePasswordView: View {
     @Environment(\.presentationMode) var presentationMode   //Back 버튼 기능 추가에 필요
     
-    @ObservedObject var userViewModel = UserViewModel()
+    @ObservedObject var userViewModel = UserViewModel() //사용자 View Model
     @State var isSigned: Bool = false
     
     var body: some View {
@@ -25,7 +25,7 @@ struct ChangePasswordView: View {
             }
         }
         .onAppear {
-            userViewModel.isSigned = isSigned
+            userViewModel.isSigned = isSigned   //로그인 여부
         }
     }
 }
@@ -39,12 +39,12 @@ struct UserAuthView: View {
         VStack {
             ScrollView {
                 VStack(alignment: .leading) {
-                    UserInfoEntryField(userViewModel: userViewModel)
+                    UserInfoEntryField(userViewModel: userViewModel)    //사용자 정보 입력 화면
                 }
                 .padding()
             }
             
-            ChangeNextStepButton(userViewModel: userViewModel)
+            ChangeNextStepButton(userViewModel: userViewModel)  //비밀번호 변경하기 버튼 - 다음 단계 진행
         }
         .navigationBarTitle(Text("title.password.step.one".localized()), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
@@ -57,6 +57,7 @@ struct UserInfoEntryField: View {
     @ObservedObject var userViewModel: UserViewModel
     
     var body: some View {
+        //Text Field - 이름
         Section(
             header:
                 fieldTitle(title: "label.name".localized(), isRequired: true),
@@ -65,6 +66,7 @@ struct UserInfoEntryField: View {
             }
         )
         
+        //Text Field - 아이디(이메일)
         Section(
             header:
                 fieldTitle(title: "label.email".localized(), isRequired: true),
@@ -73,6 +75,7 @@ struct UserInfoEntryField: View {
             }
         )
         
+        //Text Field - 휴대전화번호
         Section(
             header:
                 fieldTitle(title: "label.phone.number".localized(), isRequired: true),
@@ -81,16 +84,15 @@ struct UserInfoEntryField: View {
                     HStack {
                         defaultTextField(comment: "comment.phone.number".localized(), text: $userViewModel.phoneNumber, type: .phonePad)
                         
-                        ChangeAuthRequestButton(userViewModel: userViewModel)
+                        ChangeAuthRequestButton(userViewModel: userViewModel)   //인증번호 요청
                     }
-                    
                     Spacer()
-        
                     TextFieldUnderline()
                 }
             }
         )
         
+        //Text Field - 인증번호
         Section(
             header:
                 fieldTitle(title: "label.auth.number".localized(), isRequired: true),
@@ -99,14 +101,16 @@ struct UserInfoEntryField: View {
                     HStack {
                         defaultTextField(comment: "comment.auth.number".localized(), text: $userViewModel.authNumber, type: .numberPad)
 
+                        //인증번호 요청 시, 타이머 시작
                         if userViewModel.isAuthRequest {
                             Text("남은시간 03:00")
                                 .font(.subheadline)
                                 .foregroundColor(.red)
                         }
                         
+                        //인증번호 확인 버튼
                         ChangeAuthCheckButton(userViewModel: userViewModel)
-                            .disabled(!userViewModel.isAuthRequest)
+                            .disabled(!userViewModel.isAuthRequest) //인증번호 요청중이 아닐때 비활성화
                     }
                     
                     Spacer()
@@ -173,7 +177,7 @@ struct ChangeNextStepButton: View {
     
     var body: some View {
         NavigationLink(
-            destination: NewPasswordView(userViewModel: userViewModel),
+            destination: NewPasswordView(userViewModel: userViewModel), //새 비밀번호 입력 창
             isActive: $userViewModel.isNewPassword,
             label: {
                 Button(
@@ -225,7 +229,9 @@ struct PasswordEntryField: View {
     @ObservedObject var userViewModel: UserViewModel
     
     var body: some View {
+        //로그인 상태인 경우 노출
         if userViewModel.isSigned {
+            //Text Field - 현재 비밀번호
             Section(
                 header:
                     fieldTitle(title: "label.current.password".localized(), isRequired: true),
@@ -235,6 +241,7 @@ struct PasswordEntryField: View {
             )
         }
         
+        //Text Field - 새 비밀번호
         Section(
             header:
                 fieldTitle(title: "label.new.password".localized(), isRequired: true),
@@ -243,6 +250,7 @@ struct PasswordEntryField: View {
             }
         )
         
+        //Text Field - 새 비밀번호 확인
         Section(
             header:
                 fieldTitle(title: "label.new.password.confirm".localized(), isRequired: true),

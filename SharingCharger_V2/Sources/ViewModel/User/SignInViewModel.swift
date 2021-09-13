@@ -140,7 +140,6 @@ class SignInViewModel: ObservableObject {
     
     //MARK: - 유효성 검사
     func validation() -> Bool {
-        
         isValidation = true
         
         //아이디(이메일) 입력 여부 확인

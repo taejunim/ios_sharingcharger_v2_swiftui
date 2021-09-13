@@ -43,8 +43,8 @@ class UserAPIService {
     //MARK: - 아이디(이메일) 확인 API 호출
     /// 아이디 조회 API 호출
     /// - Parameter userId:
-    ///   - 일반 사용자: email
-    ///   - 개인 소유주: username
+    ///   - email: 일반 사용자 ID
+    ///   - username: 개인 소유주 ID
     /// - Returns: User Model
     public func requestCheckId(userId: String) -> Future<User, AFError> {
         
@@ -54,7 +54,7 @@ class UserAPIService {
     //MARK: - 아이디(이메일) 찾기 API 호출
     /// Description
     /// - Parameter parameters:
-    ///   -
+    ///   - 
     /// - Returns: description
     public func requestFindId(parameters: [String:String]) -> Future<User, AFError> {
         

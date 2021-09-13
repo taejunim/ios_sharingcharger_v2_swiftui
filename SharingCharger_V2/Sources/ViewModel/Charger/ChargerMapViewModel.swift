@@ -8,101 +8,60 @@
 import Foundation
 import Combine
 
+///충전기 지도 View Model
 class ChargerMapViewModel: ObservableObject {
-    public var didChange = PassthroughSubject<ChargerMapViewModel, Never>()
+    //public var didChange = PassthroughSubject<ChargerMapViewModel, Never>()
     
     private let chargerAPI = ChargerAPIService()  //충전기 API Service
     @Published var viewUtil = ViewUtil() //View Util
     
-    @Published var result: String = ""
+    @Published var result: String = ""  //조회 결과
     
     //MARK: - 위치 정보 변수
     @Published var location = Location()   //위치 정보 서비스
     @Published var authStatus = Location().getAuthStatus()
     @Published var latitude: Double = 37.566407799201336    //위도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
     @Published var longitude: Double = 126.97787363088995   //경도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
-    @Published var zoomLevel: Int = 1
+    @Published var zoomLevel: Int = 0   //Zoom Level
     @Published var currentAddress: String = ""  //현재 위치 주소 - 지도 중심 위치
     
     //MARK: - 지도 관련 변수
-    @Published var mapView = MTMapView(frame: .zero)
-    @Published var isTapOnMap: Bool = false
+    @Published var mapView = MTMapView(frame: .zero)    //지도 화면
+    @Published var isTapOnMap: Bool = false //지도 탭 여부
+    @Published var selectChargerId: String = "" //선택한 충전기 ID
+    @Published var moveToChargerId: String = "" //해당 충전기의 위치로 이동할 충전기 ID
     
     //MARK: - 충전기 조회 변수
-    @Published var charger: [String:Any] = [:]
-    @Published var chargers: [[String:Any]] = []
-    @Published var markerItem: [String:Any] = [:]
-    @Published var markerItems: [[String:Any]] = []
+    @Published var isShowSearchModal: Bool = false  //검색조건 Modal 창 노출 여부
+    @Published var currentDate: Date = Date()   //현재 일시
+    @Published var charger: [String:Any] = [:]  //충전기 정보
+    @Published var chargers: [[String:Any]] = []    //충전기 정보 목록
+    @Published var markerItem: [String:Any] = [:]   //충전기 마커 정보
+    @Published var markerItems: [[String:Any]] = [] //충전기 마커 정보 목록
+    @Published var searchStartDate: Date?   //조회 시작일시
+    @Published var searchEndDate: Date? //조회 종료일시
+    @Published var radius: String = ""  //조회 반경범위
+    @Published var isShowChargerList: Bool = false  //충전기 목록 노출 여부
+    @Published var searchChargers: [[String:String]] = []  //충전기 목록
     
     //MARK: - 충전기 정보 변수
-    @Published var isShowInfoView: Bool = false
-    @Published var chargerName: String = ""
-    @Published var chargerAddress: String = ""
-    @Published var chargerUnitPrice: String = ""
-    @Published var isFavorites: Bool = false
+    @Published var isShowInfoView: Bool = false //충전기 정보 화면 노출 여부
+    @Published var chargerId: String = ""   //충전기 ID
+    @Published var chargerName: String = "" //충전기 명
+    @Published var bleNumber: String = ""   //충전기 BLE 번호
+    @Published var chargerAddress: String = ""  //충전기 주소
+    @Published var chargerDetailAddress: String = ""    //충전기 상세주소
+    @Published var chargeUnitPrice: String = ""    //충전 단가
+    @Published var chargerStatus: String = ""   //충전기 상태
+    @Published var isFavorites: Bool = false    //즐겨찾기 표시 여부
     
-    //MARK: - 검색 조건 변수
-    @Published var isShowSearchModal: Bool = false
-    @Published var isRefresh: Bool = false {
-        didSet {
-            if isRefresh {
-                resetSearchCondition()
-            }
-        }
-    }
-    
-    @Published var showChargingDate: Bool = false
-    @Published var showChargingTime: Bool = false
-    @Published var showRadius: Bool = false
-    
-    @Published var selectChargeType: String = "Instant" {
-        didSet {
-            showChargingDate = false
-            changedChareType()
-        }
-    }
-
-    @Published var selectChargingTime: Int = 240 {
-        didSet {
-            changedChargingTime()
-        }
-    }
-    
-    @Published var startDay: String = ""
-    @Published var startTime: String = ""
-    @Published var endDay: String = ""
-    @Published var endTime: String = ""
-    @Published var textChargingTime: String = ""
-
-    @Published var currentDate: Date = Date()
-    @Published var setHour: String = "HH".dateFormatter(formatDate: Date())
-    @Published var setMinute: String = "mm".dateFormatter(formatDate: Date())
-    
-    @Published var startSelectionTime: Int = 0
-    @Published var maxSelectionTime: Int = 1410
-    @Published var setTime: Int = 0
-    @Published var selectDay: Date = Date() {
-        didSet {
-            if selectChargeType == "Scheduled" {
-                changeSelectDay()
-            }
-        }
-    }
-    @Published var selectTempDay: Date?
-    @Published var selectTime: Int = 0 {
-        didSet {
-            if selectChargeType == "Scheduled" {
-            }
-        }
-    }
-    @Published var searchStartDate: Date?
-    @Published var searchEndDate: Date?
-    
-    @Published var selectRadius: String = "3"
-    
+    //MARK: - 현재 일시(서버 시간 기준) 조회
+    /// - Parameter completion: Current Date 서버 기준 현재 일시
     func getCurrentDate(completion: @escaping (Date) -> Void) {
+        //현재 일시 API 호출
         let request = chargerAPI.requestCurrentDate()
         request.execute(
+            //API 호출 성공
             onSuccess: { (currentDate) in
                 let formatDate = "yyyy-MM-dd HH:mm:ss".toDateFormatter(formatString: currentDate)!
                 
@@ -111,357 +70,10 @@ class ChargerMapViewModel: ObservableObject {
             },
             //API 호출 실패
             onFailure: { (error) in
-                self.result = "error"
                 completion(Date())
             }
         )
     }
-    
-    func setTotalChargingTime() {
-        if selectChargingTime >= 60 {
-            if selectChargingTime % 60 == 0 {
-                textChargingTime = String(selectChargingTime / 60) + "시간"
-            }
-            else {
-                textChargingTime = String(selectChargingTime / 60) + "시간 " + String(selectChargingTime % 60) + "분"
-            }
-        }
-        else {
-            textChargingTime = String(selectChargingTime) + "분"
-        }
-    }
-    
-    func setSearchDate() {
-        let calcDate: Date?
-        
-        var textStartDay: String = ""
-        var textStartTime: String = ""
-        var textEndDay: String = ""
-        var textEndTime: String = ""
-        
-        //충전 유형 - 즉시 충전
-        if selectChargeType == "Instant" {
-            calcDate = Calendar.current.date(byAdding: .minute, value: selectChargingTime, to: currentDate)!
-            
-            textStartDay = "MM/dd (E)".dateFormatter(formatDate: currentDate)
-            textStartTime = "HH:mm".dateFormatter(formatDate: currentDate)
-            textEndDay = "MM/dd (E)".dateFormatter(formatDate: calcDate!)
-            textEndTime = "HH:mm".dateFormatter(formatDate: calcDate!)
-        }
-        //충전 유형 - 예약 충전
-        else if selectChargeType == "Scheduled" {
-            setReservationSearchDate()
-            
-            calcDate = Calendar.current.date(byAdding: .minute, value: selectChargingTime, to: selectDay)!
-
-            textStartDay = "MM/dd (E)".dateFormatter(formatDate: selectDay)
-            textStartTime = "HH:mm".dateFormatter(formatDate: selectDay)
-            textEndDay = "MM/dd (E)".dateFormatter(formatDate: selectDay)
-            textEndTime = "HH:mm".dateFormatter(formatDate: calcDate!)
-        }
-        
-        startDay = textStartDay
-        startTime = textStartTime
-        endDay = textEndDay
-        endTime = textEndTime
-    }
-    
-    func setReservationSearchDate() {
-        getCurrentDate() { (currentDate) in
-            self.currentDate = currentDate
-            
-            let currentDate: String = "yyyyMMdd".dateFormatter(formatDate: self.currentDate)
-            var currentHour: Int = Int("HH".dateFormatter(formatDate: self.currentDate))!
-            var currentMinute: Int = Int("mm".dateFormatter(formatDate: self.currentDate))!
-            
-            if currentMinute >= 0 && currentMinute < 30 {
-                currentMinute = 30
-            }
-            else if currentMinute >= 30 && currentMinute < 59 {
-                currentHour = currentHour + 1
-                currentMinute = 0
-            }
-            
-            let totalMinutesTime = (currentHour * 60) + currentMinute
-            
-            self.startSelectionTime = totalMinutesTime
-            self.maxSelectionTime = 1410
-            self.maxSelectionTime = self.maxSelectionTime - (self.selectChargingTime - 30)
-            self.selectTime = totalMinutesTime
-            
-            let stringSearchDate = currentDate + String(format: "%02d", currentHour) + String(format: "%02d", currentMinute) + "00"
-            
-            let searchDate = "yyyyMMddHHmmss".toDateFormatter(formatString: stringSearchDate)!
-            
-            self.selectTempDay = searchDate
-        }
-    }
-    
-    func changedChareType() {
-        setTotalChargingTime()
-        
-        getCurrentDate() { (currentDate) in
-            self.currentDate = currentDate
-            
-            var calcDate: Date?
-            
-            var textStartDay: String = ""
-            var textStartTime: String = ""
-            var textEndDay: String = ""
-            var textEndTime: String = ""
-            
-            //충전 유형 - 즉시 충전
-            if self.selectChargeType == "Instant" {
-                self.selectDay = self.currentDate
-                
-                calcDate = Calendar.current.date(byAdding: .minute, value: self.selectChargingTime, to: self.currentDate)!
-                
-                textStartDay = "MM/dd (E)".dateFormatter(formatDate: self.currentDate)
-                textStartTime = "HH:mm".dateFormatter(formatDate: self.currentDate)
-                textEndDay = "MM/dd (E)".dateFormatter(formatDate: calcDate!)
-                textEndTime = "HH:mm".dateFormatter(formatDate: calcDate!)
-            }
-            //충전 유형 - 예약 충전
-            else if self.selectChargeType == "Scheduled" {
-                self.currentDate = currentDate
-                
-                let currentDate: String = "yyyyMMdd".dateFormatter(formatDate: self.currentDate)
-                var currentHour: Int = Int("HH".dateFormatter(formatDate: self.currentDate))!
-                var currentMinute: Int = Int("mm".dateFormatter(formatDate: self.currentDate))!
-                
-                if currentMinute >= 0 && currentMinute < 30 {
-                    currentMinute = 30
-                }
-                else if currentMinute >= 30 && currentMinute < 59 {
-                    currentHour = currentHour + 1
-                    currentMinute = 0
-                }
-                
-                let totalMinutesTime = (currentHour * 60) + currentMinute
-                
-                self.startSelectionTime = totalMinutesTime
-                self.maxSelectionTime = 1410
-                self.maxSelectionTime = self.maxSelectionTime - (self.selectChargingTime - 30)
-                self.selectTime = totalMinutesTime
-                
-                let stringSearchDate = currentDate + String(format: "%02d", currentHour) + String(format: "%02d", currentMinute) + "00"
-                
-                let searchDate = "yyyyMMddHHmmss".toDateFormatter(formatString: stringSearchDate)!
-                
-                self.selectTempDay = searchDate
-                
-                calcDate = Calendar.current.date(byAdding: .minute, value: self.selectChargingTime, to: self.selectTempDay!)!
-
-                textStartDay = "MM/dd (E)".dateFormatter(formatDate: self.selectTempDay!)
-                textStartTime = "HH:mm".dateFormatter(formatDate: self.selectTempDay!)
-                textEndDay = "MM/dd (E)".dateFormatter(formatDate: self.selectTempDay!)
-                textEndTime = "HH:mm".dateFormatter(formatDate: calcDate!)
-            }
-            
-            self.startDay = textStartDay
-            self.startTime = textStartTime
-            self.endDay = textEndDay
-            self.endTime = textEndTime
-        }
-    }
-    
-    func changeSelectDay() {
-        getCurrentDate() { (currentDate) in
-            self.currentDate = currentDate
-            
-            let currentDay = "yyyyMMdd".dateFormatter(formatDate: currentDate)
-            let selectedDay = "yyyyMMdd".dateFormatter(formatDate: self.selectDay)
-            
-            let calcDate: Date?
-            
-            var textStartDay: String = ""
-            var textStartTime: String = ""
-            var textEndDay: String = ""
-            var textEndTime: String = ""
-
-            if currentDay == selectedDay {
-                let currentDate: String = "yyyyMMdd".dateFormatter(formatDate: self.currentDate)
-                var currentHour: Int = Int("HH".dateFormatter(formatDate: self.currentDate))!
-                var currentMinute: Int = Int("mm".dateFormatter(formatDate: self.currentDate))!
-                
-                if currentMinute >= 0 && currentMinute < 30 {
-                    currentMinute = 30
-                }
-                else if currentMinute >= 30 && currentMinute < 59 {
-                    currentHour = currentHour + 1
-                    currentMinute = 0
-                }
-                
-                let totalMinutesTime = (currentHour * 60) + currentMinute
-                
-                self.startSelectionTime = totalMinutesTime
-                self.selectTime = totalMinutesTime
-                
-                let stringSearchDate = currentDate + String(format: "%02d", currentHour) + String(format: "%02d", currentMinute) + "00"
-                
-                let searchDate = "yyyyMMddHHmmss".toDateFormatter(formatString: stringSearchDate)!
-                
-                self.selectTempDay = searchDate
-            }
-            else {
-                self.selectTempDay = "yyyyMMddHHmmss".toDateFormatter(formatString: selectedDay + "000000")!
-                self.selectTime = 0
-                self.startSelectionTime = 0
-            }
-            
-            calcDate = Calendar.current.date(byAdding: .minute, value: self.selectChargingTime, to: self.selectTempDay!)!
-
-            textStartDay = "MM/dd (E)".dateFormatter(formatDate: self.selectTempDay!)
-            textStartTime = "HH:mm".dateFormatter(formatDate: self.selectTempDay!)
-            textEndDay = "MM/dd (E)".dateFormatter(formatDate: self.selectTempDay!)
-            textEndTime = "HH:mm".dateFormatter(formatDate: calcDate!)
-            
-            self.startDay = textStartDay
-            self.startTime = textStartTime
-            self.endDay = textEndDay
-            self.endTime = textEndTime
-            
-            self.maxSelectionTime = 1410
-            self.maxSelectionTime = self.maxSelectionTime - (self.selectChargingTime - 30)
-        }
-    }
-    
-    func changedSelectTime() {
-        
-    }
-    
-    func changedChargingTime() {
-        setTotalChargingTime()
-        
-        let calcDate: Date?
-        
-        var textStartDay: String = ""
-        var textStartTime: String = ""
-        var textEndDay: String = ""
-        var textEndTime: String = ""
-        
-        //충전 유형 - 즉시 충전
-        if selectChargeType == "Instant" {
-            calcDate = Calendar.current.date(byAdding: .minute, value: selectChargingTime, to: currentDate)!
-            
-            textStartDay = "MM/dd (E)".dateFormatter(formatDate: currentDate)
-            textStartTime = "HH:mm".dateFormatter(formatDate: currentDate)
-            textEndDay = "MM/dd (E)".dateFormatter(formatDate: calcDate!)
-            textEndTime = "HH:mm".dateFormatter(formatDate: calcDate!)
-        }
-        //충전 유형 - 예약 충전
-        else if selectChargeType == "Scheduled" {
-            calcDate = Calendar.current.date(byAdding: .minute, value: selectChargingTime, to: selectTempDay!)!
-
-            textStartDay = "MM/dd (E)".dateFormatter(formatDate: selectTempDay!)
-            textStartTime = "HH:mm".dateFormatter(formatDate: selectTempDay!)
-            textEndDay = "MM/dd (E)".dateFormatter(formatDate: selectTempDay!)
-            textEndTime = "HH:mm".dateFormatter(formatDate: calcDate!)
-            
-            print(selectChargingTime)
-            
-            maxSelectionTime = 1410
-            maxSelectionTime = maxSelectionTime - (selectChargingTime - 30)
-        }
-        
-        startDay = textStartDay
-        startTime = textStartTime
-        endDay = textEndDay
-        endTime = textEndTime
-    }
-    
-
-//    func setSearchDate() {
-//        if selectChargingTime >= 60 {
-//            if selectChargingTime % 60 == 0 {
-//                textChargingTime = String(selectChargingTime / 60) + "시간"
-//            }
-//            else {
-//                textChargingTime = String(selectChargingTime / 60) + "시간 " + String(selectChargingTime % 60) + "분"
-//            }
-//        }
-//        else {
-//            textChargingTime = String(selectChargingTime) + "분"
-//        }
-//
-//        startDate = "MM/dd (E) HH:mm".dateFormatter(formatDate: setDate)
-//
-//        let calcEndDate: Date = Calendar.current.date(byAdding: .minute, value: selectChargingTime, to: setDate)!
-//
-//        endDate = "MM/dd (E) HH:mm".dateFormatter(formatDate: calcEndDate)
-//        endTime = "HH:mm".dateFormatter(formatDate: calcEndDate)
-//    }
-//
-//    func changeSelectDay() {
-//        let today = "yyyyMMdd".dateFormatter(formatDate: Date())
-//        let selectedDay = "yyyyMMdd".dateFormatter(formatDate: selectDay)
-//
-//        if today == selectedDay {
-//            if selectChargeType == "Instant" {
-//                setDate = Date()
-//                setTime = 0
-//            }
-//            else {
-//                let currentDate: String = "yyyyMMdd".dateFormatter(formatDate: Date())
-//                var currentHour: Int = Int("HH".dateFormatter(formatDate: Date()))!
-//                var currentMinute: Int = Int("mm".dateFormatter(formatDate: Date()))!
-//
-//                var changedDate = ""
-//
-//                if currentMinute >= 0 && currentMinute < 30 {
-//                    print("30")
-//                    currentMinute = 30
-//                }
-//                else if currentMinute >= 30 && currentMinute < 59 {
-//                    print("00")
-//                    currentHour = currentHour + 1
-//                    currentMinute = 0
-//                }
-//
-//                setTime = (currentHour * 60) + currentMinute
-//                selectTime = String(format: "%02d", currentHour) + String(format: "%02d", currentMinute)
-//                changedDate = currentDate + String(format: "%02d", currentHour) + String(format: "%02d", currentMinute) + "00"
-//
-//                setDate = "yyyyMMddHHmmss".toDateFormatter(formatString: changedDate)!
-//            }
-//        }
-//        else {
-//            setDate = "yyyyMMddHHmmss".toDateFormatter(formatString: selectedDay + "000000")!
-//            setTime = 0
-//            selectTime = "0000"
-//        }
-//    }
-//
-//    func changeSearchDate() {
-//
-//        if selectChargeType == "Instant" {
-//            selectDay = Date()
-//            selectTime = "0000"
-//        }
-//        else if selectChargeType == "Scheduled" {
-//            let currentDate: String = "yyyyMMdd".dateFormatter(formatDate: Date())
-//            var currentHour: Int = Int("HH".dateFormatter(formatDate: Date()))!
-//            var currentMinute: Int = Int("mm".dateFormatter(formatDate: Date()))!
-//            var changedDate = ""
-//
-//            if currentMinute >= 0 && currentMinute < 30 {
-//                print("30")
-//                currentMinute = 30
-//            }
-//            else if currentMinute >= 30 && currentMinute < 59 {
-//                print("00")
-//                currentHour = currentHour + 1
-//                currentMinute = 0
-//            }
-//
-//            changedDate = currentDate + String(format: "%02d", currentHour) + String(format: "%02d", currentMinute) + "00"
-//
-//            setDate = "yyyyMMddHHmmss".toDateFormatter(formatString: changedDate)!
-//            setTime = (currentHour * 60) + currentMinute
-//
-//            selectTime = String(format: "%02d", currentHour) + String(format: "%02d", currentMinute)
-//        }
-//    }
     
     //MARK: - 위치 정보 호출
     func getLoacation() {
@@ -474,7 +86,13 @@ class ChargerMapViewModel: ObservableObject {
     }
     
     //MARK: - 현재 위치 이동
-    func currentLocation() {
+    /// - Parameters:
+    ///   - searchStartDate: 조회 시작일시
+    ///   - searchEndDate: 조회 종료일시
+    func currentLocation(_ searchStartDate: Date, _ searchEndDate: Date) {
+        isShowInfoView = false  //충전기 정보 창 비활성
+        mapView.removeAllPOIItems() //지도에 표시된 마커 전체삭제
+        
         getLoacation()  //현재 위치 정보 호출
         
         //현재 위치 지도 중심으로 이동
@@ -483,114 +101,194 @@ class ChargerMapViewModel: ObservableObject {
             animated: true
         )
         
-        mapView.setZoomLevel(MTMapZoomLevel(1.0), animated: true)   //Zoom Level 설정
+        mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
         
-        getChargerList(zoomLevel: 1, latitude: latitude, longitude: longitude)
+        //충전기 목록 조회
+        getChargerList(zoomLevel: 0, latitude: latitude, longitude: longitude, searchStartDate: searchStartDate, searchEndDate: searchEndDate)
     }
     
     //MARK: - 충전기 목록 조회 실행
-    func getChargerList(zoomLevel: Int, latitude: Double, longitude: Double) {
-        viewUtil.isLoading = true
+    /// - Parameters:
+    ///   - zoomLevel: Zoom 레벨
+    ///   - latitude: 위도
+    ///   - longitude: 경도
+    ///   - searchStartDate: 조회 시작일시
+    ///   - searchEndDate: 조회 종료일시
+    func getChargerList(zoomLevel: Int, latitude: Double, longitude: Double, searchStartDate: Date, searchEndDate: Date) {
+        isShowInfoView = false  //충전기 정보 화면 비활성화
+        viewUtil.isLoading = true   //로딩 시작
         
-        charger.removeAll()
-        markerItem.removeAll()
         chargers.removeAll()    //조회한 충전기 목록 초기화
         markerItems.removeAll() //조회한 충전기 목록 마커 정보 초기화
-        
-        let currentDate: String = "yyyy-MM-dd'T'HH:mm:ss".dateFormatter(formatDate: currentDate)
+        searchChargers.removeAll()  //조회한 하단 충전기 목록 초기화
 
+        let startDate: String = "yyyy-MM-dd'T'HH:mm:ss".dateFormatter(formatDate: searchStartDate)  //조회 시작일시
+        let endDate: String = "yyyy-MM-dd'T'HH:mm:ss".dateFormatter(formatDate: searchEndDate)  //조회 종료일시
+
+        //조회 조건 Parameters
         let parameters = [
-            "gpsX": String(longitude),
-            "gpsY": String(latitude),
-            "startDate": currentDate,
-            "endDate": currentDate,
-            "distance": selectRadius
+            "gpsX": String(longitude),  //X좌표(경도)
+            "gpsY": String(latitude),   //Y좌표(위도)
+            "startDate": startDate, //조회 시작일시
+            "endDate": endDate, //조회 종료일시
+            "distance": radius  //조회 반경범위
         ]
+        
+        var searchCharger: [String:String] = [:]    //조회한 충전기 정보
+        var searchChargers: [[String:String]] = []  //조회환 충전기 정보 목록
 
         //충전기 목록 API 호출
         let request = chargerAPI.requestChargerList(parameters: parameters)
         request.execute(
             //API 호출 성공
             onSuccess: { (getChargers) in
-                self.viewUtil.isLoading = false
+                self.viewUtil.isLoading = false //로딩 종료
                 self.result = "success"
                 
                 for index in 0..<getChargers.count {
                     let getCharger = getChargers[index]
                     
-                    self.charger.updateValue(getCharger.id!, forKey: "chargerId")
-                    self.charger.updateValue(getCharger.name!, forKey: "chargerName")
-                    self.charger.updateValue(getCharger.address!, forKey: "address")
-                    self.charger.updateValue(getCharger.gpsX!, forKey: "longitude")
-                    self.charger.updateValue(getCharger.gpsY!, forKey: "latitude")
-                    self.charger.updateValue(getCharger.currentStatusType!, forKey: "chargerStatus")
-                    self.charger.updateValue(getCharger.searchDateFlag!, forKey: "isSearchDate")
+                    self.charger.updateValue(getCharger.id!, forKey: "chargerId")   //충전기 ID
+                    self.charger.updateValue(getCharger.name!, forKey: "chargerName")   //충전기 명
+                    self.charger.updateValue(getCharger.bleNumber!, forKey: "bleNumber")    //BLE 번호
+                    self.charger.updateValue(getCharger.address!, forKey: "address")    //충전기 주소
+                    self.charger.updateValue(getCharger.detailAddress!, forKey: "detailAddress")    //충전기 상세주소
+                    self.charger.updateValue(getCharger.gpsX!, forKey: "longitude") //X좌표(경도)
+                    self.charger.updateValue(getCharger.gpsY!, forKey: "latitude")  //Y좌표(위도)
+                    self.charger.updateValue(getCharger.currentStatusType!, forKey: "chargerStatus")    //충전기 상태
+                    self.charger.updateValue(getCharger.searchDateFlag!, forKey: "isSearchDate")    //조회일자 여부
                     
-                    self.chargers.append(self.charger)
+                    self.chargers.append(self.charger)  //충전기 목록에 충전기 정보 추가
+                    
+                    searchCharger = [
+                        "chargerId": String(getCharger.id!),    //충전기 ID
+                        "chargerName": getCharger.name!,    //충전기 명
+                        "bleNumber": getCharger.bleNumber!, //BLE 번호
+                        "address": getCharger.address!, //충전기 주소
+                        "detailAddress": getCharger.detailAddress!, //충전기 상세주소
+                        "longitude": String(getCharger.gpsX!),  //X좌표(경도)
+                        "latitude": String(getCharger.gpsY!),   //Y좌표(위도)
+                        "chargerStatus": getCharger.currentStatusType!  //충전기 상태
+                    ]
+                    
+                    searchChargers.append(searchCharger)    //조회 충전기 목록 추가
                 }
                 
-                self.setChargerMarker(chargers: self.chargers)
+                self.setChargerMarker(chargers: self.chargers)  //지도에 표시될 충전기 마커 설정
+                self.searchChargers.append(contentsOf: searchChargers)  //조회 충전기 목록 추가
             },
             //API 호출 실패
             onFailure: { (error) in
-                self.viewUtil.isLoading = false
+                self.viewUtil.isLoading = false //로딩 종료
                 self.result = "error"
-                self.chargers = []
+                self.chargers = []  //충전기 목록 초기화
             }
         )
     }
     
+    //MARK: - 충전기 마커 설저
+    /// - Parameter chargers: 충전기 정보 목록
     func setChargerMarker(chargers: [[String:Any]]) {
-        
         for index in 0..<chargers.count {
+            let charger = chargers[index]   //충전기 정보
+            let chargerStauts = charger["chargerStatus"] as! String //충전기 상태
             
-            let charger = chargers[index]
-            let chargerStauts = charger["chargerStatus"] as! String
+            var markgerImage: String = ""   //충전기 마커 이미지
+            var markgerSelectImage: String = ""  //충전기 마커 선택 이미지
             
-            var markgerImage: String = ""
-            var markgerSeletImage: String = ""
-            
+            //충전기 상태 - 충전 대기 상태
             if chargerStauts == "READY" {
                 markgerImage = "Map-Pin-Blue.png"
-                markgerSeletImage = "Map-Pin-Blue-Select.png"
+                markgerSelectImage = "Map-Pin-Blue-Select.png"
             }
+            //충전기 상태 - 예약 상태
             else if chargerStauts == "RESERVATION" {
                 markgerImage = "Map-Pin-Red.png"
-                markgerSeletImage = "Map-Pin-Red-Select.png"
+                markgerSelectImage = "Map-Pin-Red-Select.png"
             }
             
+            //충전기 마커 정보
             markerItem = [
-                "markerId": charger["chargerId"]!,
-                "markerName": charger["chargerName"]!,
-                "address": charger["address"]!,
-                "latitude": charger["latitude"]!,
-                "longitude": charger["longitude"]!,
-                "markerImage": markgerImage,
-                "markerSelectImage": markgerSeletImage
+                "markerId": charger["chargerId"]!,  //Marker ID
+                "markerName": charger["chargerName"]!,  //마커 명
+                "address": charger["address"]!, //마커 주소
+                "latitude": charger["latitude"]!,   //위도
+                "longitude": charger["longitude"]!, //경도
+                "markerImage": markgerImage,    //마커 이미지
+                "markerSelectImage": markgerSelectImage //마커 선택 이미지
             ]
             
-            markerItems.append(markerItem)
+            markerItems.append(markerItem)  //마커 목록에 추가
+        }
+        
+        addPOIItems(markerItems: markerItems)   //지도에 생성한 마커 추가
+    }
+    
+    //MARK: - 지도 POIItem(마커) 추가
+    /// - Parameter markerItems: 마커 정보 목록
+    func addPOIItems(markerItems: [[String:Any]]) {
+        var poiItem: MTMapPOIItem?  //POI Item
+        var poiItems: [MTMapPOIItem] = []   //POI Item 목록
+        var mapPoint: MTMapPoint?   //마커 위치
+
+        //POI Item 생성
+        for index in 0..<markerItems.count {
+            let markerItem = markerItems[index]
+
+            let latitude = markerItem["latitude"] as? Double    //위도
+            let longitude = markerItem["longitude"] as? Double  //경도
+            mapPoint = MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude!, longitude: longitude!))  //마커 위치
+
+            poiItem = MTMapPOIItem()
+            poiItem?.tag = markerItem["markerId"] as! Int   //마커 태그 - ID
+            poiItem?.itemName = markerItem["markerName"] as? String //마커 명
+            poiItem?.mapPoint = mapPoint    //마커 위치
+            poiItem?.markerType = .customImage  //마커 이미지 타입 - 커스텀 이미지
+            poiItem?.customImage = UIImage(named: markerItem["markerImage"] as! String)?.resize(width: 40)  //마커 이미지 - 이미지 사이즈 설정
+            poiItem?.markerSelectedType = .customImage  //마커 선택 이미지 타입 - 커스텀 이미지
+            poiItem?.customSelectedImage = UIImage(named: markerItem["markerSelectImage"] as! String)?.resize(width: 40)    //마커 선택 이미지
+            poiItem?.customImageAnchorPointOffset = .init(offsetX: 40, offsetY: 0)  //마커 이미지 Offset 설정
+            poiItem?.showDisclosureButtonOnCalloutBalloon = false   //마커 선택 시 노출되는 말풍선의 이미지 비활성
+
+            poiItems.append(poiItem!)
+        }
+
+        mapView.addPOIItems(poiItems)   //지도에 POIItems(마커) 추가
+    }
+    
+    //MARK: - 선택된 충전기
+    /// 지도에서 충전기 마커 선택 시, 실행
+    /// - Parameter chargerId: 선택한 충전기 ID
+    func selectedCharger(chargerId: Int) {
+        self.selectChargerId = String(chargerId)
+        
+        //Background Thread - 지도 이벤트 발생 시, 느려지는 현상으로 추가
+        DispatchQueue.global(qos: .background).async {
+            DispatchQueue.main.async {
+                self.isShowInfoView = true  //충전기 정보 창 호출
+                self.isFavorites = false    //충전기 즐겨찾기 표시 여부
+                
+                self.getCharger(chargerId: self.selectChargerId)  //충전기 정보 호출
+                self.getChargerReservation(chargerId: self.selectChargerId)   //충전기 예약 현황 호출
+            }
         }
     }
     
-    func selectedCharger(chargerId: Int) {
-        let chargerId = String(chargerId)
-        
-        isFavorites = false
-        isShowInfoView = true
-        getCharger(chargerId: chargerId)
-        getChargerReservation(chargerId: chargerId)
-    }
-    
+    //MARK: - 충전기 정보 호출
+    /// 충전기 선택 시 충전기의 정보 API 호출
+    /// - Parameter chargerId: 선택한 충전기 ID
     func getCharger(chargerId: String) {
-    
+        //충전기 정보 API 호출
         let request = chargerAPI.requestCharger(chargerId: chargerId)
         request.execute(
+            //API 호출 성공
             onSuccess: { (charger) in
-                //print(charger)
-                self.chargerName = charger.name!
-                self.chargerAddress = charger.address!
-                self.chargerUnitPrice = charger.rangeOfFee!
+                self.chargerId = String(charger.id!) //충전기 ID
+                self.chargerName = charger.name!    //충전기 명
+                self.bleNumber = charger.bleNumber! //BLE 번호
+                self.chargerAddress = charger.address!  //충전기 주소
+                self.chargerDetailAddress = charger.detailAddress!   //충전기 상세주소
+                self.chargeUnitPrice = charger.rangeOfFee!  //충전 단가
             },
             //API 호출 실패
             onFailure: { (error) in
@@ -598,20 +296,23 @@ class ChargerMapViewModel: ObservableObject {
             }
         )
     }
-
+    
+    //MARK: - 충전기 예약 현황 호출
+    /// 충전기 선택 시, 해당 충전기의 예약 현황
+    /// - Parameter chargerId: 선택한 충전기 ID
     func getChargerReservation(chargerId: String) {
-        
+        //충전기 예약 현황 조회 Parameters
         let parameters = [
             "page": "1",
             "size": "10",
             "sort": "ASC"
         ]
         
+        //충전기 예약 현황 API 호출
         let request = chargerAPI.requestChargerReservation(chargerId: chargerId, parameters: parameters)
         request.execute(
+            //API 호출 성공
             onSuccess: { (charger) in
-                //print(charger)
-                //print(charger.chargerAllowTime)
                 self.getAvailableTime(availableTime: charger.chargerAllowTime)
             },
             //API 호출 실패
@@ -622,6 +323,9 @@ class ChargerMapViewModel: ObservableObject {
         )
     }
     
+    //MARK: - 이용 가능 시간
+    /// 조회한 충전기 예약 현황 정보에 따른 충전기 이용 가능 시간 생성
+    /// - Parameter availableTime: 이용 가능 시간
     func getAvailableTime(availableTime: ChargerAllowTime) {
         print(availableTime)
         
@@ -631,7 +335,7 @@ class ChargerMapViewModel: ObservableObject {
         
         print("HHmmss".dateFormatter(formatDate: openTime!))
         
-        if "2021-08-27T16:53:00" < "2021-08-27T"+getOpenTime {
+        if "2021-08-27T16:53:00" < ("2021-08-27T" + getOpenTime) {
             print("tq")
         }
         else {
@@ -639,20 +343,18 @@ class ChargerMapViewModel: ObservableObject {
         }
     }
     
-    func resetSearchCondition() {
-        getCurrentDate() { (currentDate) in
-            self.currentDate = currentDate
-        }
-        selectChargeType = "Instant"
-        setTime = 0
-        selectDay = Date()
-        selectTempDay = selectDay
-        selectTime = 0
-        startSelectionTime = 0
-        maxSelectionTime = 1410
-        selectChargingTime = 240
-        selectRadius = "3"
-        showChargingTime = false
-        showRadius = false
+    //MARK: - 선택한 충전기로 지도 이동 및 마커 선택 표시
+    /// 하단 조회된 충전기 목록에서 충전기 선택 시, 해당 충전기로 지도 이동 및 충전기 마커 선택 표시 처리
+    /// - Parameter chargerId: 선택한 충전기 ID
+    func moveToSelectedCharger(chargerId: String) {
+        //현재 위치 지도 중심으로 이동
+        mapView.setMapCenter(
+            MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
+            animated: true
+        )
+        
+        mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
+        
+        mapView.select(mapView.findPOIItem(byTag: Int(chargerId)!), animated: true)   //마커 선택 표시 처리
     }
 }

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var viewUtil = ViewUtil()
-    private var signInViewModel = SignInViewModel()
+    @ObservedObject var viewUtil = ViewUtil()   //View Utility
+    private var signInViewModel = SignInViewModel() //로그인 View Model
     
     let userId: String = UserDefaults.standard.string(forKey: "userId") ?? ""   //저장된 아이디(이메일)
     let password: String = UserDefaults.standard.string(forKey: "password") ?? ""   //저장된 비밀번호
@@ -27,11 +27,11 @@ struct ContentView: View {
                         signInViewModel.autoSignIn(userId: userId, password: password) { (result) in
                             signInViewModel.signInStatus = result   //로그인 상태
                             if result == "success" {
-                                UserDefaults.standard.set(true, forKey: "autoSignIn")
+                                UserDefaults.standard.set(true, forKey: "autoSignIn")   //자동 로그인 여부 - True
                             }
                             //로그인 실패 또는 서버 에러에 따른 메시지 출력
                             else if result == "fail" {
-                                UserDefaults.standard.set(false, forKey: "autoSignIn")
+                                UserDefaults.standard.set(false, forKey: "autoSignIn")  //자동 로그인 여부 - False
                                 viewUtil.showToast(isShow: true, message: "fail.signin.auto".message())
                             }
                             else if result == "error" {
@@ -42,6 +42,7 @@ struct ContentView: View {
                 }
         }
         else {
+            //저장된 사용자 ID와 비밀번호가 없는 경우
             if userId == "" && password == "" {
                 SignInView()    //로그인 화면
             }

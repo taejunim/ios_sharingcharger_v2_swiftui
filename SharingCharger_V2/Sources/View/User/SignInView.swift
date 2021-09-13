@@ -126,7 +126,7 @@ struct ChangePasswordButton: View {
     
     var body: some View {
         NavigationLink(
-            destination: ChangePasswordView(isSigned: false),
+            destination: ChangePasswordView(isSigned: false),   //패스워드 변경 화면
             label: {
                 Text("button.change.password".localized())
                     .font(.caption)

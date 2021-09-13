@@ -82,6 +82,9 @@ class ViewUtil: ObservableObject {
         self.toastMessage = message
     }
     
+    //MARK: - 팝업
+    /// Popup VIew
+    /// - Returns: Popup View
     func popup() -> some View {
         HStack(alignment: .top, spacing: 10) {
             Text(toastMessage)

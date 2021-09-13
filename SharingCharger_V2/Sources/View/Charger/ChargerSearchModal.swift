@@ -1,16 +1,17 @@
 //
-//  ChargerSearchModal.swift
+//  ChargerSearchModal2.swift
 //  SharingCharger_V2
 //
-//  Created by KJ on 2021/08/26.
+//  Created by KJ on 2021/09/06.
 //
 
 import SwiftUI
 
-//MARK: - 충전기 검색 조건 Modal 화면
 struct ChargerSearchModal: View {
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var chargerMap: ChargerMapViewModel
+    
+    @ObservedObject var chargerSearch: ChargerSearchViewModel   //충전기 검색 View Model
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
     
     var body: some View {
         VStack {
@@ -21,8 +22,8 @@ struct ChargerSearchModal: View {
                     Spacer()
                     
                     //초기화 버튼
-                    RefreshButton() { (isRefresh) in
-                        chargerMap.isRefresh = isRefresh
+                    RefreshButton() { (isReset) in
+                        chargerSearch.isReset = isReset //초기화 여부
                     }
                 }
                 .padding(.bottom)
@@ -30,12 +31,12 @@ struct ChargerSearchModal: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 10) {
                         //총 충전 시간
-                        Text("총 " + chargerMap.textChargingTime + " 충전")
+                        Text("총 " + chargerSearch.textChargingTime + " 충전")
                             .font(.title2)
                             .fontWeight(.bold)
                         
                         //충전 시작일시 ~ 종료일시
-                        Text("\(chargerMap.startDay) \(chargerMap.startTime)~\(chargerMap.endDay) \(chargerMap.endTime)")
+                        Text("\(chargerSearch.textStartDay) \(chargerSearch.textStartTime) ~ \(chargerSearch.textEndDay) \(chargerSearch.textEndTime)")
                     }
                     
                     Spacer()
@@ -44,20 +45,18 @@ struct ChargerSearchModal: View {
                 //검색 조건 선택 영역
                 ScrollView {
                     VStack {
-                        ChargeTypePicker(chargerMap: chargerMap)    //충전 유형 선택 Picker
-                        
+                        ChargeTypePicker(chargerSearch: chargerSearch)    //충전 유형 선택 Picker
                         VerticalDividerline()
                         
-                        ChargingDatePicker(chargerMap: chargerMap)  //충전 일시 선택 Picker
-                        
+                        ChargingDatePicker(chargerSearch: chargerSearch)  //충전 일시 선택 Picker
                         VerticalDividerline()
                         
-                        ChargingTimePicker(chargerMap: chargerMap)  //충전 시간 선택 Picker
-                        
+                        ChargingTimePicker(chargerSearch: chargerSearch)  //충전 시간 선택 Picker
                         VerticalDividerline()
                     }
                     
                     VStack {
+                        //검색 조건 타이틀
                         HStack {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("검색 조건")
@@ -67,11 +66,9 @@ struct ChargerSearchModal: View {
                             
                             Spacer()
                         }
-                        
                         VerticalDividerline()
                         
-                        RadiusPicker(chargerMap: chargerMap)    //반경 범위 선택 Picker
-                        
+                        RadiusPicker(chargerSearch: chargerSearch)    //반경 범위 선택 Picker
                         VerticalDividerline()
                     }
                     .padding(.top)
@@ -79,23 +76,34 @@ struct ChargerSearchModal: View {
             }
             .padding()
             
-            ChargerSearchButton(chargerMap: chargerMap) //충전기 목록 검색 버튼
+            ChargerSearchButton(chargerSearch: chargerSearch, chargerMap: chargerMap) //충전기 목록 검색 버튼
         }
         .onAppear {
-            chargerMap.setTotalChargingTime()
-            chargerMap.setSearchDate()
-            chargerMap.setReservationSearchDate()
+            //충전기 검색 조건의 충전 타입이 '예약 충전'인 경우
+            if chargerSearch.searchType == "Scheduled" {
+                chargerSearch.selectChargeType = chargerSearch.searchType   //충전 타입
+                chargerSearch.selectStartDate = chargerSearch.selectTempStartDate!  //시작 일자 선택
+                chargerSearch.selectStartTime = chargerSearch.selectTempStartTime   //시작 시간 선택
+            }
+            else {
+                chargerSearch.changeStartTimeRange()    //충전 시작 시간 범위 설정
+            }
+        }
+        .onDisappear {
+            chargerSearch.showChargingDate = false  //충전 시작일자 선택 항목 닫기
+            chargerSearch.showChargingTime = false  //충전 시간 선택 항목 닫기
+            chargerSearch.showRadius = false    //조회 반경범위 선택 항목 닫기
         }
     }
 }
 
 //MARK: - 충전 유형 선택 Picker
 struct ChargeTypePicker: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var chargerSearch: ChargerSearchViewModel
     
     var body: some View {
         Picker(
-            selection: $chargerMap.selectChargeType,
+            selection: $chargerSearch.selectChargeType, //충전 유형 선택
             label: Text("충전 선택"),
             content: {
                 Text("즉시 충전").tag("Instant")
@@ -109,108 +117,142 @@ struct ChargeTypePicker: View {
 
 //MARK: - 충전 일시 선택 Picker
 struct ChargingDatePicker: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var chargerSearch: ChargerSearchViewModel
     
-    var closedRange: ClosedRange<Date> {
-        let today = Date()
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Date())!
-        
-        return today...tomorrow
+    //충전 시작일자 선택 범위
+    var closedRangeDate: ClosedRange<Date> {
+        var today = chargerSearch.currentDate
+        let todayTime = Int("HHmm".dateFormatter(formatDate: today))
+
+        //현재 시간이 23시 30분 이전인 경우
+        if todayTime! < 2330 {
+            let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: today)    //현재 일자 + 1일
+
+            return today...nextDay!
+        }
+        //현재 시간이 23시 30분 이후인 경우
+        else {
+            today = Calendar.current.date(byAdding: .day, value: 1, to: today)! //현재 일자 + 1일
+            let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: today)    //현재 일자 + 2일
+
+            return today...nextDay!
+        }
     }
     
     var body: some View {
         DisclosureGroup(
-            isExpanded: $chargerMap.showChargingDate,
+            isExpanded: $chargerSearch.showChargingDate,
             content: {
-                VStack {
+                HStack {
                     DatePicker(
-                        "",
-                        selection: $chargerMap.selectDay,
-                        in: closedRange,
+                        "충전 시작 일시 선택",
+                        selection: $chargerSearch.selectStartDate,
+                        in: closedRangeDate,
                         displayedComponents: .date
                     )
-                    .labelsHidden()
+                    .labelsHidden() //라벨 비활성화
                     .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
                     
-                    Picker("시간 선택", selection: $chargerMap.selectTime) {
-                        //30분 ~ 10시간 (30분 단위)
-                        ForEach(Array(stride(from: chargerMap.startSelectionTime, through: chargerMap.maxSelectionTime, by: 30)), id: \.self) { (minute) in
+                    Picker("충전 시작 시간 선택", selection: $chargerSearch.selectStartTime) {
+                        //시간 선택 - 00:00 ~ 23:30 (30분 단위)
+                        ForEach(Array(stride(from: 0, to: 86400, by: 1800)), id: \.self) { (second) in
 
-                            let timeHour = minute / 60  //시간 계산
-                            let timeMinute = minute % 60    //분 계산
+                            let timeHour: Int = second / 3600    //시간 계산
+                            let timeMinute: Int = second % 3600 / 60   //분 계산
 
-                            let setHour = String(format: "%02d", timeHour)
-                            let setMinute = String(format: "%02d", timeMinute)
-                            let timeLabel =  setHour + ":" + setMinute
+                            let time: String = String(format: "%02d", timeHour) + String(format: "%02d", timeMinute)    //HHmm
+                            let timeLabel: String = String(format: "%02d", timeHour) + ":" + String(format: "%02d", timeMinute) //HH:mm
+                            let formatStartDate: String = "yyyyMMdd".dateFormatter(formatDate: chargerSearch.selectStartDate)   //yyyyMMdd
 
-                            Text(timeLabel).tag(setHour+setMinute).font(.subheadline)
+                            //현재 일자와 충전 시작일자를 비교하여 선택 가능한 충전 시작 시간만 표출
+                            if chargerSearch.formatCurrentDay == formatStartDate {
+                                
+                                //시작 시간 최소 범위와 같거나 큰 경우만
+                                if chargerSearch.startTimeMinRange <= second {
+                                    Text(timeLabel).tag(time).font(.subheadline)
+                                }
+                            }
+                            else {
+                                //시작 시간 최대 범위와 같거나 작은 경우만
+                                if chargerSearch.startTimeMaxRange >= second {
+                                    Text(timeLabel).tag(time).font(.subheadline)
+                                }
+                            }
                         }
                     }
+                    .frame(width: 150, height: 70)
+                    .clipped()
                 }
             },
             label: {
                 Button(
                     action: {
-                        chargerMap.showChargingDate.toggle()
+                        chargerSearch.showChargingDate.toggle()
                     },
                     label: {
                         HStack {
                             fieldTitle(title: "충전 시작 일시", isRequired: false)
                             Spacer()
-                            Text("\(chargerMap.startDay) \(chargerMap.startTime)")
+                            Text("\(chargerSearch.textStartDay) \(chargerSearch.textStartTime)")
                         }
                     }
                 )
             }
         )
-        .accentColor(chargerMap.selectChargeType == "Instant" ? .gray : .black)
-        .disabled(chargerMap.selectChargeType == "Instant" ? true : false)
+        .accentColor(chargerSearch.selectChargeType == "Instant" ? .gray : .black)  //충전 유형 선택에 따라 색상 변경
+        .disabled(chargerSearch.selectChargeType == "Instant" ? true : false)   //충전 유형 선택에 따라 비활성화 변경
     }
 }
 
 //MARK: - 충전 시간 선택 Picker
 struct ChargingTimePicker: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var chargerSearch: ChargerSearchViewModel
     
     var body: some View {
         HStack {
             DisclosureGroup(
-                isExpanded: $chargerMap.showChargingTime,
+                isExpanded: $chargerSearch.showChargingTime,
                 content: {
-                    Picker("충전 시간 선택", selection: $chargerMap.selectChargingTime) {
+                    Picker("충전 시간 선택", selection: $chargerSearch.selectChargingTime) {
                         //30분 ~ 10시간 (30분 단위)
-                        ForEach(Array(stride(from: 30, through: 600, by: 30)), id: \.self) { (minute) in
-
-                            let timeHour = minute / 60  //시간 계산
-                            let timeMinute = minute % 60    //분 계산
+                        ForEach(Array(stride(from: 1800, through: 36000, by: 1800)), id: \.self) { (second) in
                             
-                            if minute > 30 {
-                                if timeMinute == 0 {
-                                    let timeLabel = "\(timeHour)시간"
-                                    Text(timeLabel).tag(minute).font(.subheadline)
-                                }
-                                else {
-                                    let timeLabel = "\(timeHour)시간 \(timeMinute)분"
-                                    Text(timeLabel).tag(minute).font(.subheadline)
-                                }
+                            let timeHour: Int = second / 3600    //시간 계산
+                            let timeMinute: Int = second % 3600 / 60   //분 계산
+                            let time: String = String(format: "%02d", timeHour) + String(format: "%02d", timeMinute) + "00" //HHmmss
+                            
+                            //시간 단위 없는 경우
+                            if timeHour == 0 {
+                                let timeLabel: String = String(format: "%02d", timeMinute) + "분"
+                                Text(timeLabel).tag(time).font(.subheadline)
                             }
                             else {
-                                let timeLabel = "\(minute)분"
-                                Text(timeLabel).tag(minute).font(.subheadline)
+                                //분 단위 없는 경우
+                                if timeMinute == 0 {
+                                    let timeLabel = String(timeHour) + "시간"
+                                    Text(timeLabel).tag(time).font(.subheadline)
+                                }
+                                //분 단위 있는 경우
+                                else {
+                                    let timeLabel = String(timeHour) + "시간 " + String(format: "%02d", timeMinute) + "분"
+                                    Text(timeLabel).tag(time).font(.subheadline)
+                                }
                             }
                         }
                     }
+                    .frame(width: 250, height: 70)
+                    .clipped()
                 },
                 label: {
                     Button(
                         action: {
-                            chargerMap.showChargingTime.toggle()
+                            chargerSearch.showChargingTime.toggle()
                         },
                         label: {
                             HStack {
                                 fieldTitle(title: "충전 시간", isRequired: false)
                                 Spacer()
-                                Text(chargerMap.textChargingTime)
+                                Text(chargerSearch.textChargingTime)
                             }
                         }
                     )
@@ -223,35 +265,36 @@ struct ChargingTimePicker: View {
 
 //MARK: - 반경 범위 선택 Picker
 struct RadiusPicker: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var chargerSearch: ChargerSearchViewModel
     
     var body: some View {
         HStack {
             DisclosureGroup(
-                isExpanded: $chargerMap.showRadius,
+                isExpanded: $chargerSearch.showRadius,
                 content: {
                     Picker(
-                        selection: $chargerMap.selectRadius,
+                        selection: $chargerSearch.selectRadius, //반경범위 선택
                         label: Text("범위 선택"),
                         content: {
-                            Text("3km").tag("3")
-                            Text("10km").tag("10")
-                            Text("40km").tag("40")
+                            Text("3km").tag("3").font(.subheadline)
+                            Text("10km").tag("10").font(.subheadline)
+                            Text("40km").tag("40").font(.subheadline)
                         }
                     )
+                    .frame(width: 250, height: 70)
+                    .clipped()
                 },
                 label: {
                     Button(
                         action: {
-                            chargerMap.showRadius.toggle()
+                            chargerSearch.showRadius.toggle()
                         },
                         label: {
                             HStack {
                                 fieldTitle(title: "범위", isRequired: false)
                                 Spacer()
-                                Text(chargerMap.selectRadius + "km")
+                                Text(chargerSearch.selectRadius + "km")
                             }
-                            .frame(maxWidth: .infinity)
                         }
                     )
                 }
@@ -264,12 +307,17 @@ struct RadiusPicker: View {
 //MARK: - 충전기 목록 검색 버튼
 struct ChargerSearchButton: View {
     @Environment(\.presentationMode) var presentationMode
+    
+    @ObservedObject var chargerSearch: ChargerSearchViewModel
     @ObservedObject var chargerMap: ChargerMapViewModel
     
     var body: some View {
         Button(
             action: {
-                chargerMap.currentLocation()    //현재 위치 기준으로 충전기 검색
+                let search = chargerSearch.setSearchCondition() //검색조건 설정
+                chargerMap.radius = search.radius   //반경범위 설정
+                chargerMap.currentLocation(search.startDate, search.endDate)    //현재 위치 이동 후, 충전기 목록 조회
+                
                 presentationMode.wrappedValue.dismiss() //현재 창 닫기
             },
             label: {
@@ -287,6 +335,6 @@ struct ChargerSearchButton: View {
 
 struct ChargerSearchModal_Previews: PreviewProvider {
     static var previews: some View {
-        ChargerSearchModal(chargerMap: ChargerMapViewModel())
+        ChargerSearchModal(chargerSearch: ChargerSearchViewModel(), chargerMap: ChargerMapViewModel())
     }
 }

@@ -5,6 +5,7 @@
 //  Created by KJ on 2021/08/09.
 //
 
+//MARK: - String Extention
 extension String {
     //MARK: - 텍스트 라벨 출력
     /// - Localizable.strings -  "String".localized()
@@ -26,10 +27,10 @@ extension String {
         return NSLocalizedString(self, tableName: tableName, value: "**\(self)**", comment: "")
     }
     
-    //MARK: - Date(일자) 포맷
-    /// 일자 포맷팅 함수 - 사용 방법 : "yyyymmdd".dateFormatter(formatDate: Date())
-    /// - Parameter formatDate: 포맷팅 형식 - ex) "yyyymmdd", "HH : mm : ss"
-    /// - Returns: 포맷팅된 Date
+    //MARK: - Date(일자) 형식을 String 형식 일자로 변경
+    /// 일자 포맷팅 함수 - 사용 방법 : "yyyy-MM-dd".dateFormatter(formatDate: Date())
+    /// - Parameter formatDate: 포맷팅 형식 - ex) "yyyy-MM-dd", "HH:mm:ss"
+    /// - Returns: String
     func dateFormatter(formatDate: Date) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = self
@@ -37,10 +38,13 @@ extension String {
         return dateFormatter.string(from: formatDate)
     }
     
+    //MARK: - String 형식 일자를 Date(일자) 형식으로 변경
+    /// 일자 포맷팅 함수 - 사용 방법 : "yyyy-mm-dd".toDateFormatter(formatString: String)
+    /// - Parameter formatString: String 형식 일자의 포맷 형식
+    /// - Returns: Date
     func toDateFormatter(formatString: String) -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = self
-        
         
         if let date = dateFormatter.date(from: formatString) {
             return date
@@ -48,5 +52,25 @@ extension String {
         else {
             return nil
         }
+    }
+}
+
+//MARK: - UIImage Extension
+extension UIImage {
+    //MARK: - 이미지 사이즈 조절
+    /// UIImage 사이즈 조절
+    /// - Parameter width: 넓이
+    /// - Returns: UIImage
+    func resize(width: CGFloat) -> UIImage {
+        let scale = width / self.size.width
+        let height = self.size.height * scale
+        let size = CGSize(width: width, height: height)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        
+        let renderImage = renderer.image { context in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
+        
+        return renderImage
     }
 }

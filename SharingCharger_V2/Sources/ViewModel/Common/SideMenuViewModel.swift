@@ -7,6 +7,7 @@
 
 import Foundation
 
+///사이드 메뉴 View Model
 class SideMenuViewModel: ObservableObject {
-    @Published var isShowMenu: Bool = false
+    @Published var isShowMenu: Bool = false //사이드 메뉴 노출 여부
 }

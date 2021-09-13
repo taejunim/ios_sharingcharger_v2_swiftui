@@ -77,6 +77,9 @@
 		2B96765626C1202E00400FF9 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B96765526C1202E00400FF9 /* UserModel.swift */; };
 		2B9FE01126BB75B300348F15 /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9FE01026BB75B300348F15 /* SignUpViewModel.swift */; };
 		2B9FE01326BB778D00348F15 /* ViewOptionSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9FE01226BB778D00348F15 /* ViewOptionSet.swift */; };
+		2BA1C71726E5AB13005EF19D /* ReservationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA1C71626E5AB13005EF19D /* ReservationViewModel.swift */; };
+		2BA1C74426E61003005EF19D /* ChargerSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA1C74326E61003005EF19D /* ChargerSearchViewModel.swift */; };
+		2BA1C74626E61051005EF19D /* ChargerSearchModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA1C74526E61051005EF19D /* ChargerSearchModal.swift */; };
 		2BA9BB4F26BA819400F60016 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA9BB4E26BA819400F60016 /* SignUpView.swift */; };
 		2BAC25CC26B3C26D00A91FDF /* SharingCharger_V2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAC25CB26B3C26D00A91FDF /* SharingCharger_V2App.swift */; };
 		2BAC25CE26B3C26D00A91FDF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAC25CD26B3C26D00A91FDF /* ContentView.swift */; };
@@ -84,7 +87,6 @@
 		2BAC25D326B3C26E00A91FDF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BAC25D226B3C26E00A91FDF /* Preview Assets.xcassets */; };
 		2BAC25E226B3D8B600A91FDF /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAC25E126B3D8B600A91FDF /* SignInView.swift */; };
 		2BBD1B4926C3A05700AAFBAC /* ChargerMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BBD1B4826C3A05700AAFBAC /* ChargerMapView.swift */; };
-		2BEF6F5F26D7984000DAD506 /* ChargerSearchModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEF6F5E26D7984000DAD506 /* ChargerSearchModal.swift */; };
 		2BEF6F6126D7C29200DAD506 /* SlideOverModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEF6F6026D7C29200DAD506 /* SlideOverModal.swift */; };
 /* End PBXBuildFile section */
 
@@ -182,6 +184,9 @@
 		2B96765526C1202E00400FF9 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		2B9FE01026BB75B300348F15 /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		2B9FE01226BB778D00348F15 /* ViewOptionSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewOptionSet.swift; sourceTree = "<group>"; };
+		2BA1C71626E5AB13005EF19D /* ReservationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationViewModel.swift; sourceTree = "<group>"; };
+		2BA1C74326E61003005EF19D /* ChargerSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerSearchViewModel.swift; sourceTree = "<group>"; };
+		2BA1C74526E61051005EF19D /* ChargerSearchModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerSearchModal.swift; sourceTree = "<group>"; };
 		2BA9BB4E26BA819400F60016 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
 		2BAC25C826B3C26D00A91FDF /* SharingCharger_V2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharingCharger_V2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BAC25CB26B3C26D00A91FDF /* SharingCharger_V2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingCharger_V2App.swift; sourceTree = "<group>"; };
@@ -191,7 +196,6 @@
 		2BAC25D426B3C26E00A91FDF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2BAC25E126B3D8B600A91FDF /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		2BBD1B4826C3A05700AAFBAC /* ChargerMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerMapView.swift; sourceTree = "<group>"; };
-		2BEF6F5E26D7984000DAD506 /* ChargerSearchModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerSearchModal.swift; sourceTree = "<group>"; };
 		2BEF6F6026D7C29200DAD506 /* SlideOverModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideOverModal.swift; sourceTree = "<group>"; };
 		CDEF0B35A43A34C13EA7E802 /* Pods_SharingCharger_V2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SharingCharger_V2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -235,6 +239,8 @@
 			isa = PBXGroup;
 			children = (
 				2B8BFBD926CE509F00C9CB65 /* ChargerMapViewModel.swift */,
+				2BA1C74326E61003005EF19D /* ChargerSearchViewModel.swift */,
+				2BA1C71626E5AB13005EF19D /* ReservationViewModel.swift */,
 			);
 			path = Charger;
 			sourceTree = "<group>";
@@ -243,7 +249,7 @@
 			isa = PBXGroup;
 			children = (
 				2BBD1B4826C3A05700AAFBAC /* ChargerMapView.swift */,
-				2BEF6F5E26D7984000DAD506 /* ChargerSearchModal.swift */,
+				2BA1C74526E61051005EF19D /* ChargerSearchModal.swift */,
 				2B95038426D8BFD800DA4281 /* ChargerInfoModal.swift */,
 			);
 			path = Charger;
@@ -271,12 +277,10 @@
 		2B8DB32E26BA65FA0032B596 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				2B97C4A026EAE6B50073ADDD /* Custom */,
 				2B8EE30C26C3501F00C1E835 /* ViewUtil.swift */,
 				2B9FE01226BB778D00348F15 /* ViewOptionSet.swift */,
-				2B8DB32F26BA660F0032B596 /* CustomView.swift */,
 				2B8BFBD726CDFCA000C9CB65 /* SideMenuView.swift */,
-				2B9391FB26D37B4F00BFB605 /* MapView.swift */,
-				2BEF6F6026D7C29200DAD506 /* SlideOverModal.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -379,6 +383,16 @@
 				2B8EBDA126BD236E0046D726 /* Keyboard.swift */,
 			);
 			path = Extension;
+			sourceTree = "<group>";
+		};
+		2B97C4A026EAE6B50073ADDD /* Custom */ = {
+			isa = PBXGroup;
+			children = (
+				2B8DB32F26BA660F0032B596 /* CustomView.swift */,
+				2B9391FB26D37B4F00BFB605 /* MapView.swift */,
+				2BEF6F6026D7C29200DAD506 /* SlideOverModal.swift */,
+			);
+			path = Custom;
 			sourceTree = "<group>";
 		};
 		2BAC25BF26B3C26D00A91FDF = {
@@ -653,7 +667,6 @@
 				2B8DCCA926B9000600C2466B /* Bluetooth.swift in Sources */,
 				2B96764D26C109BE00400FF9 /* APIRouter.swift in Sources */,
 				2B96763C26C0F94A00400FF9 /* Extension.swift in Sources */,
-				2BEF6F5F26D7984000DAD506 /* ChargerSearchModal.swift in Sources */,
 				2BBD1B4926C3A05700AAFBAC /* ChargerMapView.swift in Sources */,
 				2B9391FC26D37B4F00BFB605 /* MapView.swift in Sources */,
 				2B8EBDA226BD236E0046D726 /* Keyboard.swift in Sources */,
@@ -671,6 +684,7 @@
 				2B8BFBDD26CE83CA00C9CB65 /* CommonViewModel.swift in Sources */,
 				2B96765626C1202E00400FF9 /* UserModel.swift in Sources */,
 				2B96762126C0BAEC00400FF9 /* ChangePasswordView.swift in Sources */,
+				2BA1C74426E61003005EF19D /* ChargerSearchViewModel.swift in Sources */,
 				2B8DB32926BA54ED0032B596 /* LaunchScreen.swift in Sources */,
 				2B96762326C0BF5700400FF9 /* UserInfoViewModel.swift in Sources */,
 				2B96765126C1122000400FF9 /* APIResponse.swift in Sources */,
@@ -682,9 +696,11 @@
 				2B8BFBD826CDFCA000C9CB65 /* SideMenuView.swift in Sources */,
 				2B9FE01126BB75B300348F15 /* SignUpViewModel.swift in Sources */,
 				2B9FE01326BB778D00348F15 /* ViewOptionSet.swift in Sources */,
+				2BA1C74626E61051005EF19D /* ChargerSearchModal.swift in Sources */,
 				2B96765426C11F7300400FF9 /* UserAPIService.swift in Sources */,
 				2B8BFBDA26CE509F00C9CB65 /* ChargerMapViewModel.swift in Sources */,
 				2B8DB32D26BA5DE00032B596 /* BluetoothView.swift in Sources */,
+				2BA1C71726E5AB13005EF19D /* ReservationViewModel.swift in Sources */,
 				2B85152026CF92F700B6AD0E /* Permission.swift in Sources */,
 				2B8BFBE326CE87E000C9CB65 /* ChargerAPIService.swift in Sources */,
 			);

@@ -66,7 +66,7 @@ struct SignUpView: View {
 //MARK: - 회원가입 정보 입력 창
 struct AccountEntryField: View {
     @ObservedObject var signUpViewModel: SignUpViewModel
-    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()    //타이머
     
     var body: some View {
         //Text Field - 이름
@@ -108,7 +108,7 @@ struct AccountEntryField: View {
                     
                     Spacer()
         
-                    TextFieldUnderline()
+                    TextFieldUnderline()    //텍스트 필드 밑줄
                 }
             }
         )
@@ -199,8 +199,7 @@ struct DuplicateCheckButton: View {
         Button(
             action: {
                 signUpViewModel.viewUtil.dismissKeyboard()  //키보드 닫기
-                
-                signUpViewModel.duplicateCheck()
+                signUpViewModel.duplicateCheck()    //아이디 중복 확인 실행
             },
             label: {
                 Text("button.duplicate.check")
@@ -283,7 +282,6 @@ struct PrivacyConsent: View {
                     HStack {
                         Text("title.terms.agree".localized())
                             .font(.subheadline)
-
                         RequiredInputLabel()
                     }
 
@@ -293,7 +291,6 @@ struct PrivacyConsent: View {
                     HStack {
                         Text("title.privacy.agree".localized())
                             .font(.subheadline)
-
                         RequiredInputLabel()
                     }
                 }
@@ -311,11 +308,12 @@ struct PrivacyConsent: View {
 
                 //동의 여부
                 VStack(alignment: .leading) {
+                    //서비스 이용약관 동의
                     Text(signUpViewModel.isTermsAgree ? "label.agree".localized() : "label.disagree".localized())
                         .font(.footnote)
                         .padding(.vertical, 5)
                         .foregroundColor(signUpViewModel.isTermsAgree ? Color("#3498DB") : Color("#E4513D"))
-                    
+                    //개인정보 처리방침 동의
                     Text(signUpViewModel.isPrivacyAgree ? "label.agree".localized() : "label.disagree".localized())
                         .font(.footnote)
                         .padding(.vertical, 5)
@@ -400,9 +398,7 @@ struct TermsContent: View {
             }
             else {
                 Spacer()
-                
-                Text("server.error".message()).multilineTextAlignment(.center)
-                
+                Text("server.error".message()).multilineTextAlignment(.center)  //서버 에러 메시지 출력
                 Spacer()
             }
             
@@ -450,9 +446,7 @@ struct PrivacyContent: View {
             }
             else {
                 Spacer()
-                
-                Text("server.error".message()).multilineTextAlignment(.center)
-                
+                Text("server.error".message()).multilineTextAlignment(.center)  //서버 에러 메시지 출력
                 Spacer()
             }
             

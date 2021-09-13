@@ -7,37 +7,45 @@
 
 import Foundation
 
-//MARK: - 포인트 이력
+//MARK: - 포인트 이력 정보
 struct PointHistory: Codable {
-    let content: [PointContent?]
-    let pageable: PointPageable
-    let totalPages, totalElements: Int
-    let last: Bool
+    let content: [PointHistoryContent?]
+    let pageable: PointHistoryPageable
+    let totalPages: Int
+    let totalElements: Int
     let numberOfElements: Int
     let first: Bool
-    let sort: PointSort
-    let size, number: Int
+    let last: Bool
+    let sort: PointHistorySort
+    let size: Int
+    let number: Int
     let empty: Bool
 }
 
-//MARK: - Content
-struct PointContent: Codable {
+//MARK: - 포인트 이력 내용 정보
+struct PointHistoryContent: Codable {
     let id: Int
     let username: String
     let point: Int
-    let type, created: String
+    let type: String
     let pointTargetId: Int
     let targetName: String
+    let created: String
 }
 
-//MARK: - Pageable
-struct PointPageable: Codable {
-    let sort: PointSort
-    let pageNumber, pageSize, offset: Int
-    let unpaged, paged: Bool
+//MARK: - 포인트 이력 페이징 정보
+struct PointHistoryPageable: Codable {
+    let sort: PointHistorySort
+    let pageNumber: Int
+    let pageSize: Int
+    let offset: Int
+    let unpaged: Int
+    let paged: Bool
 }
 
-//MARK: - Sort
-struct PointSort: Codable {
-    let sorted, unsorted, empty: Bool
+//MARK: - 포인트 이력 정렬 정보
+struct PointHistorySort: Codable {
+    let sorted: Bool
+    let unsorted: Bool
+    let empty: Bool
 }

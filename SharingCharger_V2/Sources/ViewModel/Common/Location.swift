@@ -5,12 +5,11 @@
 //  Created by KJ on 2021/08/12.
 //
 
-import Foundation
-
 import SwiftUI
 import Foundation
 import CoreLocation
 
+///위치 서비스 View Model
 class Location: ObservableObject {
     @Published var locationManager = CLLocationManager()    //Location Manager 인스턴스 생성
     @Published var latitude: Double?    //위도
@@ -81,11 +80,7 @@ class Location: ObservableObject {
         if locationStatus == "notDetermined" || locationStatus == "restricted" || locationStatus == "denied" {
             //self.isShowAlert = true    //알림창 활성
             //self.alert = requestAuthAlert() //위치 서비스 권한 요청 알림창
-            locationUsagePermission()
         }
-    }
-    
-    func locationUsagePermission() {
     }
     
     //MARK: - 위치 서비스 권한 요청 알림창

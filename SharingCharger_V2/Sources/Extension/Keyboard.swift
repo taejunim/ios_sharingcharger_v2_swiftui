@@ -8,8 +8,8 @@
 import SwiftUI
 import Foundation
 
+//MARK: - 키보드 활성화 시 화면 위치 이동
 struct Keyboard: ViewModifier {
-    
     @State var offset: CGFloat = 0
     
     func body(content: Content) -> some View {
