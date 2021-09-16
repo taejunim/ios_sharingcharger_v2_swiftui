@@ -24,13 +24,13 @@ struct PointHistory: Codable {
 
 //MARK: - 포인트 이력 내용 정보
 struct PointHistoryContent: Codable {
-    let id: Int
-    let username: String
-    let point: Int
-    let type: String
-    let pointTargetId: Int
-    let targetName: String
-    let created: String
+    let id: Int?
+    let username: String?
+    let point: Int?
+    let type: String?
+    let pointTargetId: Int?
+    let targetName: String?
+    let created: String?
 }
 
 //MARK: - 포인트 이력 페이징 정보
@@ -39,7 +39,7 @@ struct PointHistoryPageable: Codable {
     let pageNumber: Int
     let pageSize: Int
     let offset: Int
-    let unpaged: Int
+    let unpaged: Bool
     let paged: Bool
 }
 
