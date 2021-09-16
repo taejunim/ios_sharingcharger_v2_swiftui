@@ -11,10 +11,11 @@ import PromisedFuture
 class PointAPIService {
     let apiClient = APIClient() //API Client - 공통 API 호출
     
+    //MARK: - [포인트 조회 관련 API]
     //MARK: - 현재 사용자 포인트 조회 API 호출
     /// 로그인한 사용자의 현재 잔여 포인트 조회
     /// - Parameter userIdNo: 사용자 ID 번호
-    /// - Returns: String
+    /// - Returns: 사용자 잔여 포인트 (String)
     public func requestCurrentDate(userIdNo: String) -> Future<String, AFError> {
 
         return apiClient.requestText(route: APIRouter.get(useApi: "base", path: "/point/users/\(userIdNo)", parameters: [:], contentType: "text"))
@@ -35,5 +36,23 @@ class PointAPIService {
     public func requestPointHistory(userIdNo: String, parameters: [String:String]) -> Future<PointHistory, AFError> {
         
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/point/users/\(userIdNo)/history", parameters: parameters, contentType: "json"))
+    }
+    
+    public func requestWalletPointHistory(userIdNo: String, parameters: [String:String]) -> Future<PointHistory, AFError> {
+        
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/point/users/electronicWallet/\(userIdNo)/history", parameters: parameters, contentType: "json"))
+    }
+
+    //MARK: - 예상 차감 포인트 조회
+    /// 해당 충전기의 충전 시 차감되는 예상 포인트 조회
+    /// - Parameters:
+    ///   - chargerId: 충전기 ID
+    ///   - parameters:
+    ///     - startDate: 충전 시작일시
+    ///     - endDate: 충전 종료일시
+    /// - Returns: 예상 차감 포인트 (String)
+    public func requestExpectedPoint(chargerId: String, parameters: [String:String]) -> Future<String, AFError> {
+        
+        return apiClient.requestText(route: APIRouter.get(useApi: "base", path: "/point/chargers/\(chargerId)/calculate", parameters: parameters, contentType: "text"))
     }
 }
