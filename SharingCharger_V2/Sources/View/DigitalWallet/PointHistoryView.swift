@@ -23,12 +23,11 @@ struct PointHistoryView: View {
         .onAppear {
             pointViewModel.getCurrentPoint()
             pointViewModel.getPointHistory()
-            print(pointViewModel.getPointHistory())
         }
         .sheet(
             isPresented: $pointViewModel.showSearchModal,
             content: {
-                PointSearchModal(point: pointViewModel) //포인트 검색조건 Modal 창
+                PointSearchModal(pointViewModel: pointViewModel) //포인트 검색조건 Modal 창
             }
         )
     }
