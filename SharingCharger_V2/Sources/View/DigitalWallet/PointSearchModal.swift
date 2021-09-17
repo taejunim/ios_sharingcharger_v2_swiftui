@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PointSearchModal: View {
-    @ObservedObject var point: PointViewModel
+    @ObservedObject var point: PointViewModel //Point View Model
     
     var body: some View {
         VStack {
