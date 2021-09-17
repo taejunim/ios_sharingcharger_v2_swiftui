@@ -13,6 +13,8 @@ class PointViewModel: ObservableObject {
     
     private let pointAPI = PointAPIService()  //포인트 API Service
     
+    @Published var viewUtil = ViewUtil() //View Util
+    
     @Published var showSearchModal: Bool = false    //검색조건 Modal 활성 여부
     @Published var isSearchReset: Bool = false  //검색조건 초기화 여부
     
@@ -58,22 +60,17 @@ class PointViewModel: ObservableObject {
     
     //MARK: - 사용자 포인트 이력 조회
     func getPointHistory() {
+        viewUtil.isLoading = true   //로딩 시작
+        searchPoints.removeAll()    //조회한 포인트 목록 마커 정보 초기화
+        
         let userIdNo: String = UserDefaults.standard.string(forKey: "userIdNo") ?? ""   //저장된 사용자 ID 번호
         
-        //시작일자 날짜 형식 변경
-        let dateFormatter: DateFormatter = {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd"
-            
-            return dateFormatter
-        }()
-        
-        let startDate = Calendar.current.date(byAdding: .month, value: -1, to: currentDate) //시작일자
+        let startDate = Calendar.current.date(byAdding: .month, value: -1, to: currentDate)! //시작일자
         let endDate: String = "yyyy-MM-dd".dateFormatter(formatDate: currentDate)   // 종료일자
         
         
         let parameters = [
-            "startDate": dateFormatter.string(from:startDate!),  //조회 시작일자(종료일자 한달 전)
+            "startDate": "yyyy-MM-dd".dateFormatter(formatDate: startDate),  //조회 시작일자(종료일자 한달 전)
             "endDate": endDate,                                  //조회 종료일자
             "pointUsedType": selectPointType,                    //포인트 구분
             "page": "1",                                         //페이지 번호
