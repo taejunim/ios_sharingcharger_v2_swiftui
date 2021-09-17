@@ -13,20 +13,11 @@ class SignInViewModel: ObservableObject {
     
     private let userAPI = UserAPIService()  //사용자 API Service
     @Published var viewUtil = ViewUtil() //View Util
-
+    
     @Published var id: String = ""  //아이디 - 이메일
     @Published var password: String = ""    //비밀번호
-    @Published var isSignIn: Bool = false   //로그인 성공 여부
     @Published var isValidation: Bool = false   //유효성 검사 여부
-
     @Published var signInStatus: String = ""    //로그인 상태
-    
-    //로그인 결과
-    @Published var result: String = "" {
-        didSet {
-            didChange.send(self)
-        }
-    }
     
     //MARK: - 자동 로그인 실행
     /// - Parameters:
@@ -76,9 +67,6 @@ class SignInViewModel: ObservableObject {
         let parameters = [
             "loginId": id,    //아이디 - 일반 사용자: email/소유주: username
             "password": password  //비밀번호
-//            "loginId": "personal@test.com",   //임시 - 소유자
-//            "loginId": "general@test.com",  //임시 - 일반 사용자
-//            "password": "test123!"  //임시 - 비밀번호
         ]
 
         //로그인 API 호출
@@ -86,32 +74,28 @@ class SignInViewModel: ObservableObject {
         request.execute(
             //로그인 성공
             onSuccess: { (signIn) in
-                print("Success: \(signIn)")
-                
                 UserDefaults.standard.set(signIn.id, forKey: "userIdNo")
                 UserDefaults.standard.set(signIn.email, forKey: "userId")
                 UserDefaults.standard.set(self.password, forKey: "password")
-                
-                self.result = "success"
-                self.viewUtil.showToast(isShow: true, message: "success.signin".message())
-                
+
                 self.id = ""    //아이디(이메일) 초기화
                 self.password = ""  //비밀번호 초기화
                 
-                self.viewUtil.nextView()    //다음화면 이동 여부 변경
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    self.viewUtil.isLoading = false
+                    self.signInStatus = "success"
+                }
             },
             //로그인 실패
             onFailure: { (error) in
-                print("Failure: \(error)")
-                
                 switch error {
                 //유효하지 않는 ID 또는 잘못된 비밀번호 엽력 오류
                 case .responseSerializationFailed:
-                    self.result = "fail"
+                    self.signInStatus = "fail"
                     self.viewUtil.showToast(isShow: true, message: "fail.signin".message())
                 //일시적인 서버 오류 및 네트워크 오류
                 default:
-                    self.result = "server error"
+                    self.signInStatus = "error"
                     self.viewUtil.showToast(isShow: true, message: "server.error".message())
                     
                     break

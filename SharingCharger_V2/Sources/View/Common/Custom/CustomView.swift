@@ -9,7 +9,7 @@ import SwiftUI
 import WebKit
 import UIKit
 
-//MARK: - Back 버튼
+//MARK: - 뒤로가기 버튼
 struct BackButton: View {
     @Environment(\.presentationMode) var presentationMode
     
@@ -29,6 +29,7 @@ struct BackButton: View {
     }
 }
 
+//MARK: - 닫기 버튼
 struct CloseButton: View {
     @Environment(\.presentationMode) var presentationMode
     
@@ -47,6 +48,7 @@ struct CloseButton: View {
     }
 }
 
+//MARK: - 새로고침 버튼
 struct RefreshButton: View {
     var isRefresh: (Bool) -> ()
     
@@ -71,11 +73,10 @@ struct Dividerline: View {
         Divider()
             .frame(height: 1)
             .background(Color("#EFEFEF"))
-            .padding(.all, 10)
     }
 }
 
-//MARK: - 구분선 - Vertical Padding
+//MARK: - 구분선 - Vertical Padding (상단, 하단)
 struct VerticalDividerline: View {
     var body: some View {
         Divider()
@@ -85,7 +86,7 @@ struct VerticalDividerline: View {
     }
 }
 
-//MARK: - 구분선 - Horizontal Padding
+//MARK: - 구분선 - Horizontal Padding (좌측, 우측)
 struct HorizontalDividerline: View {
     var body: some View {
         Divider()

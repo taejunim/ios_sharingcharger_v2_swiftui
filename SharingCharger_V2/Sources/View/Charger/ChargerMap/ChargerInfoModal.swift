@@ -21,9 +21,20 @@ struct ChargerInfoModal: View {
                 content: {
                     VStack {
                         VStack(spacing: 5) {
+                            //예약 정보가 존재하고 해당 충전기가 예약된 충전기인 경우 노출
+                            if reservation.isUserReservation == true && reservation.reservedChargerId == chargerMap.selectChargerId {
+                                ReservationSummaryInfo(reservation: reservation)    //예약 요약 정보 화면
+                                Dividerline()
+                                    .padding(.vertical, 5)
+                            }
+                            
                             ChargerSummaryInfo(chargerMap: chargerMap)  //충전기 요약 정보 화면
                             ChargeUnitPrice(chargerMap: chargerMap) //충전 단가 정보
-                            ChargerAvailableTime(chargerMap: chargerMap, reservation: reservation)  //충전이 이용 가능 시간 정보
+                            
+                            //예약 정보가 없거나 해당 충전기가 예약된 충전기가 아닌 경우 노출
+                            if reservation.isUserReservation == false || reservation.reservedChargerId != chargerMap.selectChargerId {
+                                ChargerAvailableTime(chargerMap: chargerMap, reservation: reservation)  //충전이 이용 가능 시간 정보
+                            }
                         }
                         .padding(.horizontal)
                         
@@ -31,9 +42,43 @@ struct ChargerInfoModal: View {
                         
                         ChargingProgressButton(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)  //충전 진행 버튼
                     }
-                    .padding(.top, 30)
+                    .padding(.top, 25)
                 }
             )
+            .popup(
+                isPresented: $reservation.viewUtil.isShowToast,   //팝업 노출 여부
+                type: .floater(verticalPadding: 80),
+                position: .bottom,
+                animation: .easeInOut(duration: 0.0),   //애니메이션 효과
+                autohideIn: 2,  //팝업 노출 시간
+                closeOnTap: false,
+                closeOnTapOutside: false,
+                view: {
+                    reservation.viewUtil.toast()
+                }
+            )
+        }
+    }
+}
+
+//MARK: - 예약 요약 정보
+struct ReservationSummaryInfo: View {
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
+    
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("총 " + reservation.textChargingTime + " 충전")
+                    .font(.title3)
+                    .fontWeight(.bold)
+                
+                Text("\(reservation.textStartDay) \(reservation.textStartTime) ~ \(reservation.textEndDay) \(reservation.textEndTime)")
+                
+                Text("예상 차감 포인트 : " + reservation.textExpectedPoint.pointFormatter())
+                    .foregroundColor(Color.gray)
+            }
+            
+            Spacer()
         }
     }
 }
@@ -45,17 +90,20 @@ struct ChargerSummaryInfo: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 5) {
-                HStack {
+                HStack(spacing: 0) {
                     //충전기 명
                     Text(chargerMap.chargerName)
                         .font(.title2)
                         .fontWeight(.bold)
+                    
+                    Text("(" + chargerMap.bleNumber.suffix(5) + ")")
                     
                     ChargerFavoritesButton(chargerMap: chargerMap)  //충전기 즐겨찾기 버튼
                 }
                 
                 Text(chargerMap.chargerAddress) //충전기 주소
                 Text(chargerMap.chargerDetailAddress) //충전기 상세주소
+                    .foregroundColor(Color.gray)
             }
             
             Spacer()
@@ -122,7 +170,7 @@ struct ChargeUnitPrice: View {
                 .font(.headline)
                 .fontWeight(.bold)
             
-            Text("시간 당 " + chargerMap.chargeUnitPrice)
+            Text("시간 당 " + chargerMap.chargeUnitPrice.trimmingCharacters(in: ["p"]).pointFormatter())
             
             Spacer()
         }
@@ -186,30 +234,84 @@ struct ChargingProgressButton: View {
     @ObservedObject var reservation: ReservationViewModel
     
     var body: some View {
-        Button(
-            action: {
-                reservation.chargeType = chargerSearch.searchType   //충전 유형
+        if reservation.isUserReservation == false || reservation.reservedChargerId != chargerMap.selectChargerId {
+            Button(
+                action: {
+                    reservation.reservationType = chargerSearch.searchType  //충전 유형
+
+                    //선택한 충전 유형에 따라 충전 단계 변경 - 즉시 충전
+                    if chargerSearch.searchType == "Instant" {
+        
+                        chargerSearch.getCurrentDate() { (currentDate) in
+                            let chargingStartDate = currentDate //충전 시작일시
+                            let chargingEndDate: Date = Calendar.current.date(byAdding: .second, value: chargerSearch.selectChargingTime, to: currentDate)! //충전 종료일시 계산
+                            
+                            reservation.checkChargingPoint(chargerId: chargerMap.selectChargerId, chargingStartDate, chargingEndDate) { (isRechargeable) in
+                                
+                                if isRechargeable {
+                                    reservation.showChargingAlert = true
+                                }
+                                else {
+                                    reservation.showChargingPointAlert = true
+                                }
+                            }
+                        }
+                    }
+                    //선택한 충전 유형에 따라 충전 단계 변경 - 예약 충전
+                    else if chargerSearch.searchType == "Scheduled" {
+                        
+                    }
+                },
+                label: {
+                    //선택한 충전 유형에 따라 버튼 라벨 변경
+                    Text(chargerSearch.searchType == "Instant" ? "충전하기" : "예약하기")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.white)
+                        .padding(.horizontal)
+                        .frame(maxWidth: .infinity, maxHeight: 40)
+                        .background(reservation.isUserReservation ? Color("#EFEFEF") : Color("#3498DB"))
+                }
+            )
+            .disabled(reservation.isUserReservation)
+        }
+        else {
+            HStack(spacing: 0) {
+                //충전 예약 취소 버튼
+                Button(
+                    action: {
+                        reservation.showCancelAlert = true
+                    },
+                    label: {
+                        Text("예약 취소")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.white)
+                            .padding(.horizontal)
+                            .frame(maxWidth: .infinity, maxHeight: 40)
+                            .background(Color("#C0392B"))
+                    }
+                )
                 
-                //선택한 충전 유형에 따라 충전 단계 변경 - 즉시 충전
-                if chargerSearch.searchType == "Instant" {
-                    
-                }
-                //선택한 충전 유형에 따라 충전 단계 변경 - 예약 충전
-                else if chargerSearch.searchType == "Scheduled" {
-                    reservation.reservation()   //예약 진행
-                }
-            },
-            label: {
-                //선택한 충전 유형에 따라 버튼 라벨 변경
-                Text(chargerSearch.searchType == "Instant" ? "충전하기" : "예약하기")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.white)
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
-                    .background(Color("#3498DB"))
+                //충전 시작 진행 버튼
+                Button(
+                    action: {
+                        withAnimation {
+                            chargerMap.showChargingView = true  //충전 화면 활성화
+                        }
+                    },
+                    label: {
+                        Text("충전 시작")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.white)
+                            .padding(.horizontal)
+                            .frame(maxWidth: .infinity, maxHeight: 40)
+                            .background(Color("#3498DB"))
+                    }
+                )
             }
-        )
+        }
     }
 }
 

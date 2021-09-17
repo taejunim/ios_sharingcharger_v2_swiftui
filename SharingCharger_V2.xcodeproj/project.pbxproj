@@ -64,6 +64,7 @@
 		2B9368A826D48AB6009B0C23 /* ChargerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9368A726D48AB6009B0C23 /* ChargerModel.swift */; };
 		2B9391FC26D37B4F00BFB605 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9391FB26D37B4F00BFB605 /* MapView.swift */; };
 		2B95038526D8BFD800DA4281 /* ChargerInfoModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B95038426D8BFD800DA4281 /* ChargerInfoModal.swift */; };
+		2B9603AA26F3344F002A4152 /* ChargeAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9603A926F3344F002A4152 /* ChargeAlertView.swift */; };
 		2B96762126C0BAEC00400FF9 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B96762026C0BAEC00400FF9 /* ChangePasswordView.swift */; };
 		2B96762326C0BF5700400FF9 /* UserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B96762226C0BF5700400FF9 /* UserInfoViewModel.swift */; };
 		2B96763C26C0F94A00400FF9 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B96763B26C0F94A00400FF9 /* Extension.swift */; };
@@ -75,6 +76,13 @@
 		2B96765126C1122000400FF9 /* APIResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B96765026C1122000400FF9 /* APIResponse.swift */; };
 		2B96765426C11F7300400FF9 /* UserAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B96765326C11F7300400FF9 /* UserAPIService.swift */; };
 		2B96765626C1202E00400FF9 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B96765526C1202E00400FF9 /* UserModel.swift */; };
+		2B9679E926F41E6500CFDC3A /* ReservationAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679E826F41E6500CFDC3A /* ReservationAPIService.swift */; };
+		2B9679EB26F41E8600CFDC3A /* ChargeAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679EA26F41E8600CFDC3A /* ChargeAPIService.swift */; };
+		2B9679ED26F41FC100CFDC3A /* ReservationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679EC26F41FC100CFDC3A /* ReservationModel.swift */; };
+		2B9679EF26F42CA400CFDC3A /* FindAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679EE26F42CA400CFDC3A /* FindAccountView.swift */; };
+		2B9679F126F4304700CFDC3A /* PointSearchModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679F026F4304700CFDC3A /* PointSearchModal.swift */; };
+		2B98709E26F1C66E0077DECE /* ChargingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B98709D26F1C66E0077DECE /* ChargingView.swift */; };
+		2B9870A026F21F610077DECE /* ChargingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B98709F26F21F610077DECE /* ChargingViewModel.swift */; };
 		2B9FE01126BB75B300348F15 /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9FE01026BB75B300348F15 /* SignUpViewModel.swift */; };
 		2B9FE01326BB778D00348F15 /* ViewOptionSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9FE01226BB778D00348F15 /* ViewOptionSet.swift */; };
 		2BA1C71726E5AB13005EF19D /* ReservationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA1C71626E5AB13005EF19D /* ReservationViewModel.swift */; };
@@ -87,6 +95,7 @@
 		2BAC25D326B3C26E00A91FDF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BAC25D226B3C26E00A91FDF /* Preview Assets.xcassets */; };
 		2BAC25E226B3D8B600A91FDF /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAC25E126B3D8B600A91FDF /* SignInView.swift */; };
 		2BBD1B4926C3A05700AAFBAC /* ChargerMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BBD1B4826C3A05700AAFBAC /* ChargerMapView.swift */; };
+		2BC430AE26EF0DDF00D9924A /* ChargerSearchInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC430AD26EF0DDF00D9924A /* ChargerSearchInfo.swift */; };
 		2BEF6F6126D7C29200DAD506 /* SlideOverModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEF6F6026D7C29200DAD506 /* SlideOverModal.swift */; };
 /* End PBXBuildFile section */
 
@@ -171,6 +180,7 @@
 		2B9368A726D48AB6009B0C23 /* ChargerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerModel.swift; sourceTree = "<group>"; };
 		2B9391FB26D37B4F00BFB605 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		2B95038426D8BFD800DA4281 /* ChargerInfoModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerInfoModal.swift; sourceTree = "<group>"; };
+		2B9603A926F3344F002A4152 /* ChargeAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargeAlertView.swift; sourceTree = "<group>"; };
 		2B96762026C0BAEC00400FF9 /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordView.swift; sourceTree = "<group>"; };
 		2B96762226C0BF5700400FF9 /* UserInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoViewModel.swift; sourceTree = "<group>"; };
 		2B96763B26C0F94A00400FF9 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
@@ -182,6 +192,13 @@
 		2B96765026C1122000400FF9 /* APIResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponse.swift; sourceTree = "<group>"; };
 		2B96765326C11F7300400FF9 /* UserAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAPIService.swift; sourceTree = "<group>"; };
 		2B96765526C1202E00400FF9 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		2B9679E826F41E6500CFDC3A /* ReservationAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationAPIService.swift; sourceTree = "<group>"; };
+		2B9679EA26F41E8600CFDC3A /* ChargeAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargeAPIService.swift; sourceTree = "<group>"; };
+		2B9679EC26F41FC100CFDC3A /* ReservationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationModel.swift; sourceTree = "<group>"; };
+		2B9679EE26F42CA400CFDC3A /* FindAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindAccountView.swift; sourceTree = "<group>"; };
+		2B9679F026F4304700CFDC3A /* PointSearchModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointSearchModal.swift; sourceTree = "<group>"; };
+		2B98709D26F1C66E0077DECE /* ChargingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargingView.swift; sourceTree = "<group>"; };
+		2B98709F26F21F610077DECE /* ChargingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargingViewModel.swift; sourceTree = "<group>"; };
 		2B9FE01026BB75B300348F15 /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		2B9FE01226BB778D00348F15 /* ViewOptionSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewOptionSet.swift; sourceTree = "<group>"; };
 		2BA1C71626E5AB13005EF19D /* ReservationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationViewModel.swift; sourceTree = "<group>"; };
@@ -196,6 +213,7 @@
 		2BAC25D426B3C26E00A91FDF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2BAC25E126B3D8B600A91FDF /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		2BBD1B4826C3A05700AAFBAC /* ChargerMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerMapView.swift; sourceTree = "<group>"; };
+		2BC430AD26EF0DDF00D9924A /* ChargerSearchInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerSearchInfo.swift; sourceTree = "<group>"; };
 		2BEF6F6026D7C29200DAD506 /* SlideOverModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideOverModal.swift; sourceTree = "<group>"; };
 		CDEF0B35A43A34C13EA7E802 /* Pods_SharingCharger_V2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SharingCharger_V2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -222,6 +240,7 @@
 				2B8BFBDC26CE83CA00C9CB65 /* CommonViewModel.swift */,
 				2B85151B26CF660A00B6AD0E /* SideMenuViewModel.swift */,
 				2B85151D26CF6DEF00B6AD0E /* Location.swift */,
+				2B8DCCA826B9000600C2466B /* Bluetooth.swift */,
 				2B85151F26CF92F700B6AD0E /* Permission.swift */,
 			);
 			path = Common;
@@ -238,9 +257,8 @@
 		2B8BFBDB26CE50A300C9CB65 /* Charger */ = {
 			isa = PBXGroup;
 			children = (
-				2B8BFBD926CE509F00C9CB65 /* ChargerMapViewModel.swift */,
-				2BA1C74326E61003005EF19D /* ChargerSearchViewModel.swift */,
-				2BA1C71626E5AB13005EF19D /* ReservationViewModel.swift */,
+				2B9679E226F41B1000CFDC3A /* ChargerMap */,
+				2B9679E326F41B9900CFDC3A /* Charge */,
 			);
 			path = Charger;
 			sourceTree = "<group>";
@@ -248,9 +266,8 @@
 		2B8DB32426BA2D5B0032B596 /* Charger */ = {
 			isa = PBXGroup;
 			children = (
-				2BBD1B4826C3A05700AAFBAC /* ChargerMapView.swift */,
-				2BA1C74526E61051005EF19D /* ChargerSearchModal.swift */,
-				2B95038426D8BFD800DA4281 /* ChargerInfoModal.swift */,
+				2B9679E126F41AD000CFDC3A /* ChargerMap */,
+				2B9679E426F41BFF00CFDC3A /* Charge */,
 			);
 			path = Charger;
 			sourceTree = "<group>";
@@ -258,9 +275,8 @@
 		2B8DB32526BA2D680032B596 /* User */ = {
 			isa = PBXGroup;
 			children = (
-				2BAC25E126B3D8B600A91FDF /* SignInView.swift */,
-				2BA9BB4E26BA819400F60016 /* SignUpView.swift */,
-				2B96762026C0BAEC00400FF9 /* ChangePasswordView.swift */,
+				2B9679E526F41CC200CFDC3A /* UserAccount */,
+				2B8BFBD726CDFCA000C9CB65 /* SideMenuView.swift */,
 				2B8BFBD526CDFC4600C9CB65 /* FavoritesView.swift */,
 			);
 			path = User;
@@ -270,6 +286,7 @@
 			isa = PBXGroup;
 			children = (
 				2B8BFBD326CDFC1A00C9CB65 /* PointHistoryView.swift */,
+				2B9679F026F4304700CFDC3A /* PointSearchModal.swift */,
 			);
 			path = DigitalWallet;
 			sourceTree = "<group>";
@@ -280,7 +297,6 @@
 				2B97C4A026EAE6B50073ADDD /* Custom */,
 				2B8EE30C26C3501F00C1E835 /* ViewUtil.swift */,
 				2B9FE01226BB778D00348F15 /* ViewOptionSet.swift */,
-				2B8BFBD726CDFCA000C9CB65 /* SideMenuView.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -288,9 +304,7 @@
 		2B8DB33126BA66650032B596 /* User */ = {
 			isa = PBXGroup;
 			children = (
-				2B8DB33226BA667D0032B596 /* SignInViewModel.swift */,
-				2B9FE01026BB75B300348F15 /* SignUpViewModel.swift */,
-				2B96762226C0BF5700400FF9 /* UserInfoViewModel.swift */,
+				2B9679E626F41CE500CFDC3A /* UserAccount */,
 				2B8BFBE026CE861100C9CB65 /* FavoritesViewModel.swift */,
 			);
 			path = User;
@@ -385,6 +399,77 @@
 			path = Extension;
 			sourceTree = "<group>";
 		};
+		2B9679E126F41AD000CFDC3A /* ChargerMap */ = {
+			isa = PBXGroup;
+			children = (
+				2BBD1B4826C3A05700AAFBAC /* ChargerMapView.swift */,
+				2BC430AD26EF0DDF00D9924A /* ChargerSearchInfo.swift */,
+				2BA1C74526E61051005EF19D /* ChargerSearchModal.swift */,
+				2B95038426D8BFD800DA4281 /* ChargerInfoModal.swift */,
+				2B9603A926F3344F002A4152 /* ChargeAlertView.swift */,
+			);
+			path = ChargerMap;
+			sourceTree = "<group>";
+		};
+		2B9679E226F41B1000CFDC3A /* ChargerMap */ = {
+			isa = PBXGroup;
+			children = (
+				2B8BFBD926CE509F00C9CB65 /* ChargerMapViewModel.swift */,
+				2BA1C74326E61003005EF19D /* ChargerSearchViewModel.swift */,
+				2BA1C71626E5AB13005EF19D /* ReservationViewModel.swift */,
+			);
+			path = ChargerMap;
+			sourceTree = "<group>";
+		};
+		2B9679E326F41B9900CFDC3A /* Charge */ = {
+			isa = PBXGroup;
+			children = (
+				2B98709F26F21F610077DECE /* ChargingViewModel.swift */,
+			);
+			path = Charge;
+			sourceTree = "<group>";
+		};
+		2B9679E426F41BFF00CFDC3A /* Charge */ = {
+			isa = PBXGroup;
+			children = (
+				2B98709D26F1C66E0077DECE /* ChargingView.swift */,
+			);
+			path = Charge;
+			sourceTree = "<group>";
+		};
+		2B9679E526F41CC200CFDC3A /* UserAccount */ = {
+			isa = PBXGroup;
+			children = (
+				2BAC25E126B3D8B600A91FDF /* SignInView.swift */,
+				2BA9BB4E26BA819400F60016 /* SignUpView.swift */,
+				2B96762026C0BAEC00400FF9 /* ChangePasswordView.swift */,
+				2B9679EE26F42CA400CFDC3A /* FindAccountView.swift */,
+			);
+			path = UserAccount;
+			sourceTree = "<group>";
+		};
+		2B9679E626F41CE500CFDC3A /* UserAccount */ = {
+			isa = PBXGroup;
+			children = (
+				2B8DB33226BA667D0032B596 /* SignInViewModel.swift */,
+				2B9FE01026BB75B300348F15 /* SignUpViewModel.swift */,
+				2B96762226C0BF5700400FF9 /* UserInfoViewModel.swift */,
+			);
+			path = UserAccount;
+			sourceTree = "<group>";
+		};
+		2B9679E726F41E1100CFDC3A /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				2B8BFBE226CE87E000C9CB65 /* ChargerAPIService.swift */,
+				2B9679EA26F41E8600CFDC3A /* ChargeAPIService.swift */,
+				2B9679E826F41E6500CFDC3A /* ReservationAPIService.swift */,
+				2B3FD82726DDF3D6000203F1 /* PointAPIService.swift */,
+				2B96765326C11F7300400FF9 /* UserAPIService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
 		2B97C4A026EAE6B50073ADDD /* Custom */ = {
 			isa = PBXGroup;
 			children = (
@@ -464,10 +549,10 @@
 		2BAC25DC26B3CAEA00A91FDF /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				2B96765526C1202E00400FF9 /* UserModel.swift */,
 				2B9368A726D48AB6009B0C23 /* ChargerModel.swift */,
+				2B9679EC26F41FC100CFDC3A /* ReservationModel.swift */,
 				2B3FD82926DDFD39000203F1 /* PointModel.swift */,
-				2B8DCCA826B9000600C2466B /* Bluetooth.swift */,
+				2B96765526C1202E00400FF9 /* UserModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -489,9 +574,7 @@
 				2B96764C26C109BE00400FF9 /* APIRouter.swift */,
 				2B96764E26C10F5200400FF9 /* APIClient.swift */,
 				2B96765026C1122000400FF9 /* APIResponse.swift */,
-				2B96765326C11F7300400FF9 /* UserAPIService.swift */,
-				2B8BFBE226CE87E000C9CB65 /* ChargerAPIService.swift */,
-				2B3FD82726DDF3D6000203F1 /* PointAPIService.swift */,
+				2B9679E726F41E1100CFDC3A /* Service */,
 			);
 			path = APIService;
 			sourceTree = "<group>";
@@ -664,6 +747,8 @@
 				2B85151E26CF6DEF00B6AD0E /* Location.swift in Sources */,
 				2B8BFBDF26CE845700C9CB65 /* PointViewModel.swift in Sources */,
 				2BEF6F6126D7C29200DAD506 /* SlideOverModal.swift in Sources */,
+				2BC430AE26EF0DDF00D9924A /* ChargerSearchInfo.swift in Sources */,
+				2B9870A026F21F610077DECE /* ChargingViewModel.swift in Sources */,
 				2B8DCCA926B9000600C2466B /* Bluetooth.swift in Sources */,
 				2B96764D26C109BE00400FF9 /* APIRouter.swift in Sources */,
 				2B96763C26C0F94A00400FF9 /* Extension.swift in Sources */,
@@ -680,23 +765,30 @@
 				2B8DB33326BA667D0032B596 /* SignInViewModel.swift in Sources */,
 				2B8BFBD426CDFC1A00C9CB65 /* PointHistoryView.swift in Sources */,
 				2BA9BB4F26BA819400F60016 /* SignUpView.swift in Sources */,
+				2B9679ED26F41FC100CFDC3A /* ReservationModel.swift in Sources */,
+				2B9679F126F4304700CFDC3A /* PointSearchModal.swift in Sources */,
 				2B3FD82A26DDFD39000203F1 /* PointModel.swift in Sources */,
 				2B8BFBDD26CE83CA00C9CB65 /* CommonViewModel.swift in Sources */,
 				2B96765626C1202E00400FF9 /* UserModel.swift in Sources */,
+				2B9603AA26F3344F002A4152 /* ChargeAlertView.swift in Sources */,
 				2B96762126C0BAEC00400FF9 /* ChangePasswordView.swift in Sources */,
 				2BA1C74426E61003005EF19D /* ChargerSearchViewModel.swift in Sources */,
 				2B8DB32926BA54ED0032B596 /* LaunchScreen.swift in Sources */,
+				2B9679EB26F41E8600CFDC3A /* ChargeAPIService.swift in Sources */,
 				2B96762326C0BF5700400FF9 /* UserInfoViewModel.swift in Sources */,
+				2B9679EF26F42CA400CFDC3A /* FindAccountView.swift in Sources */,
 				2B96765126C1122000400FF9 /* APIResponse.swift in Sources */,
 				2BAC25CE26B3C26D00A91FDF /* ContentView.swift in Sources */,
 				2B8DCCAF26B92A9400C2466B /* KakaoMap.swift in Sources */,
 				2B3FD82826DDF3D6000203F1 /* PointAPIService.swift in Sources */,
 				2BAC25CC26B3C26D00A91FDF /* SharingCharger_V2App.swift in Sources */,
+				2B9679E926F41E6500CFDC3A /* ReservationAPIService.swift in Sources */,
 				2B85151C26CF660A00B6AD0E /* SideMenuViewModel.swift in Sources */,
 				2B8BFBD826CDFCA000C9CB65 /* SideMenuView.swift in Sources */,
 				2B9FE01126BB75B300348F15 /* SignUpViewModel.swift in Sources */,
 				2B9FE01326BB778D00348F15 /* ViewOptionSet.swift in Sources */,
 				2BA1C74626E61051005EF19D /* ChargerSearchModal.swift in Sources */,
+				2B98709E26F1C66E0077DECE /* ChargingView.swift in Sources */,
 				2B96765426C11F7300400FF9 /* UserAPIService.swift in Sources */,
 				2B8BFBDA26CE509F00C9CB65 /* ChargerMapViewModel.swift in Sources */,
 				2B8DB32D26BA5DE00032B596 /* BluetoothView.swift in Sources */,

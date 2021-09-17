@@ -12,7 +12,7 @@ struct SharingCharger_V2App: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-            //KakaoMapView()
+            //ChargingView(chargerMap: ChargerMapViewModel())
         }
     }
 }

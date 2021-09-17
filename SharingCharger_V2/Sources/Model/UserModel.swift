@@ -7,6 +7,7 @@
 
 import Foundation
 
+//MARK: - 사용자 정보
 struct User: Codable {
     let id: Int?    //ID No
     let userType: String?   //사용자 타입
@@ -21,4 +22,26 @@ struct User: Codable {
     let privacyPolicyFlag: Bool?    //개인정보 처리방침 동의 여부
     let created: String?    //생성 일자
     let updated: String?    //갱신 일자
+}
+
+//MARK: - 사용자 예약 정보
+struct UserReservation: Codable {
+    let id: Int
+    let userId: Int
+    let userName: String?
+    let chargerId: Int
+    let chargerName: String?
+    let bleNumber: String?
+    let chargerAddress: String?
+    let chargerDetailAddress: String?
+    let gpsX: Double?
+    let gpxY: Double?
+    let rangeOfFee: String?
+    let expectPoint: Int?
+    let startDate: String?
+    let endDate: String?
+    let cancelDate: String?
+    let state: String?
+    let created: String?
+    let updated: String?
 }

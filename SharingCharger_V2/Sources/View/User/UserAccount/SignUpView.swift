@@ -46,7 +46,7 @@ struct SignUpView: View {
             type: .floater(verticalPadding: 80),
             position: .bottom,
             animation: .easeInOut(duration: 0.0),   //애니메이션 효과
-            autohideIn: 2,  //팝업 노출 시간
+            autohideIn: 1,  //팝업 노출 시간
             closeOnTap: false,
             closeOnTapOutside: false,
             view: {
@@ -513,7 +513,7 @@ struct AccountRegistButton: View {
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, maxHeight: 40)
-                    .background(Color("#3498DB"))   //회원가입 정보 입력에 따른 배경색상 변경
+                    .background(Color("#3498DB"))
             }
         )
     }

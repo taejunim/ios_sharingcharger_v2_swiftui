@@ -77,7 +77,7 @@ struct UserPoint: View {
     }
 }
 
-struct UserRervation: View {
+struct UserReservationInfo: View {
     var body: some View {
         Text("Rervation")
     }
@@ -134,6 +134,8 @@ struct MenuList: View {
             FavoritesMenuButton()
             
             PointMenuButton()
+            
+            SignOutButton(sideMenu: sideMenu)
         }
     }
 }
@@ -163,6 +165,33 @@ struct PointMenuButton: View {
             label: {
                 HStack {
                     Text("포인트 이력")
+                        .foregroundColor(Color.black)
+                    
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: 40)
+            }
+        )
+    }
+}
+
+struct SignOutButton: View {
+    @ObservedObject var sideMenu: SideMenuViewModel
+    
+    var body: some View {
+        Button(
+            action: {
+                for key in UserDefaults.standard.dictionaryRepresentation().keys {
+                    UserDefaults.standard.removeObject(forKey: key.description)
+                }
+                withAnimation {
+                    sideMenu.isSignOut = true
+                    UserDefaults.standard.set(false, forKey: "autoSignIn")
+                }
+            },
+            label: {
+                HStack {
+                    Text("로그아웃 - 임시")
                         .foregroundColor(Color.black)
                     
                     Spacer()

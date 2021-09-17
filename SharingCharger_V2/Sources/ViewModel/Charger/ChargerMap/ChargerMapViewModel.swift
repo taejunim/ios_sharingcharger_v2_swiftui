@@ -10,16 +10,15 @@ import Combine
 
 ///충전기 지도 View Model
 class ChargerMapViewModel: ObservableObject {
-    //public var didChange = PassthroughSubject<ChargerMapViewModel, Never>()
-    
     private let chargerAPI = ChargerAPIService()  //충전기 API Service
+    private let reservationAPI = ReservationAPIService()    //예약 API Service
+
     @Published var viewUtil = ViewUtil() //View Util
-    
     @Published var result: String = ""  //조회 결과
     
     //MARK: - 위치 정보 변수
     @Published var location = Location()   //위치 정보 서비스
-    @Published var authStatus = Location().getAuthStatus()
+    @Published var authStatus = Location().getAuthStatus()  //위치 정보 권한 상태
     @Published var latitude: Double = 37.566407799201336    //위도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
     @Published var longitude: Double = 126.97787363088995   //경도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
     @Published var zoomLevel: Int = 0   //Zoom Level
@@ -51,15 +50,19 @@ class ChargerMapViewModel: ObservableObject {
     @Published var bleNumber: String = ""   //충전기 BLE 번호
     @Published var chargerAddress: String = ""  //충전기 주소
     @Published var chargerDetailAddress: String = ""    //충전기 상세주소
+    @Published var chargerLatitude: Double? //충전기 위도(Y좌표)
+    @Published var chargerLongitude: Double?    //충전기 경도(X좌표)
     @Published var chargeUnitPrice: String = ""    //충전 단가
     @Published var chargerStatus: String = ""   //충전기 상태
     @Published var isFavorites: Bool = false    //즐겨찾기 표시 여부
+    
+    @Published var showChargingView: Bool = false   //충전 화면 노출 여부
     
     //MARK: - 현재 일시(서버 시간 기준) 조회
     /// - Parameter completion: Current Date 서버 기준 현재 일시
     func getCurrentDate(completion: @escaping (Date) -> Void) {
         //현재 일시 API 호출
-        let request = chargerAPI.requestCurrentDate()
+        let request = reservationAPI.requestCurrentDate()
         request.execute(
             //API 호출 성공
             onSuccess: { (currentDate) in
@@ -165,7 +168,7 @@ class ChargerMapViewModel: ObservableObject {
                         "chargerName": getCharger.name!,    //충전기 명
                         "bleNumber": getCharger.bleNumber!, //BLE 번호
                         "address": getCharger.address!, //충전기 주소
-                        "detailAddress": getCharger.detailAddress!, //충전기 상세주소
+                        "detailAddress": getCharger.detailAddress! == "" ? "-" : getCharger.detailAddress!, //충전기 상세주소
                         "longitude": String(getCharger.gpsX!),  //X좌표(경도)
                         "latitude": String(getCharger.gpsY!),   //Y좌표(위도)
                         "chargerStatus": getCharger.currentStatusType!  //충전기 상태
@@ -191,18 +194,27 @@ class ChargerMapViewModel: ObservableObject {
     func setChargerMarker(chargers: [[String:Any]]) {
         for index in 0..<chargers.count {
             let charger = chargers[index]   //충전기 정보
-            let chargerStauts = charger["chargerStatus"] as! String //충전기 상태
+            let status = charger["chargerStatus"] as! String //충전기 상태
             
             var markgerImage: String = ""   //충전기 마커 이미지
             var markgerSelectImage: String = ""  //충전기 마커 선택 이미지
             
             //충전기 상태 - 충전 대기 상태
-            if chargerStauts == "READY" {
+            if status == "READY" {
                 markgerImage = "Map-Pin-Blue.png"
                 markgerSelectImage = "Map-Pin-Blue-Select.png"
             }
             //충전기 상태 - 예약 상태
-            else if chargerStauts == "RESERVATION" {
+            else if status == "RESERVATION" {
+                markgerImage = "Map-Pin-Red.png"
+                markgerSelectImage = "Map-Pin-Red-Select.png"
+            }
+            //충전기 상태 -
+            else if status == "CHARGING" {
+                markgerImage = "Map-Pin-Red.png"
+                markgerSelectImage = "Map-Pin-Red-Select.png"
+            }
+            else {
                 markgerImage = "Map-Pin-Red.png"
                 markgerSelectImage = "Map-Pin-Red-Select.png"
             }
@@ -287,7 +299,9 @@ class ChargerMapViewModel: ObservableObject {
                 self.chargerName = charger.name!    //충전기 명
                 self.bleNumber = charger.bleNumber! //BLE 번호
                 self.chargerAddress = charger.address!  //충전기 주소
-                self.chargerDetailAddress = charger.detailAddress!   //충전기 상세주소
+                self.chargerDetailAddress = charger.detailAddress! == "" ? "-" : charger.detailAddress!   //충전기 상세주소
+                self.chargerLongitude = charger.gpsX!   //X좌표(경도)
+                self.chargerLatitude = charger.gpsY!    //Y좌표(위도)
                 self.chargeUnitPrice = charger.rangeOfFee!  //충전 단가
             },
             //API 호출 실패
@@ -309,7 +323,7 @@ class ChargerMapViewModel: ObservableObject {
         ]
         
         //충전기 예약 현황 API 호출
-        let request = chargerAPI.requestChargerReservation(chargerId: chargerId, parameters: parameters)
+        let request = reservationAPI.requestChargerReservation(chargerId: chargerId, parameters: parameters)
         request.execute(
             //API 호출 성공
             onSuccess: { (charger) in
@@ -354,6 +368,30 @@ class ChargerMapViewModel: ObservableObject {
         )
         
         mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
+        
+        mapView.select(mapView.findPOIItem(byTag: Int(chargerId)!), animated: true)   //마커 선택 표시 처리
+    }
+    
+    //MARK: - 충전기 선택 해제
+    /// 지도에서 선택한 충전기의 선택 해제 처리
+    /// - Parameter chargerId: 선택된 충전기 ID
+    func deselectedCharger(chargerId: String) {
+        if chargerId != "" {
+            mapView.deselect(mapView.findPOIItem(byTag: Int(chargerId)!))   //선택 해제 처리
+        }
+    }
+    
+    func moveToReservedCharger(chargerId: String, latitude: Double, longitude: Double) {
+        //충전기 위치 지도 중심으로 이동
+        mapView.setMapCenter(
+            MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
+            animated: true
+        )
+        
+        mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
+        
+        //충전기 목록 조회
+        getChargerList(zoomLevel: 0, latitude: latitude, longitude: longitude, searchStartDate: currentDate, searchEndDate: currentDate)
         
         mapView.select(mapView.findPOIItem(byTag: Int(chargerId)!), animated: true)   //마커 선택 표시 처리
     }

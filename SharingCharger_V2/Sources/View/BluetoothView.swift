@@ -9,15 +9,14 @@ import SwiftUI
 
 struct BluetoothView: View {
     @Environment(\.presentationMode) var presentationMode   //Back 버튼 기능 추가에 필요
-    @ObservedObject var signUpViewModel: SignUpViewModel
-    @ObservedObject var blueTooth = Bluetooth()
+    @ObservedObject var bluetooth = Bluetooth()
     
     var body: some View {
         VStack {
             Text("Hello, world!")
                 .padding()
             
-            if blueTooth.isSwitchedOn {
+            if bluetooth.isSwitchedOn {
                 Text("Bluetooth is switched on")
                     .foregroundColor(.green)
             }
@@ -26,14 +25,55 @@ struct BluetoothView: View {
                     .foregroundColor(.red)
             }
             
+            if bluetooth.permission {
+                Text("사용 권한 있음")
+            }
+            else {
+                Text("사용 권한 없음")
+            }
+            
             Button(
                 action: {
-                    blueTooth.test()
-                    blueTooth.test2()
+                    bluetooth.bluetoothPermission()
                 },
                 label: {
-                    Text("조회 시작")
-                    
+                    Text("블루투스 사용권한 확인")
+                }
+            )
+            
+            if bluetooth.isOnBluetooth {
+                Text("블루투스 ON")
+            }
+            else {
+                Text("블루투스 OFF")
+            }
+            
+            Button(
+                action: {
+                    bluetooth.bluetoothPower()
+                },
+                label: {
+                    Text("블루투스 ON/OFF")
+                }
+            )
+            
+            Button(
+                action: {
+                    bluetooth.bluetoothScan()
+                },
+                label: {
+                    Text("블루투스 검색 시작")
+                }
+            )
+            
+            Text(bluetooth.bleNumber)
+            
+            Button(
+                action: {
+                    bluetooth.bluetoothScanStop()
+                },
+                label: {
+                    Text("블루투스 검색 중지")
                 }
             )
         }
@@ -48,6 +88,6 @@ struct BluetoothView: View {
 
 struct BluetoothView_Previews: PreviewProvider {
     static var previews: some View {
-        BluetoothView(signUpViewModel: SignUpViewModel())
+        BluetoothView()
     }
 }

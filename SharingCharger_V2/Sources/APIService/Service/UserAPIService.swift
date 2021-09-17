@@ -8,7 +8,7 @@
 import Alamofire
 import PromisedFuture
 
-//MARK: - 사용자 API Service
+// MARK: - [사용자 관리 관련 API]
 class UserAPIService {
     let apiClient = APIClient() //API Client - 공통 API 호출
     
@@ -64,7 +64,7 @@ class UserAPIService {
     //MARK: - 인증번호 요청 API 호출
     /// SMS 인증번호 요청 API 호출
     /// - Parameter phoneNumber: 휴대전화번호
-    /// - Returns: 인증번호(String)
+    /// - Returns: 인증번호 (String)
     public func requestSMSAuth(phoneNumber: String) -> Future<String, AFError> {
 
         return apiClient.requestText(route: APIRouter.get(useApi: "base", path: "/sms/\(phoneNumber)", parameters: [:], contentType: "text"))
@@ -72,7 +72,7 @@ class UserAPIService {
     
     //MARK: - 서비스 이용약관 내용 API 호출
     /// 서비스 이용약관 내용 API 호출
-    /// - Returns: HTML Text
+    /// - Returns: 서비스 이용약관 내용 (HTML Text)
     public func requestTerms() -> Future<String, AFError> {
 
         return apiClient.requestText(route: APIRouter.get(useApi: "base", path: "/policy/service", parameters: [:], contentType: "text"))
@@ -80,7 +80,7 @@ class UserAPIService {
     
     //MARK: - 개인정보 처리방침 내용 API 호출
     /// 개인정보 처리방침 내용 API 호출
-    /// - Returns: HTML Text
+    /// - Returns: 개인정보 처리방침 내용 (HTML Text)
     public func requestPrivacy() -> Future<String, AFError> {
 
         return apiClient.requestText(route: APIRouter.get(useApi: "base", path: "/policy/privacy", parameters: [:], contentType: "text"))

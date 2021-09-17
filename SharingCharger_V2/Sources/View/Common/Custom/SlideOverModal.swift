@@ -45,7 +45,7 @@ struct SlideOverModal<Content: View> : View {
                         VStack {
                             RoundedRectangle(cornerRadius: handleThickness / 2.0)
                                 .frame(width: 40, height: handleThickness)
-                                .foregroundColor(Color.gray)
+                                .foregroundColor(Color("#BDBDBD"))
                                 .padding(10)
                             
                             Spacer()

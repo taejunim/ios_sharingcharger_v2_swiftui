@@ -53,6 +53,20 @@ extension String {
             return nil
         }
     }
+    
+    //MARK: - 포인트 텍스트를 천자리 콤마 형식으로 변환
+    /// 사용 방법: "1000".pointFormatter()
+    /// - Returns: 변환 포인트 텍스트 - 1,000p (String)
+    func pointFormatter() -> String {
+        let numberFormmatter = NumberFormatter()
+        
+        numberFormmatter.numberStyle = .decimal
+        let numberValue = Int(self) ?? 0    //값이 빈 값이거나 null인 경우 0으로 처리
+        
+        let pointString = numberFormmatter.string(from: NSNumber(value: numberValue))! + "p"
+        
+        return pointString
+    }
 }
 
 //MARK: - UIImage Extension
