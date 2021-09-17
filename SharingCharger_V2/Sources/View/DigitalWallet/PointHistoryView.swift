@@ -19,12 +19,36 @@ struct PointHistoryView: View {
         .padding(.horizontal)
         .navigationBarTitle(Text("title.point.history".localized()), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
-        .navigationBarItems(leading: BackButton(), trailing: NavigationLink("검색 조건", destination: FavoritesView()))  //커스텀 Back 버튼 추가
+        .navigationBarItems(leading: BackButton(), trailing: PointSearchModalButton(point: pointViewModel))  //커스텀 Back 버튼 추가
         .onAppear {
             pointViewModel.getCurrentPoint()
             pointViewModel.getPointHistory()
             print(pointViewModel.getPointHistory())
         }
+        .sheet(
+            isPresented: $pointViewModel.showSearchModal,
+            content: {
+                PointSearchModal(point: pointViewModel) //포인트 검색조건 Modal 창
+            }
+        )
+    }
+}
+
+struct PointSearchModalButton: View {
+    @ObservedObject var point: PointViewModel
+    
+    var body: some View {
+        Button(
+            action: {
+                point.showSearchModal = true
+            },
+            label: {
+                Image("Button-Slider")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 25, height: 25)
+            }
+        )
     }
 }
 

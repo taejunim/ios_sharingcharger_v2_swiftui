@@ -13,13 +13,14 @@ class PointViewModel: ObservableObject {
     
     private let pointAPI = PointAPIService()  //포인트 API Service
     
+    @Published var showSearchModal: Bool = false    //검색조건 Modal 활성 여부
+    @Published var isSearchReset: Bool = false  //검색조건 초기화 여부
     
     //MARK: - 포인트 이력 파라미터
     @Published var currentPoint: Int = 0
     @Published var selectPointType: String = "ALL"
     @Published var selectSort: String = "ASC"
     @Published var currentDate: Date = Date()
-    
     
     //MARK: - 포인트 이력
     @Published var point: [String:Any] = [:]
@@ -29,8 +30,6 @@ class PointViewModel: ObservableObject {
     var ageArr = [String]()
     var nameArr = [String]()
     var employedArr = [String]()
-    
-    
     
     //MARK: - 현재 사용자 포인트 조회
     func getCurrentPoint() {
