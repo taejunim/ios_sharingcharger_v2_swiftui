@@ -89,10 +89,11 @@ struct remainPoints: View {
                     let point: String = points["point"]!            //포인트
                     let targetName: String = points["targetName"]!  //
                     let typeColor: String = points["typeColor"]!    //유형에 따른 text color
+                    let typeCode: String = points["typeCode"]!
                     
                     let date = created.replacingOccurrences(of: "T", with: " ") //생성 날짜에서 T 제거
                     let Point = Int(point)  //포인트 int형으로 변환
-                   
+                    
                     HStack {
                         VStack(alignment: .leading){
                             HStack{
@@ -100,9 +101,11 @@ struct remainPoints: View {
                                     .font(.caption)
                                     .foregroundColor(.gray)
                                 Spacer()
-                                Text("\(targetName)")
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
+                                if (typeCode == "PURCHASE" || typeCode == "PURCHASE_CANCEL" ){
+                                    Text("\(targetName)")
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                }
                             }
                             Spacer()
                             HStack{
@@ -114,7 +117,16 @@ struct remainPoints: View {
                                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                                     .foregroundColor(Color(typeColor))
                             }
-                            
+                            Spacer()
+                            HStack{
+                                if (typeCode == "EXCHANGE" || typeCode == "GIVE" || typeCode == "WITHDRAW" ){
+                                    if targetName != ""{
+                                        Text("\(targetName)")
+                                            .font(.caption)
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                            }
                         }
                         .padding(.vertical, 5.0)
                     }

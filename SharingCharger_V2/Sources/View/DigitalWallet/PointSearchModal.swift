@@ -19,8 +19,8 @@ struct PointSearchModal: View {
                     Spacer()
                     
                     //초기화 버튼
-                    RefreshButton() { (isReset) in
-                        pointViewModel.isSearchReset = isReset //초기화 여부
+                    RefreshButton() { (isSearchReset) in
+                        pointViewModel.isSearchReset = isSearchReset //초기화 여부
                     }
                 }
                 .padding(.bottom)
@@ -35,26 +35,50 @@ struct PointSearchModal: View {
                                     .font(.title2)
                                     .fontWeight(.bold)
                             }
-                            
                             Spacer()
                         }
                         VerticalDividerline()
                         //조회기간
                         HStack {
+                            
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("조회기간")
                                     .font(.body)
                                 PointDatePicker(pointViewModel: pointViewModel)
-                                HStack{
-                                       Text("2020-06-22")
-                                       Spacer()
-                                       Text("-")
-                                       Spacer()
-                                       Text("2020-07-22")
-                               }.padding()
+                                HStack {
+                                    //조회 시작일자
+                                    DatePicker(
+                                        "",
+                                        selection: $pointViewModel.selectMonth,
+                                        displayedComponents: [.date]
+                                    )
+                                    .labelsHidden()
+                                    .accentColor(.black)
+                                    .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                                    
+                                    Spacer()
+                                    
+                                    Text("-")
+                                    
+                                    Spacer()
+                                    
+                                    //조회 종료일자
+                                    DatePicker(
+                                        "",
+                                        selection: $pointViewModel.currentDate,
+                                        displayedComponents: [.date]
+                                        
+                                    )
+                                    .labelsHidden()
+                                    .accentColor(.black)
+                                    .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                                }
+                                .frame(maxWidth: .infinity)
+                                .disabled(pointViewModel.chooseDate != "ownPeriod" ? true : false)   //조회기간 선택에 따라 비활성화 변경
                             }
                             Spacer()
                         }
+                        
                         VerticalDividerline()
                         //유형
                         HStack {
@@ -83,10 +107,17 @@ struct PointSearchModal: View {
             .padding()
             
             PointSearchButton(pointViewModel: pointViewModel)
-            //
-            //하단버튼 추가
-            //
+            
         }
+        .onAppear{
+            pointViewModel.chooseDate = "oneMonth"
+            pointViewModel.selectPointType = "ALL"
+            pointViewModel.selectSort = "DESC"
+            
+            pointViewModel.selectMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date())!
+            pointViewModel.currentDate = Date()
+        }
+        
     }
 }
 //MARK: - 포인트 조회기간 선택 Picker
@@ -95,13 +126,13 @@ struct PointDatePicker: View {
     
     var body: some View {
         Picker(
-            selection: $pointViewModel.searchPoints, //충전 유형 선택
-            label: Text("정렬 선택"),
+            selection: $pointViewModel.chooseDate, //조회기간 선택
+            label: Text("조회기간 선택"),
             content: {
                 Text("1개월").tag("oneMonth")
-                Text("3개월").tag("twoMonth")
-                Text("6개월").tag("threeMonth")
-                Text("직접 선택").tag("select")
+                Text("3개월").tag("threeMonth")
+                Text("6개월").tag("sixMonth")
+                Text("직접 선택").tag("ownPeriod")
             }
         )
         .padding(.vertical)
@@ -115,7 +146,7 @@ struct PointTypePicker: View {
     
     var body: some View {
         Picker(
-            selection: $pointViewModel.searchPoints, //충전 유형 선택
+            selection: $pointViewModel.selectPointType, //포인트 유형 선택
             label: Text("유형 선택"),
             content: {
                 Text("전체").tag("ALL")
@@ -126,7 +157,7 @@ struct PointTypePicker: View {
         .padding(.vertical)
         .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
         Picker(
-            selection: $pointViewModel.searchPoints, //충전 유형 선택
+            selection: $pointViewModel.selectPointType, //포인트 유형 선택
             label: Text("유형 선택"),
             content: {
                 Text("포인트 환전").tag("EXCHANGE")
@@ -138,36 +169,36 @@ struct PointTypePicker: View {
         .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
     }
 }
-
 //MARK: - 포인트 정렬 선택 Picker
 struct PointSortPicker: View {
     @ObservedObject var pointViewModel: PointViewModel
     
     var body: some View {
-        Picker(
-            selection: $pointViewModel.searchPoints, //충전 유형 선택
-            label: Text("정렬 선택"),
-            content: {
-                Text("최신순").tag("DESC")
-                Text("과거순").tag("ASC")
-            }
-        )
-        .padding(.vertical)
-        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+        VStack (alignment:.leading){
+            Picker(
+                selection: $pointViewModel.selectSort, //포인트 유형 선택
+                label: Text("정렬 선택"),
+                content: {
+                    Text("최신순").tag("DESC")
+                    Text("과거순").tag("ASC")
+                }
+            )
+            .pickerStyle(SegmentedPickerStyle())
+            
+        }.padding(.vertical,25.0)
     }
 }
+
 //MARK: - 포인트 목록 검색 버튼
 struct PointSearchButton: View {
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedObject var pointViewModel: PointViewModel
-    // @ObservedObject var chargerMap: ChargerMapViewModel
     
     var body: some View {
         Button(
             action: {
-                print("button click")
-                
+                pointViewModel.getPointHistory()
                 presentationMode.wrappedValue.dismiss() //현재 창 닫기
             },
             label: {
