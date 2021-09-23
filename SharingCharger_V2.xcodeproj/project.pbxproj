@@ -25,8 +25,6 @@
 		2B8DB32D26BA5DE00032B596 /* BluetoothView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8DB32C26BA5DE00032B596 /* BluetoothView.swift */; };
 		2B8DB33026BA660F0032B596 /* CustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8DB32F26BA660F0032B596 /* CustomView.swift */; };
 		2B8DB33326BA667D0032B596 /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8DB33226BA667D0032B596 /* SignInViewModel.swift */; };
-		2B8DCCA526B8EC9700C2466B /* EvzBLEKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B8DCCA326B8EC5200C2466B /* EvzBLEKit.xcframework */; };
-		2B8DCCA626B8EC9700C2466B /* EvzBLEKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B8DCCA326B8EC5200C2466B /* EvzBLEKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2B8DCCA926B9000600C2466B /* Bluetooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8DCCA826B9000600C2466B /* Bluetooth.swift */; };
 		2B8DCCAF26B92A9400C2466B /* KakaoMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8DCCAE26B92A9400C2466B /* KakaoMap.swift */; };
 		2B8DCD1C26B92E0000C2466B /* map_pinup_custom@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B8DCCF726B92E0000C2466B /* map_pinup_custom@3x.png */; };
@@ -81,6 +79,11 @@
 		2B9679ED26F41FC100CFDC3A /* ReservationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679EC26F41FC100CFDC3A /* ReservationModel.swift */; };
 		2B9679EF26F42CA400CFDC3A /* FindAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679EE26F42CA400CFDC3A /* FindAccountView.swift */; };
 		2B9679F126F4304700CFDC3A /* PointSearchModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679F026F4304700CFDC3A /* PointSearchModal.swift */; };
+		2B9679F326F454B000CFDC3A /* PurchaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679F226F454B000CFDC3A /* PurchaseViewModel.swift */; };
+		2B9679F526F4553B00CFDC3A /* PurchaseAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679F426F4553B00CFDC3A /* PurchaseAPIService.swift */; };
+		2B9679F726F456A400CFDC3A /* PurchaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9679F626F456A400CFDC3A /* PurchaseModel.swift */; };
+		2B9679FA26F4932100CFDC3A /* EvzBLEKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B9679F826F4931C00CFDC3A /* EvzBLEKit.xcframework */; };
+		2B9679FB26F4932100CFDC3A /* EvzBLEKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B9679F826F4931C00CFDC3A /* EvzBLEKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2B98709E26F1C66E0077DECE /* ChargingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B98709D26F1C66E0077DECE /* ChargingView.swift */; };
 		2B9870A026F21F610077DECE /* ChargingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B98709F26F21F610077DECE /* ChargingViewModel.swift */; };
 		2B9FE01126BB75B300348F15 /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9FE01026BB75B300348F15 /* SignUpViewModel.swift */; };
@@ -89,6 +92,7 @@
 		2BA1C74426E61003005EF19D /* ChargerSearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA1C74326E61003005EF19D /* ChargerSearchViewModel.swift */; };
 		2BA1C74626E61051005EF19D /* ChargerSearchModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA1C74526E61051005EF19D /* ChargerSearchModal.swift */; };
 		2BA9BB4F26BA819400F60016 /* SignUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA9BB4E26BA819400F60016 /* SignUpView.swift */; };
+		2BAAC07D26FC46CE0013B254 /* UserAuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAAC07C26FC46CE0013B254 /* UserAuthView.swift */; };
 		2BAC25CC26B3C26D00A91FDF /* SharingCharger_V2App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAC25CB26B3C26D00A91FDF /* SharingCharger_V2App.swift */; };
 		2BAC25CE26B3C26D00A91FDF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAC25CD26B3C26D00A91FDF /* ContentView.swift */; };
 		2BAC25D026B3C26E00A91FDF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BAC25CF26B3C26E00A91FDF /* Assets.xcassets */; };
@@ -106,7 +110,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				2B8DCCA626B8EC9700C2466B /* EvzBLEKit.xcframework in Embed Frameworks */,
+				2B9679FB26F4932100CFDC3A /* EvzBLEKit.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -133,7 +137,6 @@
 		2B8DB32C26BA5DE00032B596 /* BluetoothView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothView.swift; sourceTree = "<group>"; };
 		2B8DB32F26BA660F0032B596 /* CustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomView.swift; sourceTree = "<group>"; };
 		2B8DB33226BA667D0032B596 /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
-		2B8DCCA326B8EC5200C2466B /* EvzBLEKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = EvzBLEKit.xcframework; sourceTree = "<group>"; };
 		2B8DCCA826B9000600C2466B /* Bluetooth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bluetooth.swift; sourceTree = "<group>"; };
 		2B8DCCAE26B92A9400C2466B /* KakaoMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoMap.swift; sourceTree = "<group>"; };
 		2B8DCCF726B92E0000C2466B /* map_pinup_custom@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "map_pinup_custom@3x.png"; sourceTree = "<group>"; };
@@ -197,6 +200,10 @@
 		2B9679EC26F41FC100CFDC3A /* ReservationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationModel.swift; sourceTree = "<group>"; };
 		2B9679EE26F42CA400CFDC3A /* FindAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindAccountView.swift; sourceTree = "<group>"; };
 		2B9679F026F4304700CFDC3A /* PointSearchModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointSearchModal.swift; sourceTree = "<group>"; };
+		2B9679F226F454B000CFDC3A /* PurchaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseViewModel.swift; sourceTree = "<group>"; };
+		2B9679F426F4553B00CFDC3A /* PurchaseAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseAPIService.swift; sourceTree = "<group>"; };
+		2B9679F626F456A400CFDC3A /* PurchaseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseModel.swift; sourceTree = "<group>"; };
+		2B9679F826F4931C00CFDC3A /* EvzBLEKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = EvzBLEKit.xcframework; sourceTree = "<group>"; };
 		2B98709D26F1C66E0077DECE /* ChargingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargingView.swift; sourceTree = "<group>"; };
 		2B98709F26F21F610077DECE /* ChargingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargingViewModel.swift; sourceTree = "<group>"; };
 		2B9FE01026BB75B300348F15 /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
@@ -205,6 +212,7 @@
 		2BA1C74326E61003005EF19D /* ChargerSearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerSearchViewModel.swift; sourceTree = "<group>"; };
 		2BA1C74526E61051005EF19D /* ChargerSearchModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerSearchModal.swift; sourceTree = "<group>"; };
 		2BA9BB4E26BA819400F60016 /* SignUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpView.swift; sourceTree = "<group>"; };
+		2BAAC07C26FC46CE0013B254 /* UserAuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAuthView.swift; sourceTree = "<group>"; };
 		2BAC25C826B3C26D00A91FDF /* SharingCharger_V2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharingCharger_V2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BAC25CB26B3C26D00A91FDF /* SharingCharger_V2App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingCharger_V2App.swift; sourceTree = "<group>"; };
 		2BAC25CD26B3C26D00A91FDF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -224,10 +232,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B8DCD3B26B9312200C2466B /* libsqlite3.tbd in Frameworks */,
-				2B8DCCA526B8EC9700C2466B /* EvzBLEKit.xcframework in Frameworks */,
 				2B8DCD3726B92E0000C2466B /* DaumMap.framework in Frameworks */,
 				2B8DCD3926B930DB00C2466B /* libc++.tbd in Frameworks */,
 				15DB9F3615D4E169D4AE2534 /* Pods_SharingCharger_V2.framework in Frameworks */,
+				2B9679FA26F4932100CFDC3A /* EvzBLEKit.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +258,7 @@
 			isa = PBXGroup;
 			children = (
 				2B8BFBDE26CE845700C9CB65 /* PointViewModel.swift */,
+				2B9679F226F454B000CFDC3A /* PurchaseViewModel.swift */,
 			);
 			path = DigitalWallet;
 			sourceTree = "<group>";
@@ -313,9 +322,9 @@
 		2B8DCCA026B8E79900C2466B /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				2B9679F826F4931C00CFDC3A /* EvzBLEKit.xcframework */,
 				2B8DCD3C26B9322500C2466B /* KakaoMapBridgingHeader.h */,
 				2B8DCCF526B92E0000C2466B /* DaumMap.embeddedframework */,
-				2B8DCCA326B8EC5200C2466B /* EvzBLEKit.xcframework */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -444,6 +453,7 @@
 				2BA9BB4E26BA819400F60016 /* SignUpView.swift */,
 				2B96762026C0BAEC00400FF9 /* ChangePasswordView.swift */,
 				2B9679EE26F42CA400CFDC3A /* FindAccountView.swift */,
+				2BAAC07C26FC46CE0013B254 /* UserAuthView.swift */,
 			);
 			path = UserAccount;
 			sourceTree = "<group>";
@@ -465,6 +475,7 @@
 				2B9679EA26F41E8600CFDC3A /* ChargeAPIService.swift */,
 				2B9679E826F41E6500CFDC3A /* ReservationAPIService.swift */,
 				2B3FD82726DDF3D6000203F1 /* PointAPIService.swift */,
+				2B9679F426F4553B00CFDC3A /* PurchaseAPIService.swift */,
 				2B96765326C11F7300400FF9 /* UserAPIService.swift */,
 			);
 			path = Service;
@@ -552,6 +563,7 @@
 				2B9368A726D48AB6009B0C23 /* ChargerModel.swift */,
 				2B9679EC26F41FC100CFDC3A /* ReservationModel.swift */,
 				2B3FD82926DDFD39000203F1 /* PointModel.swift */,
+				2B9679F626F456A400CFDC3A /* PurchaseModel.swift */,
 				2B96765526C1202E00400FF9 /* UserModel.swift */,
 			);
 			path = Model;
@@ -761,11 +773,14 @@
 				2B96764F26C10F5200400FF9 /* APIClient.swift in Sources */,
 				2B8BFBD626CDFC4600C9CB65 /* FavoritesView.swift in Sources */,
 				2B8EE30D26C3501F00C1E835 /* ViewUtil.swift in Sources */,
+				2BAAC07D26FC46CE0013B254 /* UserAuthView.swift in Sources */,
 				2B8DB33026BA660F0032B596 /* CustomView.swift in Sources */,
+				2B9679F726F456A400CFDC3A /* PurchaseModel.swift in Sources */,
 				2B8DB33326BA667D0032B596 /* SignInViewModel.swift in Sources */,
 				2B8BFBD426CDFC1A00C9CB65 /* PointHistoryView.swift in Sources */,
 				2BA9BB4F26BA819400F60016 /* SignUpView.swift in Sources */,
 				2B9679ED26F41FC100CFDC3A /* ReservationModel.swift in Sources */,
+				2B9679F326F454B000CFDC3A /* PurchaseViewModel.swift in Sources */,
 				2B9679F126F4304700CFDC3A /* PointSearchModal.swift in Sources */,
 				2B3FD82A26DDFD39000203F1 /* PointModel.swift in Sources */,
 				2B8BFBDD26CE83CA00C9CB65 /* CommonViewModel.swift in Sources */,
@@ -793,6 +808,7 @@
 				2B8BFBDA26CE509F00C9CB65 /* ChargerMapViewModel.swift in Sources */,
 				2B8DB32D26BA5DE00032B596 /* BluetoothView.swift in Sources */,
 				2BA1C71726E5AB13005EF19D /* ReservationViewModel.swift in Sources */,
+				2B9679F526F4553B00CFDC3A /* PurchaseAPIService.swift in Sources */,
 				2B85152026CF92F700B6AD0E /* Permission.swift in Sources */,
 				2B8BFBE326CE87E000C9CB65 /* ChargerAPIService.swift in Sources */,
 			);

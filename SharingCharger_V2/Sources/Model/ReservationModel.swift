@@ -75,3 +75,25 @@ struct Sort: Codable {
     let unsorted: Bool?
     let empty: Bool?
 }
+
+//MARK: - 사용자 예약 정보
+struct UserReservation: Codable {
+    let id: Int
+    let userId: Int
+    let userName: String?
+    let chargerId: Int
+    let chargerName: String?
+    let bleNumber: String?
+    let chargerAddress: String?
+    let chargerDetailAddress: String?
+    let gpsX: Double?
+    let gpxY: Double?
+    let rangeOfFee: String?
+    let expectPoint: Int?
+    let startDate: String?
+    let endDate: String?
+    let cancelDate: String?
+    let state: String?
+    let created: String?
+    let updated: String?
+}

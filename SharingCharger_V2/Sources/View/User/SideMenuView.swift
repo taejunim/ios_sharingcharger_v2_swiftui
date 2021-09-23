@@ -11,6 +11,7 @@ struct SideMenuView: View {
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedObject var sideMenu: SideMenuViewModel
+    @ObservedObject var reservation: ReservationViewModel
     
     @State var dragOffset = CGSize.zero //Drag Offset
     
@@ -27,7 +28,7 @@ struct SideMenuView: View {
                     
                     Rectangle()
                         .foregroundColor(Color.white.opacity(0.85))
-                        .frame(width: geometry.size.width/1.2, height: geometry.size.height)
+                        .frame(width: geometry.size.width/1.15, height: geometry.size.height)
                         .edgesIgnoringSafeArea(.all)
                         .transition(.move(edge: .leading))
                         .offset(dragOffset)
@@ -55,9 +56,21 @@ struct SideMenuView: View {
             
             GeometryReader { geometry in
                 VStack {
+                    UserProfile()
+                    
+                    Dividerline()
+                    
+                    UserPoint()
+                    
+                    UserReservationInfo(reservation: reservation)
+                    
+                    Dividerline()
+                    
                     MenuList(sideMenu: sideMenu).padding(.horizontal)
+                    
+                    Spacer()
                 }
-                .frame(width: geometry.size.width/1.2, height: geometry.size.height)
+                .frame(width: geometry.size.width/1.15, height: geometry.size.height)
                 .offset(dragOffset)
             }
             .transition(.move(edge: .leading))
@@ -65,21 +78,81 @@ struct SideMenuView: View {
     }
 }
 
-struct Profile: View {
+struct UserProfile: View {
     var body: some View {
-        Text("profile")
+        VStack(spacing: 10) {
+            HStack {
+                //사용자 명
+                Text(UserDefaults.standard.string(forKey: "userName") ?? "User Name")
+                    .font(.title)
+                    .fontWeight(.bold)
+                
+                Spacer()
+                
+                Button(
+                    action: {
+                        
+                    },
+                    label: {
+                        Image("Button-Setting")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 25, height: 25)
+                    }
+                )
+            }
+            
+            HStack {
+                //사용자 ID
+                Text(UserDefaults.standard.string(forKey: "userId") ?? "User ID")
+                    .fontWeight(.bold)
+                
+                Spacer()
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 10)
     }
 }
 
 struct UserPoint: View {
+    @ObservedObject var point = PointViewModel()
+        
     var body: some View {
-        Text("user point")
+        HStack {
+            Text("잔여 포인트")
+            
+            Spacer()
+            
+            Text(String(point.currentPoint).pointFormatter())
+                .foregroundColor(Color("#3498DB"))
+            
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 10)
+        .onAppear {
+            point.getCurrentPoint()
+        }
     }
 }
 
 struct UserReservationInfo: View {
+    @ObservedObject var reservation: ReservationViewModel
+    
     var body: some View {
-        Text("Rervation")
+        HStack {
+            Text("예약 상태")
+            
+            Spacer()
+            
+            VStack {
+                Text(reservation.textReservationDate)
+                Text(reservation.reservedChargerName)
+            }
+            .foregroundColor(Color("#E4513D"))
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 10)
     }
 }
 
@@ -89,47 +162,6 @@ struct MenuList: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-//            NavigationLink(
-//                destination: FavoritesView(),
-//                isActive: $isActive,
-//                label: {
-//                    Button(
-//                        action: {
-//                            isActive = true
-//                        },
-//                        label: {
-//                            HStack {
-//                                Text("즐겨찾기")
-//                                    .foregroundColor(Color.black)
-//
-//                                Spacer()
-//                            }
-//                            .frame(maxWidth: .infinity, maxHeight: 40)
-//                        }
-//                    )
-//                }
-//            )
-//
-//            NavigationLink(
-//                destination: PointView(),
-//                isActive: $isActive2,
-//                label: {
-//                    Button(
-//                        action: {
-//                            isActive2 = true
-//                        },
-//                        label: {
-//                            HStack {
-//                                Text("포인트 이력")
-//                                    .foregroundColor(Color.black)
-//
-//                                Spacer()
-//                            }
-//                            .frame(maxWidth: .infinity, maxHeight: 40)
-//                        }
-//                    )
-//                }
-//            )
             
             FavoritesMenuButton()
             
@@ -204,6 +236,6 @@ struct SignOutButton: View {
 
 struct SideMenuView_Previews: PreviewProvider {
     static var previews: some View {
-        SideMenuView(sideMenu: SideMenuViewModel())
+        SideMenuView(sideMenu: SideMenuViewModel(), reservation: ReservationViewModel())
     }
 }

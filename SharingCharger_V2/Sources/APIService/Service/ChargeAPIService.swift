@@ -15,8 +15,24 @@ class ChargeAPIService {
     let apiClient = APIClient() //API Client - 공통 API 호출
     
     //MARK: - 충전 시작 전 인증 API 호출
-    public func requestChargingAuth(chargerId: String, parameters: [String:Any]) -> Future<UserReservation, AFError> {
+    public func requestChargerUseAuth(chargerId: String, parameters: [String:Any]) -> Future<UserReservation, AFError> {
         
         return apiClient.request(route: APIRouter.post(useApi: "base", path: "/recharge/authenticate/charger/\(chargerId)", parameters: parameters))
     }
+    
+    public func requestChargeStart(chargerId: String, parameters: [String:Any]) -> Future<UserReservation, AFError> {
+        
+        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/recharge/start/charger/\(chargerId)", parameters: parameters))
+    }
+    
+    public func requestChargeEnd(chargerId: String, parameters: [String:Any]) -> Future<UserReservation, AFError> {
+        
+        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/recharge/end/charger/\(chargerId)", parameters: parameters))
+    }
+    
+    public func requestChargeAbnormalEnd(chargerId: String, parameters: [String:Any]) -> Future<UserReservation, AFError> {
+        
+        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/recharge/end/charger/\(chargerId)/unplanned", parameters: parameters))
+    }
+    
 }

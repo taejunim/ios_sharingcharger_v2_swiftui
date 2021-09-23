@@ -35,7 +35,7 @@ struct SignInView: View {
                         HStack {
                             Spacer()
                             
-                            FindAccountButton(signInViewModel: signInViewModel)
+                            FindAccountViewButton(signInViewModel: signInViewModel)
                             
                             Text("/")
                                 .font(.caption)
@@ -159,12 +159,13 @@ struct SignUpButton: View {
     }
 }
 
-struct FindAccountButton: View {
+//MARK: - 아이디 찾기 화면 이동 버튼
+struct FindAccountViewButton: View {
     @ObservedObject var signInViewModel: SignInViewModel
     
     var body: some View {
         NavigationLink(
-            destination: ChangePasswordView(isSigned: false),   //패스워드 변경 화면
+            destination: FindAccountView(), //아이디 찾기 화면
             label: {
                 HStack {
                     Spacer()
@@ -181,7 +182,7 @@ struct FindAccountButton: View {
     }
 }
 
-//MARK: - 비밀번호 변경 버튼
+//MARK: - 비밀번호 변경 화면 이동 버튼
 struct ChangePasswordButton: View {
     @ObservedObject var signInViewModel: SignInViewModel
     

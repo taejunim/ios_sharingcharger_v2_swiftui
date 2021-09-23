@@ -58,14 +58,33 @@ extension String {
     /// 사용 방법: "1000".pointFormatter()
     /// - Returns: 변환 포인트 텍스트 - 1,000p (String)
     func pointFormatter() -> String {
-        let numberFormmatter = NumberFormatter()
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
         
-        numberFormmatter.numberStyle = .decimal
         let numberValue = Int(self) ?? 0    //값이 빈 값이거나 null인 경우 0으로 처리
-        
-        let pointString = numberFormmatter.string(from: NSNumber(value: numberValue))! + "p"
+        let pointString = numberFormatter.string(from: NSNumber(value: numberValue))! + "p"
         
         return pointString
+    }
+}
+
+extension Int {
+    func amountFormatter() -> String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        
+        let stringNumber = numberFormatter.string(from: NSNumber(value: self))! + "원"
+        
+        return stringNumber
+    }
+    
+    func decimalNumberFormatter() -> String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        
+        let stringNumber = numberFormatter.string(from: NSNumber(value: self))!
+        
+        return stringNumber
     }
 }
 

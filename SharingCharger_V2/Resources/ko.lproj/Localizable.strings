@@ -13,6 +13,7 @@
 "title.terms.agree" = "서비스 이용약관 동의";
 "title.privacy" = "개인정보 처리방침";
 "title.privacy.agree" = "개인정보 처리방침 동의";
+"title.account.find" = "아이디 찾기";
 "title.password.change" = "비밀번호 변경";
 "title.password.step.one" = "비밀번호 변경(1/2)";
 "title.password.step.two" = "비밀번호 변경(2/2)";

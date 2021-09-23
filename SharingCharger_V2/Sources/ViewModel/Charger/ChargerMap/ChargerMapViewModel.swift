@@ -23,6 +23,7 @@ class ChargerMapViewModel: ObservableObject {
     @Published var longitude: Double = 126.97787363088995   //경도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
     @Published var zoomLevel: Int = 0   //Zoom Level
     @Published var currentAddress: String = ""  //현재 위치 주소 - 지도 중심 위치
+    @Published var isCurrentLocation: Bool = false  //현재 위치 이동 여부
     
     //MARK: - 지도 관련 변수
     @Published var mapView = MTMapView(frame: .zero)    //지도 화면
@@ -41,7 +42,7 @@ class ChargerMapViewModel: ObservableObject {
     @Published var searchEndDate: Date? //조회 종료일시
     @Published var radius: String = ""  //조회 반경범위
     @Published var isShowChargerList: Bool = false  //충전기 목록 노출 여부
-    @Published var searchChargers: [[String:String]] = []  //충전기 목록
+    @Published var searchChargers: [[String:String]] = []  //충전기 검색 목록
     
     //MARK: - 충전기 정보 변수
     @Published var isShowInfoView: Bool = false //충전기 정보 화면 노출 여부
@@ -93,8 +94,8 @@ class ChargerMapViewModel: ObservableObject {
     ///   - searchStartDate: 조회 시작일시
     ///   - searchEndDate: 조회 종료일시
     func currentLocation(_ searchStartDate: Date, _ searchEndDate: Date) {
+        isCurrentLocation = true    //현재 위치 이동 여부
         isShowInfoView = false  //충전기 정보 창 비활성
-        mapView.removeAllPOIItems() //지도에 표시된 마커 전체삭제
         
         getLoacation()  //현재 위치 정보 호출
         
@@ -179,19 +180,22 @@ class ChargerMapViewModel: ObservableObject {
                 
                 self.setChargerMarker(chargers: self.chargers)  //지도에 표시될 충전기 마커 설정
                 self.searchChargers.append(contentsOf: searchChargers)  //조회 충전기 목록 추가
+                self.isCurrentLocation = false  //현재 위치 이동 여부
             },
             //API 호출 실패
             onFailure: { (error) in
                 self.viewUtil.isLoading = false //로딩 종료
                 self.result = "error"
                 self.chargers = []  //충전기 목록 초기화
+                self.isCurrentLocation = false  //현재 위치 이동 여부
             }
         )
     }
     
-    //MARK: - 충전기 마커 설저
+    //MARK: - 충전기 마커 세팅
     /// - Parameter chargers: 충전기 정보 목록
     func setChargerMarker(chargers: [[String:Any]]) {
+        
         for index in 0..<chargers.count {
             let charger = chargers[index]   //충전기 정보
             let status = charger["chargerStatus"] as! String //충전기 상태
@@ -239,6 +243,8 @@ class ChargerMapViewModel: ObservableObject {
     //MARK: - 지도 POIItem(마커) 추가
     /// - Parameter markerItems: 마커 정보 목록
     func addPOIItems(markerItems: [[String:Any]]) {
+        mapView.removeAllPOIItems() //지도에 표시된 마커 전체삭제
+        
         var poiItem: MTMapPOIItem?  //POI Item
         var poiItems: [MTMapPOIItem] = []   //POI Item 목록
         var mapPoint: MTMapPoint?   //마커 위치

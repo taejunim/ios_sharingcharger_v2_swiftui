@@ -19,16 +19,18 @@ class ReservationViewModel: ObservableObject {
     @Published var showChargingPointAlert: Bool = false
     @Published var showCancelAlert: Bool = false
     
-    @Published var userIdNo: String = "" //UserDefaults.standard.string(forKey: "userIdNo")! //사용자 ID 번호
+    @Published var userIdNo: String = ""    //사용자 ID 번호
     @Published var isUserReservation: Bool = false  //사용자 예약 여부
-    @Published var reservationId: String = ""   //예약 ID
+    @Published var reservationId: String = ""   //예약 ID 번호
     @Published var reservationType: String = ""  //충전 예약 유형
     @Published var reservedChargerId: String = ""  //예약 충전기 번호
+    @Published var reservedChargerName: String = ""     //예약 충전기 명
     @Published var chargerLatitude: Double? //충전기 위도(Y좌표)
     @Published var chargerLongitude: Double?    //충전기 경도(X좌표)
     
     @Published var reservationStartDate: Date?  //예약 시작일시
     @Published var reservationEndDate: Date?    //예약 종료일시
+    @Published var reservationStatus: String = ""   //예약 상태
     
     @Published var textChargingTime: String = ""    //총 충전 시간 텍스트
     @Published var textStartDay: String = ""    //충전 시작 일자 텍스트
@@ -36,9 +38,11 @@ class ReservationViewModel: ObservableObject {
     @Published var textEndDay: String = ""  //충전 종료 일자 텍스트
     @Published var textEndTime: String = "" //충전 종료 시간 텍스트
     @Published var textExpectedPoint: String = ""   //예상 차감포인트 텍스트
+    @Published var textReservationStatus: String = ""   //예약 상태 텍스트
+    @Published var textReservationDate: String = "" //예약 일자 텍스트
     
-    @Published var textUserPoint: String = ""
-    @Published var textNeedPoint: String = ""
+    @Published var textUserPoint: String = ""   //사용자 보유 포인트 텍스트
+    @Published var textNeedPoint: String = ""   //필요 포인트(부족 포인트) 텍스트
     
     //MARK: - 사용자의 현재 예약 정보 조회
     func getUserReservation() {
@@ -51,15 +55,18 @@ class ReservationViewModel: ObservableObject {
                 
                 self.reservationId = String(reservation.id) //예약 ID
                 self.reservedChargerId = String(reservation.chargerId)  //예약 충전기 ID
+                self.reservedChargerName = reservation.chargerName!  //예약 충전기 명
                 
                 let formatStartDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: reservation.startDate!) //충전 시작일시 - Date 형식으로 변환
                 let formatEndDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: reservation.endDate!) //충전 종료일시 - Date 형식으로 변환
 
-                self.reservationStartDate = formatStartDate
-                self.reservationEndDate = formatEndDate
+                self.reservationStartDate = formatStartDate //예약 충전 시작일시
+                self.reservationEndDate = formatEndDate //예약 충전 종료일시
                 
-                self.setReservationInfo()
-                self.textExpectedPoint = String(reservation.expectPoint!)
+                self.reservationStatus = reservation.state! //예약 상태
+                
+                self.setReservationInfo()   //예약 정보 텍스트 설정
+                self.textExpectedPoint = String(reservation.expectPoint!)   //예상 차감 포인트 텍스트
             },
             //API 호출 실패
             onFailure: { (error) in
@@ -104,6 +111,17 @@ class ReservationViewModel: ObservableObject {
         textStartTime = "HH:mm".dateFormatter(formatDate: reservationStartDate!)    //예약 시작시간
         textEndDay = "MM/dd (E)".dateFormatter(formatDate: reservationEndDate!) //예약 종료일자
         textEndTime = "HH:mm".dateFormatter(formatDate: reservationEndDate!)    //예약 종료시간
+        
+        textReservationDate = "yyyy년 MM월 dd일 HH시 mm분".dateFormatter(formatDate: reservationStartDate!)
+        
+        //예약 상태 텍스트 - RESERVE(예약)
+        if reservationStatus == "RESERVE" {
+            textReservationStatus = "예약"
+        }
+        //KEEP(예약 지킴) - 충전중
+        else if reservationStatus == "KEEP" {
+            textReservationStatus = "충전중"
+        }
     }
     
     func checkChargingPoint(chargerId: String, _ chargingStartDate: Date, _ chargingEndDate: Date, completion: @escaping (Bool) -> Void) {
@@ -208,6 +226,8 @@ class ReservationViewModel: ObservableObject {
             onSuccess: { (cancel) in
                 completion(cancel)
                 self.viewUtil.showToast(isShow: true, message: "해당 예약 건이 정상적으로 취소되었습니다.")
+                self.textReservationDate = ""
+                self.reservedChargerName = ""
             },
             //API 호출 실패
             onFailure: { (error) in

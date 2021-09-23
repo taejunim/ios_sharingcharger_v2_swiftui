@@ -8,6 +8,12 @@
 import Foundation
 
 class UserViewModel: ObservableObject {
+    @Published var viewPath: String = ""
+    @Published var viewTitle: String = ""
+    
+    @Published var showFindAccountPopup: Bool = false
+    @Published var isFindAccount: Bool = false
+    
     @Published var isSigned: Bool = false
     @Published var isNewPassword: Bool = false
     

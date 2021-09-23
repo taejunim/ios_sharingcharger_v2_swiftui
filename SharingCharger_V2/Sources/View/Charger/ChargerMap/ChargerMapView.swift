@@ -14,6 +14,7 @@ struct ChargerMapView: View {
     @ObservedObject var chargerMap = ChargerMapViewModel()  //충전기 지도 View Model
     @ObservedObject var chargerSearch = ChargerSearchViewModel()    //충전기 조회 View Model
     @ObservedObject var reservation = ReservationViewModel()    //예약 View Model
+    @ObservedObject var purchase = PurchaseViewModel()
     
     var body: some View {
         //로그아웃 시, 로그인 화면으로 이동
@@ -34,23 +35,10 @@ struct ChargerMapView: View {
                         },
                         //지도 이동 후 위경도 정보 호출
                         movedPoint: { (latitude, longitude) in
-                            chargerMap.latitude = latitude  //위도
-                            chargerMap.longitude = longitude    //경도
-                            
-                            //충전기 목록 호출
-                            chargerMap.getChargerList(
-                                zoomLevel: chargerMap.zoomLevel,
-                                latitude: chargerMap.latitude,
-                                longitude: chargerMap.longitude,
-                                searchStartDate: chargerSearch.chargingStartDate!,
-                                searchEndDate: chargerSearch.chargingEndDate!
-                            )
-                        },
-                        //지도 확대 및 축소 시 Zoom 레벨 호출
-                        changedZoomLevel: { (zoomLevel) in
-                            //Zoom Level 변경된 경우 실행
-                            if chargerMap.zoomLevel != zoomLevel {
-                                chargerMap.zoomLevel = zoomLevel    //Zoom Level
+                            //현재 위치 이동 시 실행 방지
+                            if !chargerMap.isCurrentLocation {
+                                chargerMap.latitude = latitude  //위도
+                                chargerMap.longitude = longitude    //경도
                                 
                                 //충전기 목록 호출
                                 chargerMap.getChargerList(
@@ -60,6 +48,25 @@ struct ChargerMapView: View {
                                     searchStartDate: chargerSearch.chargingStartDate!,
                                     searchEndDate: chargerSearch.chargingEndDate!
                                 )
+                            }
+                        },
+                        //지도 확대 및 축소 시 Zoom 레벨 호출
+                        changedZoomLevel: { (zoomLevel) in
+                            //현재 위치 이동 시 실행 방지
+                            if !chargerMap.isCurrentLocation {
+                                //Zoom Level 변경된 경우 실행
+                                if chargerMap.zoomLevel != zoomLevel {
+                                    chargerMap.zoomLevel = zoomLevel    //Zoom Level
+                                    
+                                    //충전기 목록 호출
+                                    chargerMap.getChargerList(
+                                        zoomLevel: chargerMap.zoomLevel,
+                                        latitude: chargerMap.latitude,
+                                        longitude: chargerMap.longitude,
+                                        searchStartDate: chargerSearch.chargingStartDate!,
+                                        searchEndDate: chargerSearch.chargingEndDate!
+                                    )
+                                }
                             }
                         },
                         //지도의 마커 선택 시 해당 마커의 ID 호출
@@ -85,7 +92,7 @@ struct ChargerMapView: View {
 
                     //사이드 메뉴 표시 여부에 따라 노출
                     if sideMenu.isShowMenu {
-                        SideMenuView(sideMenu: sideMenu)    //사이드 메뉴
+                        SideMenuView(sideMenu: sideMenu, reservation: reservation)    //사이드 메뉴
                     }
                     
                     //로딩 표시 여부에 따라 표출
@@ -100,7 +107,11 @@ struct ChargerMapView: View {
                     
                     //충전기 정보 Modal 화면에서 충전하기 진행 시, 잔여 포인트가 부족할 경우 '포인트 충전 알림창' 호출
                     if reservation.showChargingPointAlert {
-                        ChargingPointAlert(chargerMap: chargerMap, reservation: reservation)
+                        ChargingPointAlert(chargerMap: chargerMap, reservation: reservation, purchase: purchase)
+                        
+                        if purchase.showPaymentInputAlert {
+                            PaymentInputAlert(purchase: purchase)
+                        }
                     }
                     
                     //충전기 정보 Modal 화면에서 예약 취소 시, 예약 취소 알림창 호출

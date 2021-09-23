@@ -56,9 +56,9 @@ class UserAPIService {
     /// - Parameter parameters:
     ///   - 
     /// - Returns: description
-    public func requestFindId(parameters: [String:String]) -> Future<User, AFError> {
+    public func requestFindId(parameters: [String:String]) -> Future<[User], AFError> {
         
-        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/find/id", parameters: parameters, contentType: "json"))
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/find/email", parameters: parameters, contentType: "json"))
     }
     
     //MARK: - 인증번호 요청 API 호출

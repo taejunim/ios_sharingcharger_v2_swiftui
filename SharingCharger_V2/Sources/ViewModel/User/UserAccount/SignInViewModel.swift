@@ -77,6 +77,7 @@ class SignInViewModel: ObservableObject {
                 UserDefaults.standard.set(signIn.id, forKey: "userIdNo")
                 UserDefaults.standard.set(signIn.email, forKey: "userId")
                 UserDefaults.standard.set(self.password, forKey: "password")
+                UserDefaults.standard.set(signIn.name, forKey: "userName")
 
                 self.id = ""    //아이디(이메일) 초기화
                 self.password = ""  //비밀번호 초기화

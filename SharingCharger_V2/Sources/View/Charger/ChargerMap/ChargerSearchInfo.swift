@@ -29,7 +29,7 @@ struct ChargerSearchInfo: View {
                         ReservationModalButton(chargerMap: chargerMap, reservation: reservation)
                     }
                     
-                    SearchChargerList(chargerMap: chargerMap, chargerSearch: chargerSearch) //조회된 충전기 목록
+                    SearchChargerList(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation) //조회된 충전기 목록
                 }
                 .frame(maxWidth: .infinity, maxHeight: geometry.size.height * 0.4)  //디바이스 화면 비율에 따라 자동 높이 조절
                 .background(Color.white)
@@ -102,6 +102,7 @@ struct SearchModalButton: View {
     }
 }
 
+//MARK: - 예약 정보 팝업 창 버튼
 struct ReservationModalButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     @ObservedObject var reservation: ReservationViewModel
@@ -142,10 +143,10 @@ struct ReservationModalButton: View {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 20)
                                     .frame(width: 55, height: 25)
-                                    .foregroundColor(Color("#1ABC9C"))    //충전기 상태에 따른 배경 색상
+                                    .foregroundColor(Color("#1ABC9C"))
                                     .shadow(color: Color("#006AC5"), radius: 1, x: 1.2, y: 1.2)
 
-                                Text("예약")
+                                Text(reservation.textReservationStatus)
                                     .font(.subheadline)
                                     .foregroundColor(Color.white)
                                     .fontWeight(.bold)
@@ -174,6 +175,7 @@ struct ReservationModalButton: View {
 struct SearchChargerList: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     @ObservedObject var chargerSearch: ChargerSearchViewModel
+    @ObservedObject var reservation: ReservationViewModel
     
     var body: some View {
         ScrollView {
@@ -203,13 +205,37 @@ struct SearchChargerList: View {
                         //예약 상태
                         else if chargerStatus == "RESERVATION" {
                             statusText = "예약중"
-                            statusColor = "#C0392B"
+                            
+                            if reservation.isUserReservation {
+                                if chargerId == reservation.reservedChargerId {
+                                    statusColor = "#1ABC9C"
+                                }
+                                else {
+                                    statusColor = "#C0392B"
+                                }
+                            }
+                            else {
+                                statusColor = "#C0392B"
+                            }
                             
                             return "Map-Pin-Red-Select"
                         }
                         else if chargerStatus == "CHARGING" {
-                            statusText = "충전중"
-                            statusColor = "#C0392B"
+                            
+                            if reservation.isUserReservation {
+                                if chargerId == reservation.reservedChargerId {
+                                    statusText = "충전중"
+                                    statusColor = "#1ABC9C"
+                                }
+                                else {
+                                    statusText = "사용중"
+                                    statusColor = "#C0392B"
+                                }
+                            }
+                            else {
+                                statusText = "사용중"
+                                statusColor = "#C0392B"
+                            }
                             
                             return "Map-Pin-Red-Select"
                         }
