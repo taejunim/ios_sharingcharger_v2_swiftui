@@ -1,5 +1,5 @@
 //
-//  UserViewModel.swift
+//  UserInfoViewModel.swift
 //  SharingCharger_V2
 //
 //  Created by KJ on 2021/08/09.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class UserViewModel: ObservableObject {
+class UserInfoViewModel: ObservableObject {
     private let userAPI = UserAPIService()  //사용자 API Service
     @Published var viewUtil = ViewUtil() //View Util
     

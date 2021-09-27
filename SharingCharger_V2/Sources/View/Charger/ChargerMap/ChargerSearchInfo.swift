@@ -1,5 +1,5 @@
 //
-//  SearchInfoView.swift
+//  ChargerSearchInfo.swift
 //  SharingCharger_V2
 //
 //  Created by KJ on 2021/09/13.
@@ -20,13 +20,14 @@ struct ChargerSearchInfo: View {
                 Spacer()
                 
                 VStack(spacing: 0) {
+                    //사용자의 예약 정보 여부에 따라 버튼 변경
                     if !reservation.isUserReservation {
                         SearchModalButton(chargerMap: chargerMap, chargerSearch: chargerSearch) //검색조건 팝업창 버튼
                         
                         HorizontalDividerline() //구분선 - Horizontal Padding
                     }
                     else {
-                        ReservationModalButton(chargerMap: chargerMap, reservation: reservation)
+                        ReservationModalButton(chargerMap: chargerMap, reservation: reservation)    //예약 정보 팝업창 버튼
                     }
                     
                     SearchChargerList(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation) //조회된 충전기 목록
@@ -38,7 +39,7 @@ struct ChargerSearchInfo: View {
                 .padding(.horizontal, 20)
             }
             .onAppear {
-                reservation.userIdNo = UserDefaults.standard.string(forKey: "userIdNo")! //사용자 ID 번호
+                reservation.userIdNo = UserDefaults.standard.string(forKey: "userIdNo") ?? "" //사용자 ID 번호
                 reservation.getUserReservation()
             }
         }

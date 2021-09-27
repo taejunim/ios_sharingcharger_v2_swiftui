@@ -12,6 +12,7 @@ struct ChargerInfoModal: View {
     @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
     @ObservedObject var chargerSearch: ChargerSearchViewModel   //충전기 검색 View Model
     @ObservedObject var reservation: ReservationViewModel   //예약 View Model
+    @ObservedObject var purchase: PurchaseViewModel //포인트 구매 View Model
     
     var body: some View {
         GeometryReader { (geometry) in
@@ -40,7 +41,7 @@ struct ChargerInfoModal: View {
                         
                         Spacer()
                         
-                        ChargingProgressButton(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)  //충전 진행 버튼
+                        ChargingProgressButton(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase)  //충전 진행 버튼
                     }
                     .padding(.top, 25)
                 }
@@ -93,7 +94,7 @@ struct ChargerSummaryInfo: View {
                 HStack(spacing: 0) {
                     //충전기 명
                     Text(chargerMap.chargerName)
-                        .font(.title2)
+                        .font(.title3)
                         .fontWeight(.bold)
                     
                     Text("(" + chargerMap.bleNumber.suffix(5) + ")")
@@ -232,48 +233,20 @@ struct ChargingProgressButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     @ObservedObject var chargerSearch: ChargerSearchViewModel
     @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var purchase: PurchaseViewModel
     
     var body: some View {
+        //사용자의 예약 정보가 없거나 다른 사용자가 예약한 충전기가 아닌 경우
         if reservation.isUserReservation == false || reservation.reservedChargerId != chargerMap.selectChargerId {
-            Button(
-                action: {
-                    reservation.reservationType = chargerSearch.searchType  //충전 유형
-
-                    //선택한 충전 유형에 따라 충전 단계 변경 - 즉시 충전
-                    if chargerSearch.searchType == "Instant" {
-        
-                        chargerSearch.getCurrentDate() { (currentDate) in
-                            let chargingStartDate = currentDate //충전 시작일시
-                            let chargingEndDate: Date = Calendar.current.date(byAdding: .second, value: chargerSearch.selectChargingTime, to: currentDate)! //충전 종료일시 계산
-                            
-                            reservation.checkChargingPoint(chargerId: chargerMap.selectChargerId, chargingStartDate, chargingEndDate) { (isRechargeable) in
-                                
-                                if isRechargeable {
-                                    reservation.showChargingAlert = true
-                                }
-                                else {
-                                    reservation.showChargingPointAlert = true
-                                }
-                            }
-                        }
-                    }
-                    //선택한 충전 유형에 따라 충전 단계 변경 - 예약 충전
-                    else if chargerSearch.searchType == "Scheduled" {
-                        
-                    }
-                },
-                label: {
-                    //선택한 충전 유형에 따라 버튼 라벨 변경
-                    Text(chargerSearch.searchType == "Instant" ? "충전하기" : "예약하기")
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.white)
-                        .padding(.horizontal)
-                        .frame(maxWidth: .infinity, maxHeight: 40)
-                        .background(reservation.isUserReservation ? Color("#EFEFEF") : Color("#3498DB"))
-                }
-            )
-            .disabled(reservation.isUserReservation)
+            
+            //선택한 충전 유형에 따라 충전 단계 변경 - 즉시 충전 버튼
+            if chargerSearch.searchType == "Instant" {
+                InstantChargeButton(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase)
+            }
+            //선택한 충전 유형에 따라 충전 단계 변경 - 예약 충전 버튼
+            else if chargerSearch.searchType == "Scheduled" {
+                ReservationChargeButton(chargerMap: chargerMap, reservation: reservation)
+            }
         }
         else {
             HStack(spacing: 0) {
@@ -315,8 +288,81 @@ struct ChargingProgressButton: View {
     }
 }
 
+//MARK: - 즉시 충전 버튼
+struct InstantChargeButton: View {
+    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var chargerSearch: ChargerSearchViewModel
+    @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var purchase: PurchaseViewModel
+    
+    var body: some View {
+        Button(
+            action: {
+                reservation.reservationType = chargerSearch.searchType  //충전 유형
+
+                //현재 일시 호출 후 포인트 확인
+                chargerSearch.getCurrentDate() { (currentDate) in
+                    let chargingStartDate = currentDate //충전 시작일시
+                    let chargingEndDate: Date = Calendar.current.date(byAdding: .second, value: chargerSearch.selectChargingTime, to: currentDate)! //충전 종료일시 계산
+                    
+                    //포인트 확인 실행
+                    reservation.checkChargingPoint(chargerId: chargerMap.selectChargerId, chargingStartDate, chargingEndDate) { (isRechargeable) in
+                        
+                        //충전할 포인트가 있는 경우
+                        if isRechargeable {
+                            reservation.showChargingAlert = true    //충전 진행 알림창 호출
+                        }
+                        //충전할 포인트가 부족한 경우
+                        else {
+                            purchase.showPointLackAlert = true  //포인트 부족 알림창 호출
+                        }
+                    }
+                }
+            },
+            label: {
+                //선택한 충전 유형에 따라 버튼 라벨 변경
+                Text("충전하기")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.white)
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .background(reservation.isUserReservation ? Color("#EFEFEF") : Color("#3498DB"))
+            }
+        )
+        .disabled(reservation.isUserReservation)
+    }
+}
+
+//MARK: - 예약 충전 버튼
+struct ReservationChargeButton: View {
+    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var reservation: ReservationViewModel
+    
+    var body: some View {
+        NavigationLink(
+            destination: ReservationView(chargerMap: chargerMap, reservation: reservation),
+            label: {
+                Text("예약하기")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.white)
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .background(reservation.isUserReservation ? Color("#EFEFEF") : Color("#3498DB"))
+            }
+        )
+        .disabled(reservation.isUserReservation)
+    }
+}
+
 struct ChargerInfoModal_Previews: PreviewProvider {
     static var previews: some View {
-        ChargerInfoModal(chargerMap: ChargerMapViewModel(), chargerSearch: ChargerSearchViewModel(), reservation: ReservationViewModel())
+        ChargerInfoModal(
+            chargerMap: ChargerMapViewModel(),
+            chargerSearch: ChargerSearchViewModel(),
+            reservation: ReservationViewModel(),
+            purchase: PurchaseViewModel()
+        )
     }
 }

@@ -58,7 +58,7 @@ class ReservationAPIService {
     /// - Returns: User Reservation Model
     public func requestReservation(parameters: [String:Any]) -> Future<UserReservation, AFError> {
         
-        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/reservation", parameters: parameters))
+        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/reservation", parameters: parameters, contentType: "json"))
     }
     
     //MARK: - 충전기 예약 취소 API 호출

@@ -31,6 +31,11 @@ struct ContentView: View {
                             }
                             //로그인 실패 또는 서버 에러에 따른 메시지 출력
                             else if result == "fail" {
+                                //사용자 저장 정보 전체 삭제
+                                for key in UserDefaults.standard.dictionaryRepresentation().keys {
+                                    UserDefaults.standard.removeObject(forKey: key.description)
+                                }
+                                
                                 UserDefaults.standard.set(false, forKey: "autoSignIn")  //자동 로그인 여부 - False
                                 viewUtil.showToast(isShow: true, message: "fail.signin.auto".message())
                             }

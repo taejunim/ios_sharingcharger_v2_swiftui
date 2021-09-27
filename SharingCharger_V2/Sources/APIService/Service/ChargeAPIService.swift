@@ -15,24 +15,28 @@ class ChargeAPIService {
     let apiClient = APIClient() //API Client - 공통 API 호출
     
     //MARK: - 충전 시작 전 인증 API 호출
-    public func requestChargerUseAuth(chargerId: String, parameters: [String:Any]) -> Future<UserReservation, AFError> {
+    public func requestChargerUseAuth(chargerId: String, parameters: [String:Any]) -> Future<String, AFError> {
         
-        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/recharge/authenticate/charger/\(chargerId)", parameters: parameters))
+        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/recharge/authenticate/charger/\(chargerId)", parameters: parameters, contentType: "text"))
     }
     
-    public func requestChargeStart(chargerId: String, parameters: [String:Any]) -> Future<UserReservation, AFError> {
+    public func requestChargeStart(chargerId: String, parameters: [String:Any]) -> Future<ChargeInfo, AFError> {
         
-        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/recharge/start/charger/\(chargerId)", parameters: parameters))
+        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/recharge/start/charger/\(chargerId)", parameters: parameters, contentType: "json"))
     }
     
-    public func requestChargeEnd(chargerId: String, parameters: [String:Any]) -> Future<UserReservation, AFError> {
+    public func requestChargeEnd(chargerId: String, parameters: [String:Any]) -> Future<ChargeInfo, AFError> {
         
         return apiClient.request(route: APIRouter.put(useApi: "base", path: "/recharge/end/charger/\(chargerId)", parameters: parameters))
     }
     
-    public func requestChargeAbnormalEnd(chargerId: String, parameters: [String:Any]) -> Future<UserReservation, AFError> {
+    public func requestChargeAbnormalEnd(chargerId: String, parameters: [String:Any]) -> Future<ChargeInfo, AFError> {
         
         return apiClient.request(route: APIRouter.put(useApi: "base", path: "/recharge/end/charger/\(chargerId)/unplanned", parameters: parameters))
     }
     
+    public func requestChargeHistory(userIdNo: String, parameters: [String:String]) -> Future<[ChargeInfo], AFError> {
+        
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/recharges/users/\(userIdNo)/history", parameters: parameters, contentType: "json"))
+    }
 }

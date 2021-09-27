@@ -101,13 +101,14 @@ struct ChargingAlert: View {
                                         chargerSearch.chargingStartDate!,   //충전 시작일시
                                         chargerSearch.chargingEndDate!  //충전 종료일시
                                     ) { (reservation) in
+                                        //충전기 재 조회 후, 예약한 충전기로 이동
+                                        chargerMap.moveToReservedCharger(chargerId: String(reservation.chargerId), latitude: chargerMap.latitude, longitude: chargerMap.longitude)
                                         
                                         withAnimation {
                                             chargerMap.showChargingView = true  //충전 화면 활성화
                                         }
                                         
                                         self.reservation.showChargingAlert = false  //충전하기 알림창 비활성화
-                                        //chargerMap.currentLocation(chargerSearch.chargingStartDate!, chargerSearch.chargingEndDate!)    //현재 위치 조회
                                     }
                                 }
                             },
@@ -139,8 +140,8 @@ struct ChargingAlert: View {
     }
 }
 
-//MARK: - 포인트 충전 알림창
-struct ChargingPointAlert: View {
+//MARK: - 포인트 부족 알림창
+struct PointLackAlert: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     @ObservedObject var reservation: ReservationViewModel
     @ObservedObject var purchase: PurchaseViewModel
@@ -204,7 +205,7 @@ struct ChargingPointAlert: View {
                         //취소 버튼 - 알림창 닫기
                         Button(
                             action: {
-                                reservation.showChargingPointAlert = false  //현재 알림창 닫기
+                                purchase.showPointLackAlert = false  //현재 알림창 닫기
                             },
                             label: {
                                 Text("취소")
@@ -391,6 +392,8 @@ struct PaymentInputAlert:View {
                                 action: {
                                     purchase.viewUtil.dismissKeyboard()  //키보드 닫기
                                     purchase.checkPaymentAmount()   //결제금액 확인 후 결제 진행 실행
+                                    
+                                    //purchase.showPaymentModal = true
                                 },
                                 label: {
                                     Text("결제 진행")
@@ -414,10 +417,18 @@ struct PaymentInputAlert:View {
                 }
                 .padding()
                 .frame(width: geometryReader.size.width, height: geometryReader.size.height)
+                .background(Color.black.opacity(purchase.showPointLackAlert ? 0 : 0.5))
                 .onAppear {
+                    purchase.paymentUserIdNo = UserDefaults.standard.string(forKey: "userIdNo")!
                     purchase.paymentAmount = 0  //결제금액 초기화
                     purchase.stringPaymentAmount = "0"  //직접입력 결제금액 초기화
                 }
+                .sheet(
+                    isPresented: $purchase.showPaymentModal,
+                    content: {
+                        PaymentModal(purchase: purchase)    //결제 Web View 팝업
+                    }
+                )
                 .popup(
                     isPresented: $purchase.viewUtil.isShowToast,   //팝업 노출 여부
                     type: .floater(verticalPadding: 80),
@@ -438,7 +449,6 @@ struct PaymentInputAlert:View {
             }
         }
         .edgesIgnoringSafeArea(.all)
-        
     }
 }
 

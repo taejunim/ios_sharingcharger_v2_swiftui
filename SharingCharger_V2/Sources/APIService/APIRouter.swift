@@ -12,7 +12,7 @@ enum APIRouter: URLRequestConvertible {
     
     //MARK: - Request Method
     case get(useApi: String, path: String, parameters: [String:String], contentType: String)    //GET
-    case post(useApi: String, path: String, parameters: [String:Any])  //POST
+    case post(useApi: String, path: String, parameters: [String:Any], contentType: String)  //POST
     case put(useApi: String, path: String, parameters: [String:Any])   //PUT
 
     //MARK: - Base URL
@@ -33,11 +33,11 @@ enum APIRouter: URLRequestConvertible {
     //MARK: - Path
     private var path: String {
         switch self {
-        case .get(_, let path, _, _):
+        case .get( _, let path, _, _):
             return path
-        case .post(_, let path, _):
+        case .post( _, let path, _, _):
             return path
-        case .put(_, let path, _):
+        case .put( _, let path, _):
             return path
         }
     }
@@ -45,11 +45,11 @@ enum APIRouter: URLRequestConvertible {
     //MARK: - Parameters
     private var parameters: Parameters? {
         switch self {
-        case .get(_, _, let parameters, _):
+        case .get( _, _, let parameters, _):
             return parameters
-        case .post(_, _, let parameters):
+        case .post( _, _, let parameters, _):
             return parameters
-        case .put(_, _, let parameters):
+        case .put( _, _, let parameters):
             return parameters
         }
     }
@@ -68,7 +68,7 @@ enum APIRouter: URLRequestConvertible {
 
         //MARK: - Headers
         switch self {
-        case .get(_, _, _, let contentType):
+        case .get( _, _, _, let contentType):
             //Content-Type에 따른 Headers 설정
             if contentType == "json" {
                 urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -77,9 +77,14 @@ enum APIRouter: URLRequestConvertible {
             else if contentType == "text" {
                 urlRequest.setValue("text/plain;charset=UTF-8", forHTTPHeaderField: "Content-Type")
             }
-        case .post:
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+        case .post( _, _, _, let contentType):
+            if contentType == "json" {
+                urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+            }
+            else if contentType == "text" {
+                urlRequest.setValue("text/plain;charset=UTF-8", forHTTPHeaderField: "Content-Type")
+            }
         case .put:
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
@@ -87,15 +92,15 @@ enum APIRouter: URLRequestConvertible {
 
         //MARK: - Parameters
         switch self {
-        case .get(_, _, let parameters, _):
+        case .get( _, _, let parameters, _):
             urlRequest = try URLEncodedFormParameterEncoder().encode(parameters, into: urlRequest)
-        case .post(_, _, let parameters):
+        case .post( _, _, let parameters, _):
             do {
                 urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])   //JSON Parsing
             } catch {
                 throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
             }
-        case .put(_, _, let parameters):
+        case .put( _, _, let parameters):
             do {
                 urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])   //JSON Parsing
             } catch {

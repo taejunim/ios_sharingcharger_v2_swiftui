@@ -20,7 +20,7 @@ class UserAPIService {
     /// - Returns: User Model
     public func requestSignIn(parameters: [String:Any]) -> Future<User, AFError> {
         
-        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/login", parameters: parameters))
+        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/login", parameters: parameters, contentType: "json"))
     }
     
     //MARK: - 회원가입 API 호출
@@ -37,7 +37,7 @@ class UserAPIService {
     /// - Returns: User Model
     public func requestSignUp(parameters: [String:Any]) -> Future<User, AFError> {
         
-        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/join", parameters: parameters))
+        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/join", parameters: parameters, contentType: "json"))
     }
     
     //MARK: - 아이디(이메일) 확인 API 호출

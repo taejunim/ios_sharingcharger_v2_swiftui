@@ -26,6 +26,6 @@ class PurchaseAPIService {
     /// - Returns: Purchase Model
     public func requestPurchase(userIdNo: String, parameters: [String:Any]) -> Future<Purchase, AFError> {
         
-        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/purchase/user/\(userIdNo)", parameters: parameters))
+        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/purchase/user/\(userIdNo)", parameters: parameters, contentType: "json"))
     }
 }

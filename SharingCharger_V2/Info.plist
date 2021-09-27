@@ -2,14 +2,64 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key></key>
-	<string></string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+		<string>kftc-bankpay</string>
+		<string>ispmobile</string>
+		<string>shinhan-sr-ansimclick</string>
+		<string>smshinhanansimclick</string>
+		<string>hdcardappcardansimclick</string>
+		<string>smhyundaiansimclick</string>
+		<string>mpocket.online.ansimclick</string>
+		<string>scardcertiapp</string>
+		<string>cloudpay</string>
+		<string>nhappcardansimclick</string>
+		<string>nonghyupcardansimclick</string>
+		<string>kb-acp</string>
+		<string>lotteappcard</string>
+		<string>lottesmartpay</string>
+		<string>citispay</string>
+		<string>shinsegaeeasypayment</string>
+		<string>kakaotalk</string>
+		<string>tswansimclick</string>
+		<string>nhallonepayansimclick</string>
+		<string>citimobileapp</string>
+		<string>payco</string>
+		<string>hanaskcardmobileportal</string>
+		<string>wooripay</string>
+		<string>lpayapp</string>
+		<string>hanawalletmembers</string>
+		<string>tauthlink</string>
+		<string>ktauthexternalcall</string>
+		<string>upluscorporation</string>
+		<string>liivbank</string>
+		<string>kb-bankpay</string>
+		<string>kipinapp</string>
+		<string>kb-auth</string>
+		<string>pocket.online.ansimclick</string>
+		<string>kakaoplus</string>
+		<string>ansimclickscard</string>
+		<string>ansimclickipcollect</string>
+		<string>samsungpay</string>
+		<string>vguardstart</string>
+		<string>shinhan-sr-ansimclick-payco</string>
+		<string>shinhan-sr-ansimclick-naverpay</string>
+	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
 	<key>KAKAO_APP_KEY</key>
 	<string>3bb3a033d0be7eb29b8b8058e0fda7a1</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string></string>
+	<string>사용자 주변의 충전기 위치를 조회하기 위해 위치 정보를 사용합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>사용자 주변의 충전기 위치를 조회하기 위해 위치 정보를 사용합니다.</string>
 	<key>CFBundleDevelopmentRegion</key>

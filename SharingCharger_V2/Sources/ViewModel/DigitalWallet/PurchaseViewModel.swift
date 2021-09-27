@@ -6,12 +6,16 @@
 //
 
 import Foundation
+import WebKit
 
 class PurchaseViewModel: ObservableObject {
     private let purchaseAPI = PurchaseAPIService()  //포인트 구매 API Service
+    private let pointAPI = PointAPIService()  //포인트 API Service
+    
     @Published var viewUtil = ViewUtil()
     
-    @Published var showPaymentInputAlert: Bool = false  //알림창 활성 여부
+    @Published var showPointLackAlert: Bool = false //포인트 부족 알림창 활성 여부
+    @Published var showPaymentInputAlert: Bool = false  //결제 입력 알림창 활성 여부
     
     @Published var paymentArray: [Int] = [10000, 30000, 50000]  //결제 금액 선택 목록
     @Published var isDirectlyInput: Bool = false    //직접입력 여부
@@ -23,9 +27,14 @@ class PurchaseViewModel: ObservableObject {
             changePaymentAmount()   //직접입력 결제 금액 변경
         }
     }
+    
     @Published var isCheckAmount: Bool = false  //결제 금액 확인 여부
     @Published var isPayment: Bool = false  //결제 성공 여부
     
+    @Published var paymentWebView = WKWebView(frame: .zero)
+    @Published var showPaymentModal: Bool = false
+    @Published var paymentUserIdNo: String = ""
+
     //MARK: - 직접 입력한 결제 금액 변경
     func changePaymentAmount() {
         //직접입력 금액이 빈값이 아니고 첫번째 숫자가 0이 아닐때만 결제 금액 변경
@@ -65,23 +74,23 @@ class PurchaseViewModel: ObservableObject {
         //결제 금액이 0이 아닌 경우 결제 단계 실행
         else {
             isCheckAmount = true    //결제금액 확인 결과
-            viewUtil.isLoading = true   //로딩 시작
+            showPaymentModal = true //결제 Web View 팝업창 호출
             
             //포인트 구매 API 실행
-            purchacePoint() { (result) in
-                self.viewUtil.isLoading = false //로딩 종료
-                
-                if result == "success" {
-                    self.isPayment = true
-                    self.paymentAmount = 0
-                    self.stringPaymentAmount = "0"
-                    self.viewUtil.showToast(isShow: true, message: "충전이 완료되었습니다.")
-                }
-                else {
-                    self.isPayment = false
-                    self.viewUtil.showToast(isShow: true, message: "server.error".message())
-                }
-            }
+//            purchacePoint() { (result) in
+//                self.viewUtil.isLoading = false //로딩 종료
+//                
+//                if result == "success" {
+//                    self.isPayment = true
+//                    self.paymentAmount = 0
+//                    self.stringPaymentAmount = "0"
+//                    self.viewUtil.showToast(isShow: true, message: "충전이 완료되었습니다.")
+//                }
+//                else {
+//                    self.isPayment = false
+//                    self.viewUtil.showToast(isShow: true, message: "server.error".message())
+//                }
+//            }
         }
     }
     

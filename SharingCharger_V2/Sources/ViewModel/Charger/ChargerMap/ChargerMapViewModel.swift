@@ -108,7 +108,7 @@ class ChargerMapViewModel: ObservableObject {
         mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
         
         //충전기 목록 조회
-        getChargerList(zoomLevel: 0, latitude: latitude, longitude: longitude, searchStartDate: searchStartDate, searchEndDate: searchEndDate)
+        getChargerList(zoomLevel: 0, latitude: latitude, longitude: longitude, searchStartDate: searchStartDate, searchEndDate: searchEndDate) { _ in }
     }
     
     //MARK: - 충전기 목록 조회 실행
@@ -118,7 +118,7 @@ class ChargerMapViewModel: ObservableObject {
     ///   - longitude: 경도
     ///   - searchStartDate: 조회 시작일시
     ///   - searchEndDate: 조회 종료일시
-    func getChargerList(zoomLevel: Int, latitude: Double, longitude: Double, searchStartDate: Date, searchEndDate: Date) {
+    func getChargerList(zoomLevel: Int, latitude: Double, longitude: Double, searchStartDate: Date, searchEndDate: Date, completion: @escaping ([Charger]) -> Void) {
         isShowInfoView = false  //충전기 정보 화면 비활성화
         viewUtil.isLoading = true   //로딩 시작
         
@@ -181,6 +181,8 @@ class ChargerMapViewModel: ObservableObject {
                 self.setChargerMarker(chargers: self.chargers)  //지도에 표시될 충전기 마커 설정
                 self.searchChargers.append(contentsOf: searchChargers)  //조회 충전기 목록 추가
                 self.isCurrentLocation = false  //현재 위치 이동 여부
+                
+                completion(getChargers)
             },
             //API 호출 실패
             onFailure: { (error) in
@@ -387,6 +389,7 @@ class ChargerMapViewModel: ObservableObject {
         }
     }
     
+    //MARK: - 예약한 충전기로 이동
     func moveToReservedCharger(chargerId: String, latitude: Double, longitude: Double) {
         //충전기 위치 지도 중심으로 이동
         mapView.setMapCenter(
@@ -397,8 +400,8 @@ class ChargerMapViewModel: ObservableObject {
         mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
         
         //충전기 목록 조회
-        getChargerList(zoomLevel: 0, latitude: latitude, longitude: longitude, searchStartDate: currentDate, searchEndDate: currentDate)
-        
-        mapView.select(mapView.findPOIItem(byTag: Int(chargerId)!), animated: true)   //마커 선택 표시 처리
+        getChargerList(zoomLevel: 0, latitude: latitude, longitude: longitude, searchStartDate: currentDate, searchEndDate: currentDate) { _ in
+            self.mapView.select(self.mapView.findPOIItem(byTag: Int(chargerId)!), animated: true)   //마커 선택 표시 처리
+        }
     }
 }

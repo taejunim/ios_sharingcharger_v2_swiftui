@@ -78,6 +78,7 @@ class SignInViewModel: ObservableObject {
                 UserDefaults.standard.set(signIn.email, forKey: "userId")
                 UserDefaults.standard.set(self.password, forKey: "password")
                 UserDefaults.standard.set(signIn.name, forKey: "userName")
+                UserDefaults.standard.set(signIn.userType, forKey: "userType") //사용자 유형 - General, Personal
 
                 self.id = ""    //아이디(이메일) 초기화
                 self.password = ""  //비밀번호 초기화
@@ -117,7 +118,8 @@ class SignInViewModel: ObservableObject {
     
     //MARK: - 비밀번호 유효성 검사
     func isPasswordValid() -> Bool {
-        let regExp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*?])(?=.*[0-9])[a-zA-Z\\d!@#$%^&*?]{6,20}"   //영문, 숫자, 특수문자
+        //let regExp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*?])(?=.*[0-9])[a-zA-Z\\d!@#$%^&*?]{6,20}"   //영문, 숫자, 특수문자
+        let regExp = "^[a-zA-Z0-9!@#$%^&*?]{1,20}$" //유효성 임시 허용
         let predicate = NSPredicate(format: "SELF MATCHES %@", regExp)
 
         return predicate.evaluate(with: password)

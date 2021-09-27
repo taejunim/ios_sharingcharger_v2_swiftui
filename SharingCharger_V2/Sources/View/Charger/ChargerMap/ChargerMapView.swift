@@ -14,7 +14,8 @@ struct ChargerMapView: View {
     @ObservedObject var chargerMap = ChargerMapViewModel()  //충전기 지도 View Model
     @ObservedObject var chargerSearch = ChargerSearchViewModel()    //충전기 조회 View Model
     @ObservedObject var reservation = ReservationViewModel()    //예약 View Model
-    @ObservedObject var purchase = PurchaseViewModel()
+    @ObservedObject var point = PointViewModel()    //포인트 View Model
+    @ObservedObject var purchase = PurchaseViewModel()  //포인트 구매 View Model
     
     var body: some View {
         //로그아웃 시, 로그인 화면으로 이동
@@ -47,7 +48,7 @@ struct ChargerMapView: View {
                                     longitude: chargerMap.longitude,
                                     searchStartDate: chargerSearch.chargingStartDate!,
                                     searchEndDate: chargerSearch.chargingEndDate!
-                                )
+                                ) { _ in }
                             }
                         },
                         //지도 확대 및 축소 시 Zoom 레벨 호출
@@ -65,7 +66,7 @@ struct ChargerMapView: View {
                                         longitude: chargerMap.longitude,
                                         searchStartDate: chargerSearch.chargingStartDate!,
                                         searchEndDate: chargerSearch.chargingEndDate!
-                                    )
+                                    ) { _ in }
                                 }
                             }
                         },
@@ -88,11 +89,11 @@ struct ChargerMapView: View {
                     FrameView(sideMenu: sideMenu, chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)
                     
                     //충전기 정보 Modal View
-                    ChargerInfoModal(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)
+                    ChargerInfoModal(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase)
 
                     //사이드 메뉴 표시 여부에 따라 노출
                     if sideMenu.isShowMenu {
-                        SideMenuView(sideMenu: sideMenu, reservation: reservation)    //사이드 메뉴
+                        SideMenuView(sideMenu: sideMenu, reservation: reservation, point: point, purchase: purchase)    //사이드 메뉴
                     }
                     
                     //로딩 표시 여부에 따라 표출
@@ -102,16 +103,17 @@ struct ChargerMapView: View {
 
                     //충전기 정보 Modal 화면에서 충전하기 진행 시, 잔여 포인트가 충분할 경우 '충전하기 알림창' 호출
                     if reservation.showChargingAlert {
-                        ChargingAlert(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)
+                        ChargingAlert(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)   //충전하기 알림창
                     }
                     
-                    //충전기 정보 Modal 화면에서 충전하기 진행 시, 잔여 포인트가 부족할 경우 '포인트 충전 알림창' 호출
-                    if reservation.showChargingPointAlert {
-                        ChargingPointAlert(chargerMap: chargerMap, reservation: reservation, purchase: purchase)
-                        
-                        if purchase.showPaymentInputAlert {
-                            PaymentInputAlert(purchase: purchase)
-                        }
+                    //충전기 정보 Modal 화면에서 충전하기 진행 시, 잔여 포인트가 부족할 경우 '포인트 부족 알림창' 호출
+                    if purchase.showPointLackAlert {
+                        PointLackAlert(chargerMap: chargerMap, reservation: reservation, purchase: purchase)    //포인트 부족 알림창
+                    }
+                    
+                    //포인트 부족 알림창에서 포인트 충전 진행 시, '포인트 결제 금액 입력 알림창' 호출
+                    if purchase.showPaymentInputAlert {
+                        PaymentInputAlert(purchase: purchase)   //포인트 결제 금액 입력 알림창
                     }
                     
                     //충전기 정보 Modal 화면에서 예약 취소 시, 예약 취소 알림창 호출
@@ -120,7 +122,7 @@ struct ChargerMapView: View {
                     }
                     
                     if chargerMap.showChargingView {
-                        ChargingView(chargerMap: chargerMap)
+                        ChargingView(chargerMap: chargerMap, reservation: reservation)
                             .transition(.move(edge: .trailing))   //노출 시작 위치
                     }
                 }
@@ -149,7 +151,7 @@ struct ChargerMapView: View {
                         longitude: chargerMap.longitude,    //경도
                         searchStartDate: chargerSearch.chargingStartDate!,  //조회 시작일시
                         searchEndDate: chargerSearch.chargingEndDate!   //조회 종료일시
-                    )
+                    ) { _ in }
                 }
             }
         }

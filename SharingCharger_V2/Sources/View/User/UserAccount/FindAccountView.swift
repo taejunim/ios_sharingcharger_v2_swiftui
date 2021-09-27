@@ -9,18 +9,18 @@ import SwiftUI
 
 struct FindAccountView: View {
     @Environment(\.presentationMode) var presentationMode   //Back 버튼 기능 추가에 필요
-    @ObservedObject var user = UserViewModel() //사용자 View Model
+    @ObservedObject var userInfo = UserInfoViewModel() //사용자 View Model
     
     var body: some View {
         ZStack {
-            UserAuthView(user: user)
+            UserAuthView(userInfo: userInfo)
             
-            if user.showFindAccountPopup {
-               FindAccountPopup(user: user)
+            if userInfo.showFindAccountPopup {
+               FindAccountPopup(userInfo: userInfo)
             }
         }
         .popup(
-            isPresented: $user.viewUtil.isShowToast,   //팝업 노출 여부
+            isPresented: $userInfo.viewUtil.isShowToast,   //팝업 노출 여부
             type: .floater(verticalPadding: 80),
             position: .bottom,                          //팝업 위치
             animation: .easeInOut(duration: 0.0),   //애니메이션 효과
@@ -28,16 +28,18 @@ struct FindAccountView: View {
             closeOnTap: false,
             closeOnTapOutside: false,
             view: {
-                user.viewUtil.toast()    //Toast 팝업 화면
+                userInfo.viewUtil.toast()    //Toast 팝업 화면
             }
         )
         .onAppear {
-            user.viewPath = "findAccount"
-            user.viewTitle = "title.account.find"
-            user.showFindAccountPopup = false
+            userInfo.viewPath = "findAccount"
+            userInfo.viewTitle = "title.account.find"
+            userInfo.showFindAccountPopup = false
+            
             let isPresented = presentationMode.wrappedValue.isPresented
+            
             if !isPresented {
-                user.viewReset() //아이디 찾기 화면 초기화
+                userInfo.viewReset() //아이디 찾기 화면 초기화
             }
         }
     }
@@ -45,25 +47,24 @@ struct FindAccountView: View {
 
 struct FindAccountButton: View {
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var user: UserViewModel
+    @ObservedObject var userInfo: UserInfoViewModel
     
     var body: some View {
         Button(
             action: {
-                user.viewUtil.dismissKeyboard()  //키보드 닫기
+                userInfo.viewUtil.dismissKeyboard()  //키보드 닫기
                 
                 //아이디 찾기 정보 유효성 검사
-                if user.validationCheck() {
-                    user.requestFindId()                //아이디 찾기 실행
+                if userInfo.validationCheck() {
+                    userInfo.requestFindId()                //아이디 찾기 실행
                     //서버 에러일 경우 팝업창 숨김
-                    if user.result == "server error"{
-                        user.showFindAccountPopup = false
+                    if userInfo.result == "server error"{
+                        userInfo.showFindAccountPopup = false
                     }else{
-                        user.showFindAccountPopup = true    //아이디 찾기 결과 창
+                        userInfo.showFindAccountPopup = true    //아이디 찾기 결과 창
                     }
                     
                 }
-
             },
             label: {
                 Text("아이디 찾기")
@@ -79,7 +80,7 @@ struct FindAccountButton: View {
 }
 
 struct FindAccountPopup: View {
-    @ObservedObject var user: UserViewModel
+    @ObservedObject var userInfo: UserInfoViewModel
     
     var body: some View {
         GeometryReader { geometryReader in
@@ -100,8 +101,8 @@ struct FindAccountPopup: View {
                     
                     VStack(spacing: 10) {
                        
-                        if user.isFindAccount {
-                            let searchIds = user.searchIds
+                        if userInfo.isFindAccount {
+                            let searchIds = userInfo.searchIds
                             Text("아이디 찾기 결과")
                             ForEach(searchIds, id: \.self) {id in
                                 let name: String = id["username"]!
@@ -119,7 +120,7 @@ struct FindAccountPopup: View {
                     Button(
                         
                         action: {
-                            user.showFindAccountPopup = false
+                            userInfo.showFindAccountPopup = false
                         },
                         label: {
                             Text("확인")

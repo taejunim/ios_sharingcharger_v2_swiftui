@@ -16,7 +16,6 @@ class ReservationViewModel: ObservableObject {
     @Published var viewUtil = ViewUtil() //View Util
     
     @Published var showChargingAlert: Bool = false
-    @Published var showChargingPointAlert: Bool = false
     @Published var showCancelAlert: Bool = false
     
     @Published var userIdNo: String = ""    //사용자 ID 번호
@@ -56,6 +55,8 @@ class ReservationViewModel: ObservableObject {
                 self.reservationId = String(reservation.id) //예약 ID
                 self.reservedChargerId = String(reservation.chargerId)  //예약 충전기 ID
                 self.reservedChargerName = reservation.chargerName!  //예약 충전기 명
+                self.chargerLatitude = reservation.gpxY
+                self.chargerLongitude = reservation.gpsX
                 
                 let formatStartDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: reservation.startDate!) //충전 시작일시 - Date 형식으로 변환
                 let formatEndDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: reservation.endDate!) //충전 종료일시 - Date 형식으로 변환

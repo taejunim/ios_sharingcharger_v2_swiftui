@@ -10,6 +10,8 @@ import Foundation
 ///충전 View Model
 class ChargingViewModel: ObservableObject {
     @Published var bluetooth = Bluetooth()
+    @Published var isConnect: Bool = false
+    @Published var isChargingStart = false
     
     let pointAPI = PointAPIService()
     
