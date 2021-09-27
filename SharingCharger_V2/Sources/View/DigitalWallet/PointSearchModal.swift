@@ -106,18 +106,8 @@ struct PointSearchModal: View {
             }
             .padding()
             
-            PointSearchButton(pointViewModel: pointViewModel)
-            
+            PointSearchButton(pointViewModel: pointViewModel) 
         }
-        .onAppear{
-            pointViewModel.chooseDate = "oneMonth"
-            pointViewModel.selectPointType = "ALL"
-            pointViewModel.selectSort = "DESC"
-            
-            pointViewModel.selectMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date())!
-            pointViewModel.currentDate = Date()
-        }
-        
     }
 }
 //MARK: - 포인트 조회기간 선택 Picker

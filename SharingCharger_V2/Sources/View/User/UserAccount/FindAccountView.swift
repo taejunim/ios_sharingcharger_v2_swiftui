@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FindAccountView: View {
+    @Environment(\.presentationMode) var presentationMode   //Back 버튼 기능 추가에 필요
     @ObservedObject var user = UserViewModel() //사용자 View Model
     
     var body: some View {
@@ -18,10 +19,26 @@ struct FindAccountView: View {
                FindAccountPopup(user: user)
             }
         }
+        .popup(
+            isPresented: $user.viewUtil.isShowToast,   //팝업 노출 여부
+            type: .floater(verticalPadding: 80),
+            position: .bottom,                          //팝업 위치
+            animation: .easeInOut(duration: 0.0),   //애니메이션 효과
+            autohideIn: 1,  //팝업 노출 시간
+            closeOnTap: false,
+            closeOnTapOutside: false,
+            view: {
+                user.viewUtil.toast()    //Toast 팝업 화면
+            }
+        )
         .onAppear {
             user.viewPath = "findAccount"
             user.viewTitle = "title.account.find"
             user.showFindAccountPopup = false
+            let isPresented = presentationMode.wrappedValue.isPresented
+            if !isPresented {
+                user.viewReset() //아이디 찾기 화면 초기화
+            }
         }
     }
 }
@@ -33,7 +50,20 @@ struct FindAccountButton: View {
     var body: some View {
         Button(
             action: {
-                user.showFindAccountPopup = true
+                user.viewUtil.dismissKeyboard()  //키보드 닫기
+                
+                //아이디 찾기 정보 유효성 검사
+                if user.validationCheck() {
+                    user.requestFindId()                //아이디 찾기 실행
+                    //서버 에러일 경우 팝업창 숨김
+                    if user.result == "server error"{
+                        user.showFindAccountPopup = false
+                    }else{
+                        user.showFindAccountPopup = true    //아이디 찾기 결과 창
+                    }
+                    
+                }
+
             },
             label: {
                 Text("아이디 찾기")
@@ -69,11 +99,16 @@ struct FindAccountPopup: View {
                     Spacer()
                     
                     VStack(spacing: 10) {
-                        
+                       
                         if user.isFindAccount {
-                            Text("아이디 찾기 결과 - username")
-                        }
-                        else {
+                            let searchIds = user.searchIds
+                            Text("아이디 찾기 결과")
+                            ForEach(searchIds, id: \.self) {id in
+                                let name: String = id["username"]!
+                                
+                                Text("\(name)")
+                            }
+                        }else{
                             Text("입력한 정보와 일치하는 계정이 없습니다.")
                         }
                     }
@@ -82,6 +117,7 @@ struct FindAccountPopup: View {
                     Spacer()
                     
                     Button(
+                        
                         action: {
                             user.showFindAccountPopup = false
                         },

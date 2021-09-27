@@ -38,6 +38,7 @@ struct UserAuthView: View {
 //MARK: - 사용자 정보 입력 창
 struct UserInfoEntryField: View {
     @ObservedObject var user: UserViewModel
+    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()    //타이머
     
     var body: some View {
         //Text Field - 이름
@@ -67,7 +68,7 @@ struct UserInfoEntryField: View {
             content: {
                 VStack {
                     HStack {
-                        defaultTextField(comment: "comment.phone.number".localized(), text: $user.phoneNumber, type: .phonePad)
+                        defaultTextField(comment: "comment.phone.number".localized(), text: $user.phone, type: .phonePad)
                         
                         ChangeAuthRequestButton(user: user)   //인증번호 요청
                     }
@@ -88,10 +89,22 @@ struct UserInfoEntryField: View {
 
                         //인증번호 요청 시, 타이머 시작
                         if user.isAuthRequest {
-                            Text("남은시간 03:00")
+                            Text("남은시간 \(String(format: "%02d", user.minutesRemaining)):\(String(format: "%02d", user.secondsRemaining))")
                                 .font(.subheadline)
                                 .foregroundColor(.red)
+                                .onReceive(timer) { _ in
+                                    user.authTimer() //인증 타이머 실행
+                                }
                         }
+                        else {
+                            //인증 완료 시, 인증 완료 문구 출력
+                            if user.isAuthComplete {
+                                Text("label.auth.complete".localized())
+                                    .font(.subheadline)
+                                    .foregroundColor(Color("#3498DB"))
+                            }
+                        }
+
                         
                         //인증번호 확인 버튼
                         ChangeAuthCheckButton(user: user)
@@ -114,6 +127,8 @@ struct ChangeAuthRequestButton: View {
     var body: some View {
         Button(
             action: {
+                user.viewUtil.dismissKeyboard() // 키보드 닫기
+                user.authRequest()              //휴대폰 인증 요청
                 
             },
             label: {
@@ -137,7 +152,8 @@ struct ChangeAuthCheckButton: View {
     var body: some View {
         Button(
             action: {
-                
+                user.viewUtil.dismissKeyboard()     // 키보드 닫기
+                user.checkAuthNumber()              // 휴대폰 인증 확인
             },
             label: {
                 Text("button.auth.check".localized())
