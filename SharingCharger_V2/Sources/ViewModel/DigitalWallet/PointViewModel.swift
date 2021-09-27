@@ -160,6 +160,8 @@ class PointViewModel: ObservableObject {
         chooseDate = "oneMonth"
         selectPointType = "ALL"
         selectSort = "DESC"
+        selectMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date())! 
+        currentDate = Date()
     }
     //MARK: - 조회기간 선택에 따른 날짜 변화
     func showSelectMonth(){
