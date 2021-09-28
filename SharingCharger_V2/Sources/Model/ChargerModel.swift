@@ -35,6 +35,18 @@ struct Charger: Codable {
     let updated: String?    //수정 일자
 }
 
+//MARK: - 소유주 충전기 요약 정보
+struct OwnerChargerSummary: Codable {
+    let ownChargerCount: Int
+    let currentChargerCount: Int
+    let currentPoint: Int
+    let monthlyReserveCount: Int
+    let monthlyRechargeCount: Int
+    let monthlyRechargeKwh: Int
+    let monthlyChargerErrorCount: Int
+    let monthlyCumulativePoint: Int
+}
+
 struct ChargerModel: Identifiable, Codable{
     let id: String
     let markerId: Int

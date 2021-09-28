@@ -44,5 +44,14 @@ class ChargerAPIService {
     public func requestOwnerChargerList(ownerIdNo: String, ownerType: String) -> Future<[Charger], AFError> {
     
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/owner/dashboard/\(ownerIdNo)/\(ownerType)", parameters: [:], contentType: "json"))
-}
+    }
+    
+    //MARK: - 소유자 충전기 요약 정보 조회 API 호출
+    /// 소유자가 보유한 충전기의 요약 정보 조회
+    /// - Parameter ownerIdNo: 소유자 ID 번호(= 사용자 ID 번호)
+    /// - Returns: Owner Charger Summary Model
+    public func requestOwnerSummaryInfo(ownerIdNo: String) -> Future<OwnerChargerSummary, AFError> {
+        
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/dashboard/personal/\(ownerIdNo)", parameters: [:], contentType: "json"))
+    }
 }
