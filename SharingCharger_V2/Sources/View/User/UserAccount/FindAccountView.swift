@@ -130,7 +130,7 @@ struct FindAccountPopup: View {
                                 .frame(maxWidth: .infinity, maxHeight: 35)
                                 .background(Color("#3498DB"))
                                 .cornerRadius(5.0)
-                                .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                                .shadow(color: Color.gray, radius: 1, x: 1.5, y: 1.5)
                         }
                     )
                     .padding(.horizontal, 10)
@@ -139,7 +139,7 @@ struct FindAccountPopup: View {
                 .background(Color.white)
                 .cornerRadius(5.0)
                 .frame(width: geometryReader.size.width/1.2, height: 250)
-                .shadow(color: .black.opacity(0.3), radius: 1, x: 3, y: 3)
+                .shadow(color: Color.black.opacity(0.3), radius: 1, x: 3, y: 3)
             }
             .padding()
             .frame(width: geometryReader.size.width, height: geometryReader.size.height)

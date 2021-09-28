@@ -20,13 +20,14 @@ class ReservationViewModel: ObservableObject {
     
     @Published var userIdNo: String = ""    //사용자 ID 번호
     @Published var isUserReservation: Bool = false  //사용자 예약 여부
+    @Published var isReservable: Bool = false   //예약 가능 여부
+    
     @Published var reservationId: String = ""   //예약 ID 번호
     @Published var reservationType: String = ""  //충전 예약 유형
     @Published var reservedChargerId: String = ""  //예약 충전기 번호
     @Published var reservedChargerName: String = ""     //예약 충전기 명
     @Published var chargerLatitude: Double? //충전기 위도(Y좌표)
     @Published var chargerLongitude: Double?    //충전기 경도(X좌표)
-    
     @Published var reservationStartDate: Date?  //예약 시작일시
     @Published var reservationEndDate: Date?    //예약 종료일시
     @Published var reservationStatus: String = ""   //예약 상태
@@ -39,8 +40,8 @@ class ReservationViewModel: ObservableObject {
     @Published var textExpectedPoint: String = ""   //예상 차감포인트 텍스트
     @Published var textReservationStatus: String = ""   //예약 상태 텍스트
     @Published var textReservationDate: String = "" //예약 일자 텍스트
-    
     @Published var textUserPoint: String = ""   //사용자 보유 포인트 텍스트
+    @Published var textRemainingPoint: String = ""  //예약 후 잔여 포인트
     @Published var textNeedPoint: String = ""   //필요 포인트(부족 포인트) 텍스트
     
     //MARK: - 사용자의 현재 예약 정보 조회
@@ -136,6 +137,7 @@ class ReservationViewModel: ObservableObject {
                 print(remainingPoint)
                 
                 if remainingPoint >= 0 {
+                    self.textRemainingPoint = String(remainingPoint)
                     completion(true)
                 }
                 else {

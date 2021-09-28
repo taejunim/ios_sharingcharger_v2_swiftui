@@ -14,6 +14,7 @@ enum APIRouter: URLRequestConvertible {
     case get(useApi: String, path: String, parameters: [String:String], contentType: String)    //GET
     case post(useApi: String, path: String, parameters: [String:Any], contentType: String)  //POST
     case put(useApi: String, path: String, parameters: [String:Any])   //PUT
+    case patch(useApi: String, path: String, parameters: [String:Any])   //PATCH
 
     //MARK: - Base URL
     static let baseUrl: String = "http://211.253.37.97:52340/api/v1"   //전기차 공유 충전기 API URL
@@ -27,6 +28,8 @@ enum APIRouter: URLRequestConvertible {
             return .post
         case .put:
             return .put
+        case .patch:
+            return .patch
         }
     }
     
@@ -39,6 +42,8 @@ enum APIRouter: URLRequestConvertible {
             return path
         case .put( _, let path, _):
             return path
+        case .patch( _, let path, _):
+            return path
         }
     }
     
@@ -50,6 +55,8 @@ enum APIRouter: URLRequestConvertible {
         case .post( _, _, let parameters, _):
             return parameters
         case .put( _, _, let parameters):
+            return parameters
+        case .patch( _, _, let parameters):
             return parameters
         }
     }
@@ -88,6 +95,9 @@ enum APIRouter: URLRequestConvertible {
         case .put:
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
+        case .patch:
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         }
 
         //MARK: - Parameters
@@ -101,6 +111,12 @@ enum APIRouter: URLRequestConvertible {
                 throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
             }
         case .put( _, _, let parameters):
+            do {
+                urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])   //JSON Parsing
+            } catch {
+                throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
+            }
+        case .patch( _, _, let parameters):
             do {
                 urlRequest.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])   //JSON Parsing
             } catch {

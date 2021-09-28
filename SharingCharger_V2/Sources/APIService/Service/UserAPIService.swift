@@ -41,7 +41,7 @@ class UserAPIService {
     }
     
     //MARK: - 아이디(이메일) 확인 API 호출
-    /// 아이디 조회 API 호출
+    /// 아이디(이메일) 조회 API 호출
     /// - Parameter userId:
     ///   - email: 일반 사용자 ID
     ///   - username: 개인 소유주 ID
@@ -52,9 +52,10 @@ class UserAPIService {
     }
     
     //MARK: - 아이디(이메일) 찾기 API 호출
-    /// Description
+    /// 아이디(이메일) 찾기 API 호출
     /// - Parameter parameters:
-    ///   - 
+    ///   - name: 사용자 명
+    ///   - phone: 휴대전화번호(- 제외)
     /// - Returns: description
     public func requestFindId(parameters: [String:String]) -> Future<[User], AFError> {
         
@@ -68,6 +69,19 @@ class UserAPIService {
     public func requestSMSAuth(phoneNumber: String) -> Future<String, AFError> {
 
         return apiClient.requestText(route: APIRouter.get(useApi: "base", path: "/sms/\(phoneNumber)", parameters: [:], contentType: "text"))
+    }
+    
+    //MARK: - 비밀번호 변경 API 호출
+    /// 비밀번호 변경 API 호출
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - parameters:
+    ///     - currentPassword: 현재 비밀번호
+    ///     - password: 새 비밀번호
+    /// - Returns: User Model
+    public func requestChangePassword(userId: String, parameters: [String:Any]) -> Future<User, AFError> {
+        
+        return apiClient.request(route: APIRouter.patch(useApi: "base", path: "/change/password/\(userId)", parameters: parameters))
     }
     
     //MARK: - 서비스 이용약관 내용 API 호출

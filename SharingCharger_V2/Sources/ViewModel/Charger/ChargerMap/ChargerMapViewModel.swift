@@ -326,7 +326,7 @@ class ChargerMapViewModel: ObservableObject {
         //충전기 예약 현황 조회 Parameters
         let parameters = [
             "page": "1",
-            "size": "10",
+            "size": "100",
             "sort": "ASC"
         ]
         
@@ -349,19 +349,19 @@ class ChargerMapViewModel: ObservableObject {
     /// 조회한 충전기 예약 현황 정보에 따른 충전기 이용 가능 시간 생성
     /// - Parameter availableTime: 이용 가능 시간
     func getAvailableTime(availableTime: ChargerAllowTime) {
-        print(availableTime)
+        //print(availableTime)
         
         let getOpenTime = availableTime.todayOpenTime
         let openTime = "HH:mm:ss".toDateFormatter(formatString: getOpenTime)
-        print(openTime)
+        //print(openTime)
         
-        print("HHmmss".dateFormatter(formatDate: openTime!))
+        //print("HHmmss".dateFormatter(formatDate: openTime!))
         
         if "2021-08-27T16:53:00" < ("2021-08-27T" + getOpenTime) {
-            print("tq")
+            //print("tq")
         }
         else {
-            print("ttttttttq")
+            //print("ttttttttq")
         }
     }
     

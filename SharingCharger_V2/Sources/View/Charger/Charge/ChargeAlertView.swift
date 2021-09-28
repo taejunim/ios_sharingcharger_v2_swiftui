@@ -38,7 +38,7 @@ struct ChargingAlert: View {
                         
                         VStack(spacing: 5) {
                             HStack(spacing: 2) {
-                                Text("충전 시작 :")
+                                Text("충전 시작일시 :")
                                     .fontWeight(.bold)
                                 
                                 Text("\(chargerSearch.textStartDay) \(chargerSearch.textStartTime)")
@@ -47,7 +47,7 @@ struct ChargingAlert: View {
                             }
                             
                             HStack(spacing: 2) {
-                                Text("충전 종료 :")
+                                Text("충전 종료일시 :")
                                     .fontWeight(.bold)
                                 
                                 Text("\(chargerSearch.textEndDay) \(chargerSearch.textEndTime)")
@@ -130,7 +130,7 @@ struct ChargingAlert: View {
                 .background(Color.white)
                 .cornerRadius(5.0)
                 .frame(width: geometryReader.size.width/1.2, height: 250)
-                .shadow(color: .black.opacity(0.3), radius: 1, x: 3, y: 3)
+                .shadow(color: Color.black.opacity(0.3), radius: 1, x: 3, y: 3)
             }
             .padding()
             .frame(width: geometryReader.size.width, height: geometryReader.size.height)
@@ -163,29 +163,34 @@ struct PointLackAlert: View {
                     
                     VStack(spacing: 10) {
                         VStack(spacing: 5) {
-                            HStack(spacing: 2) {
-                                Text("잔여 포인트 :")
+                            HStack(spacing: 1) {
+                                Text("잔여 포인트 : ")
                                     .fontWeight(.bold)
                                 
                                 Text(reservation.textUserPoint.pointFormatter())    //사용자 포인트
+                                    .fontWeight(.bold)
                                 
                                 Spacer()
                             }
                             
                             HStack(spacing: 1) {
-                                Text("차감 포인트 :")
+                                Text("차감 포인트 : ")
                                     .fontWeight(.bold)
                                 
-                                Text(reservation.textExpectedPoint.pointFormatter())    //충전 시 예상 차감 포인트
-
+                                Text("-" + reservation.textExpectedPoint.pointFormatter())    //충전 시 예상 차감 포인트
+                                    .fontWeight(.bold)
+                                    .foregroundColor(Color("#C0392B"))
+                                
                                 Spacer()
                             }
                             
                             HStack(spacing: 1) {
-                                Text("부족 포인트 :")
+                                Text("부족 포인트 : ")
                                     .fontWeight(.bold)
                                 
-                                Text(reservation.textNeedPoint.trimmingCharacters(in: ["-"]).pointFormatter())  //잔여 포인트 - 예상 차감 포인트
+                                Text(reservation.textNeedPoint.pointFormatter())  //잔여 포인트 - 예상 차감 포인트
+                                    .fontWeight(.bold)
+                                    .foregroundColor(Color("#C0392B"))
                                 
                                 Spacer()
                             }
@@ -232,7 +237,7 @@ struct PointLackAlert: View {
                                     .frame(maxWidth: .infinity, maxHeight: 35)
                                     .background(Color("#3498DB"))
                                     .cornerRadius(5.0)
-                                    .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                                    .shadow(color: Color.gray, radius: 1, x: 1.5, y: 1.5)
                             }
                         )
                     }
@@ -242,7 +247,7 @@ struct PointLackAlert: View {
                 .background(Color.white)
                 .cornerRadius(5.0)
                 .frame(width: geometryReader.size.width/1.2, height: 250)
-                .shadow(color: .black.opacity(0.3), radius: 1, x: 3, y: 3)
+                .shadow(color: Color.black.opacity(0.3), radius: 1, x: 3, y: 3)
             }
             .padding()
             .frame(width: geometryReader.size.width, height: geometryReader.size.height)
@@ -413,7 +418,7 @@ struct PaymentInputAlert:View {
                     .background(Color.white)
                     .cornerRadius(5.0)
                     .frame(width: geometryReader.size.width/1.2, height: 260)
-                    .shadow(color: .black.opacity(0.3), radius: 1, x: 3, y: 3)
+                    .shadow(color: Color.black.opacity(0.3), radius: 1, x: 3, y: 3)
                 }
                 .padding()
                 .frame(width: geometryReader.size.width, height: geometryReader.size.height)
@@ -523,7 +528,7 @@ struct CancelReservationAlert: View {
                                     .frame(maxWidth: .infinity, maxHeight: 35)
                                     .background(Color("#3498DB"))
                                     .cornerRadius(5.0)
-                                    .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                                    .shadow(color: Color.gray, radius: 1, x: 1.5, y: 1.5)
                             }
                         )
                     }
@@ -533,7 +538,7 @@ struct CancelReservationAlert: View {
                 .background(Color.white)
                 .cornerRadius(5.0)
                 .frame(width: geometryReader.size.width/1.2, height: 200)
-                .shadow(color: .black.opacity(0.3), radius: 1, x: 3, y: 3)
+                .shadow(color: Color.black.opacity(0.3), radius: 1, x: 3, y: 3)
             }
             .padding()
             .frame(width: geometryReader.size.width, height: geometryReader.size.height)

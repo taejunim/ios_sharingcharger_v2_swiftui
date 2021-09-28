@@ -245,7 +245,7 @@ struct ChargingProgressButton: View {
             }
             //선택한 충전 유형에 따라 충전 단계 변경 - 예약 충전 버튼
             else if chargerSearch.searchType == "Scheduled" {
-                ReservationChargeButton(chargerMap: chargerMap, reservation: reservation)
+                ReservationChargeButton(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase)
             }
         }
         else {
@@ -337,11 +337,13 @@ struct InstantChargeButton: View {
 //MARK: - 예약 충전 버튼
 struct ReservationChargeButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var chargerSearch: ChargerSearchViewModel
     @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var purchase: PurchaseViewModel
     
     var body: some View {
         NavigationLink(
-            destination: ReservationView(chargerMap: chargerMap, reservation: reservation),
+            destination: ReservationView(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase),
             label: {
                 Text("예약하기")
                     .font(.title2)
