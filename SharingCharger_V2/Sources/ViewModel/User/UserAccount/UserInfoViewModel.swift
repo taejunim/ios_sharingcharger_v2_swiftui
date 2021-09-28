@@ -455,7 +455,7 @@ class UserInfoViewModel: ObservableObject {
         
         //비밀번호 확인 입력 여부 확인
         if confirmNewPassword.isEmpty {
-            viewUtil.showToast(isShow: true, message: "input.empty.confirm.newPassword".message())
+            viewUtil.showToast(isShow: true, message: "input.empty.confirm.NewPassword".message())
             return false
         }
         else {
