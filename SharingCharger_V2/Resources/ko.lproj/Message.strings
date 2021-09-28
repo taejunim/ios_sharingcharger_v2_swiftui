@@ -27,10 +27,11 @@
 "duplicate.id" = "이미 사용중인 아이디(이메일)입니다.";
 
 //MARK: - 비밀번호 메시지
+"fail.findId" = "일치하는 회원 정보가 없습니다.";
 "mismatch.password" = "비밀번호가 일치하지 않습니다.\n확인 후 다시 입력하세요.";
 "mismatch.current.password" = "현재 비밀번호가 일치하지 않습니다.\n확인 후 다시 입력하세요.";
-"sucess.change.password" = "비밀번호 변경이 완료되었습니다.";
-"fial.change.password" = "비밀번호 변경이 실패하였습니다.";
+"success.change.password" = "비밀번호 변경이 완료되었습니다.";
+"fail.change.password" = "비밀번호 변경이 실패하였습니다.";
 
 //MARK: - 인증 메시지
 "auth.complete" = "인증이 완료되었습니다.";
@@ -42,6 +43,9 @@
 //MARK: - 입력 항목 메시지
 "input.empty.name" = "이름을 입력하지 않았습니다.";
 "input.empty.email" = "아이디(이메일)를 입력하지 않았습니다.";
+"input.empty.currentPassword" = "현재 비밀번호를 입력하지 않았습니다.";
+"input.empty.newPassword" = "새 비밀번호를 입력하지 않았습니다.";
+"input.empty.confirm.NewPassword" = "새 비밀번호 확인을 입력하지 않았습니다.";
 "input.empty.password" = "비밀번호를 입력하지 않았습니다.";
 "input.empty.confirm.password" = "비밀번호 확인을 입력하지 않았습니다.";
 "input.empty.phone" = "휴대전화번호를 입력하지 않았습니다.";

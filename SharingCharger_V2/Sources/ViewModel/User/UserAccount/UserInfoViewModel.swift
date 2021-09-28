@@ -27,9 +27,7 @@ class UserInfoViewModel: ObservableObject {
     @Published var email: String = ""            //이메일 - 아이디
     @Published var phone: String = ""            //전화번호
     @Published var authNumber: String = ""       //인증번호
-    @Published var password: String = ""         //비밀번호
-    @Published var confirmPassword: String = ""  //비밀번호 확인
- 
+    
     
     @Published var isAuthRequest: Bool = false  //인증 요청 여부
     @Published var isReRequest: Bool = false    //인증 재요청 여부
@@ -47,10 +45,10 @@ class UserInfoViewModel: ObservableObject {
     @Published var searchId: [String:String] = [:]    //조회한 아이디 정보
     @Published var searchIds: [[String:String]] = []    //조회한 아이디 정보 목록
     
-    //MARK: - 회원가입 실행
+    //MARK: - 아이디 찾기 실행
     func requestFindId() {
         viewUtil.isLoading = true   //로딩 시작
-        searchIds.removeAll()       //조회한 포인트 목록 마커 정보 초기화
+        searchIds.removeAll()       //조회한 아이디 목록 정보 초기화
         
         let parameters: [String:String] = [
             "name": name,       //사용자 이름
@@ -80,51 +78,148 @@ class UserInfoViewModel: ObservableObject {
                             self.searchId = [
                                 "username": findId.username!    //아이디(이메일)
                             ]
-                            self.searchIds.append(self.searchId)
-                            print(self.searchIds.append(self.searchId))
+                            self.searchIds.append(self.searchId)    //조회한 아이디를 배열에 저장
                         }
                     }
                 }
                 //비밀번호 변경 화면일 경우
-                if self.viewPath == "changePassword"{
+                else if self.viewPath == "changePassword"{
                     //아이디가 조회되지 않을 경우
                     if findId.count == 0 {
-                        self.viewUtil.showToast(isShow: true, message: "이름 또는 번호가 올바르지 않음".message())
-                        self.isNewPassword = false  //비밀번호 변경 완료 화면
+                        self.viewUtil.showToast(isShow: true, message: "fail.findId".message()) //조회 실패 메시지
+                        self.isNewPassword = false  //비밀번호 변경 완료 화면으로 넘어가지 않음
                     }else{
-//                        if email =
-                        self.isNewPassword = true
+                        //조회된 아이디 수만큼 출력
+                        for index in 0..<findId.count {
+                            let findId = findId[index]
+                            self.searchId = [
+                                "username": findId.username!    //아이디(이메일)
+                            ]
+                            self.searchIds.append(self.searchId)    //조회한 아이디를 배열에 저장
+
+                            if self.email == findId.username!{
+                                self.isNewPassword = true   //아이디가 일치할 경우
+                            }else{
+                                self.isNewPassword = false //아이디가 일치하지 않을 경우
+                                self.viewUtil.showToast(isShow: true, message: "fail.findId".message()) //조회 실패 메시지
+                            }
+                        }
                     }
-                    
                 }
-               
+                
             },
             
             //아이디(이메일) 찾기 API 호출 실패
             onFailure: { (error) in
                 self.isFindAccount = false
                 switch error {
-                //에러
+                    //에러
+                    case .responseSerializationFailed:
+                        self.result = "fail"
+                        //일시적인 서버 오류 및 네트워크 오류
+                    default:
+                        self.showFindAccountPopup = false
+                        self.result = "server error"
+                        self.viewUtil.showToast(isShow: true, message: "server.error".message())    //서버 에러 메시지 출력
+                    break
+                }
+                //비밀번호 변경 화면일 경우
+                if self.viewPath == "changePassword"{
+                    self.viewUtil.showToast(isShow: true, message: "fail.findId".message()) //조회 실패 메시지 출력
+                    self.isNewPassword = false   //비밀번호 변경 완료 화면으로 넘어가지 않음
+                }
+                
+                self.viewUtil.isLoading = false //로딩 종료
+                
+            }
+        )
+    }
+    //MARK: - 비밀번호 변경 실행(로그인 한 상태)
+    func requestChangePassword(completion: @escaping (String) -> Void){
+        viewUtil.isLoading = true   //로딩 시작
+        
+        let parameters: [String:String] = [
+            "currentPassword": currentPassword,     //현재 비밀번호
+            "password": newPassword                 //새 비밀번호
+        ]
+        let userId = UserDefaults.standard.string(forKey: "userId") ?? "User ID"
+        
+        //아이디(이메일) 찾기 API 호출
+        let request = userAPI.requestChangePassword(userId:userId,parameters: parameters)
+        request.execute(
+            //아이디 찾기 성공
+            onSuccess: { (findId) in
+                
+                self.result = "success"
+                
+                self.viewUtil.showToast(isShow: true, message: "success.change.password".message())//비밀번호 변경 완료 메시지
+                
+                completion(self.result)
+            },
+            
+            //아이디(이메일) 찾기 API 호출 실패
+            onFailure: { (error) in
+                
+                switch error {
+                    //에러
                 case .responseSerializationFailed:
                     self.result = "fail"
-                //일시적인 서버 오류 및 네트워크 오류
+                    self.viewUtil.showToast(isShow: true, message: "fail.change.password".message())//비밀번호 변경 실패 메시지
+                    //일시적인 서버 오류 및 네트워크 오류
                 default:
                     self.showFindAccountPopup = false
                     self.result = "server error"
                     self.viewUtil.showToast(isShow: true, message: "server.error".message())    //서버 에러 메시지 출력
                     break
                 }
-                if self.viewPath == "changePassword"{
-                    self.viewUtil.showToast(isShow: true, message: "이름 또는 번호가 올바르지 않음".message())
-                    //print("이름 또는 전화번호가 일치하지 않음")
-                   self.isNewPassword = false   //비밀번호 변경 완료 화면
-                }
-
                 self.viewUtil.isLoading = false //로딩 종료
                 
+                completion(self.result)
             }
         )
     }
+    //MARK: - 비밀번호 초기화 후 변경 실행(로그인 안한 상태)
+    func requestResetPassword(completion: @escaping (String) -> Void){
+        viewUtil.isLoading = true   //로딩 시작
+        
+        let parameters: [String:String] = [
+            "password": newPassword        //새 비밀번호 확인
+        ]
+        
+        //아이디(이메일) 찾기 API 호출
+        let request = userAPI.requestResetPassword(userId:email,parameters: parameters)
+        request.execute(
+            //아이디 찾기 성공
+            onSuccess: { (findId) in
+                self.result = "success"
+             
+                self.viewUtil.showToast(isShow: true, message: "success.change.password".message())//비밀번호 변경 완료 메시지
+                
+                completion(self.result)
+            },
+            
+            //아이디(이메일) 찾기 API 호출 실패
+            onFailure: { (error) in
+                
+                switch error {
+                    //에러
+                case .responseSerializationFailed:
+                    self.result = "fail"
+                    self.viewUtil.showToast(isShow: true, message: "fail.change.password".message())//비밀번호 변경 실패 메시지
+                    //일시적인 서버 오류 및 네트워크 오류
+                default:
+                    self.showFindAccountPopup = false
+                    self.result = "server error"
+                    self.viewUtil.showToast(isShow: true, message: "server.error".message())    //서버 에러 메시지 출력
+                    break
+                }
+                self.viewUtil.isLoading = false //로딩 종료
+                
+                completion(self.result)
+            }
+        )
+    }
+    
     //MARK: - 인증 요청 실행
     func authRequest() {
         //휴대전화번호 입력 여부 확인
@@ -251,20 +346,28 @@ class UserInfoViewModel: ObservableObject {
         return predicate.evaluate(with: email)
     }
     //MARK: - 비밀번호 유효성 검사
+    func isCurrentPasswordValid() -> Bool {
+        let regExp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*?])(?=.*[0-9])[a-zA-Z\\d!@#$%^&*?]{6,20}"   //영문, 숫자, 특수문자 (6~20자)
+        let predicate = NSPredicate(format: "SELF MATCHES %@", regExp)
+        
+        return predicate.evaluate(with: currentPassword)
+    }
+    //MARK: - 비밀번호 유효성 검사
     func isPasswordValid() -> Bool {
         let regExp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*?])(?=.*[0-9])[a-zA-Z\\d!@#$%^&*?]{6,20}"   //영문, 숫자, 특수문자 (6~20자)
         let predicate = NSPredicate(format: "SELF MATCHES %@", regExp)
-
-        return predicate.evaluate(with: password)
+        
+        return predicate.evaluate(with: newPassword)
     }
     
     //MARK: - 비밀번호 확인 유효성 검사
     func isConfirmPasswordValid() -> Bool {
         let regExp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*?])(?=.*[0-9])[a-zA-Z\\d!@#$%^&*?]{6,20}"   //영문, 숫자, 특수문자 (6~20자)
         let predicate = NSPredicate(format: "SELF MATCHES %@", regExp)
-
-        return predicate.evaluate(with: confirmPassword)
+        
+        return predicate.evaluate(with: confirmNewPassword)
     }
+ 
     //MARK: - 유효성 검사
     func validationCheck() -> Bool {
         isValidation = true
@@ -321,9 +424,25 @@ class UserInfoViewModel: ObservableObject {
     func passwordValidationCheck() -> Bool {
         isValidation = true
         
-        //비밀번호 입력 여부 확인
-        if password.isEmpty {
-            viewUtil.showToast(isShow: true, message: "input.empty.password".message())
+        //로그인한 상태일 떄
+        if isSigned == true{
+            //현재 비밀번호 입력 여부 확인
+            if currentPassword.isEmpty {
+                viewUtil.showToast(isShow: true, message: "input.empty.currentPassword".message())
+                return false
+            }
+            else {
+                //현재 비밀번호 유효성 검사
+                guard isCurrentPasswordValid() else {
+                    viewUtil.showToast(isShow: true, message: "input.invalid.password".message())
+                    return false
+                }
+            }
+        }
+       
+        //새 비밀번호 입력 여부 확인
+        if newPassword.isEmpty {
+            viewUtil.showToast(isShow: true, message: "input.empty.newPassword".message())
             return false
         }
         else {
@@ -335,8 +454,8 @@ class UserInfoViewModel: ObservableObject {
         }
         
         //비밀번호 확인 입력 여부 확인
-        if confirmPassword.isEmpty {
-            viewUtil.showToast(isShow: true, message: "input.empty.confirm.password".message())
+        if confirmNewPassword.isEmpty {
+            viewUtil.showToast(isShow: true, message: "input.empty.confirm.newPassword".message())
             return false
         }
         else {
@@ -346,6 +465,13 @@ class UserInfoViewModel: ObservableObject {
                 return false
             }
         }
+        //입력한 비밀번호 일치 여부 확인
+        if newPassword != confirmNewPassword {
+            confirmNewPassword = ""
+            viewUtil.showToast(isShow: true, message: "mismatch.password".message())
+            return false
+        }
+        
         return true
     }
     //MARK: - 화면 초기화
@@ -360,6 +486,7 @@ class UserInfoViewModel: ObservableObject {
         name = ""    //이름
         phone = "" //전화번호
         authNumber = ""  //인증번호
+        email = ""  //아이디(이메일)
         
         
         isAuthRequest = false  //인증 요청 여부
@@ -371,5 +498,15 @@ class UserInfoViewModel: ObservableObject {
         isStartTimer = false
         minutesRemaining = 3    //타이머 분 시간 설정(기본값: 3)
         secondsRemaining = 0    //타이머 초 시간 설정(기본값: 0)
+    }
+    //MARK: - 화면 초기화
+    func changePwViewReset() {
+        isValidation = false
+        
+        result = ""  //결과 상태
+        
+        currentPassword = ""
+        newPassword = ""
+        confirmNewPassword = ""
     }
 }

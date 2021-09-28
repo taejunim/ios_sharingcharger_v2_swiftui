@@ -61,13 +61,9 @@ struct ChangeNextStepButton: View {
                         userInfo.viewUtil.dismissKeyboard()  //키보드 닫기
                         
                         //유효성 체크
-//                        if userInfo.validationCheck() {
-//                            userInfo.isNewPassword = true   //다음 화면으로 넘어가기
-//                        }
                         if userInfo.validationCheck() {
-                        userInfo.requestFindId()
+                            userInfo.requestFindId() //아이디 찾기 실행
                         }
-                        //userInfo.isNewPassword = true   //다음 화면으로 넘어가기
                     },
                     label: {
                         Text("button.password.next.step".localized())
@@ -170,11 +166,38 @@ struct ChangeCompleteButton: View {
                 userInfo.viewUtil.dismissKeyboard()  //키보드 닫기
                 
                 if userInfo.passwordValidationCheck() {
-                    print("button click")
+                    
+                    //로그인 했을 경우
+                    if userInfo.isSigned == true{
+                        userInfo.requestChangePassword(){ (result) in   //비밀번호 변경 실행
+                            //비밀번호 변경 완료인 경우 비밀번호 변경 화면 닫기
+                            if result == "success" {
+                                //등록 완료 메시지 출력 후 비밀번호 변경 완료 화면 닫기
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    userInfo.changePwViewReset()    //새 비밀번호 입력화면 초기화
+                                    self.presentationMode.wrappedValue.dismiss()    //비밀번호 변경 완료 화면 닫기 
+                                }
+                            }
+                        }
+                    }
+                    //로그인 안 했을 경우
+                    else{
+                        userInfo.requestResetPassword() { (result) in       //비밀번호 초기화 후 변경 실행
+                            //회원가입 완료인 경우 회원가입 화면 닫기
+                            if result == "success" {
+                                //비밀번호 완료 메시지 출력 후 비밀번호 변경 완료 화면 닫기
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    userInfo.viewReset()            //비밀번호 변경화면 초기화
+                                    userInfo.changePwViewReset()    //새 비밀번호 입력화면 초기화
+                                    self.presentationMode.wrappedValue.dismiss()
+                                    self.presentationMode.wrappedValue.dismiss()
+                                }
+                            }
+                        }
+                    }
+                    
                 }
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-//                    self.presentationMode.wrappedValue.dismiss()
-//                }
+                
             },
             label: {
                 Text("button.password.complete".localized())
