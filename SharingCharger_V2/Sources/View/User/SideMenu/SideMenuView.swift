@@ -237,7 +237,7 @@ struct MenuList: View {
             NoticeMenuButton()  //공지사항 메뉴 버튼
             
             //회원 유형이 개인 소유주인 경우에만 노출
-            if UserDefaults.standard.string(forKey: "userType") != "Personal" {
+            if UserDefaults.standard.string(forKey: "userType") == "Personal" {
                 OwnerChargerMenuButton()   //소유주 충전기 관리 메뉴 버튼
             }
         }
