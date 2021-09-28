@@ -72,7 +72,7 @@ class UserAPIService {
     }
     
     //MARK: - 비밀번호 변경 API 호출
-    /// 비밀번호 변경 API 호출
+    /// 로그인 상태인 경우, 비밀번호 변경 API 호출 - 비밀번호를 아는 경우
     /// - Parameters:
     ///   - userId: 사용자 ID
     ///   - parameters:
@@ -82,6 +82,18 @@ class UserAPIService {
     public func requestChangePassword(userId: String, parameters: [String:Any]) -> Future<User, AFError> {
         
         return apiClient.request(route: APIRouter.patch(useApi: "base", path: "/change/password/\(userId)", parameters: parameters))
+    }
+    
+    //MARK: - 비밀번호 초기화 후 변경 API 호출
+    /// 로그인 상태가 아닌 경우, 회원 인증 후 새 비밀번호로 변경 API 호출 - 비밀번호 잊은 경우
+    /// - Parameters:
+    ///   - userId: 사용자 ID
+    ///   - parameters:
+    ///     - password: 새 비밀번호
+    /// - Returns: User Model
+    public func requestResetPassword(userId: String, parameters: [String:Any]) -> Future<User, AFError> {
+        
+        return apiClient.request(route: APIRouter.patch(useApi: "base", path: "/reset/password/\(userId)", parameters: parameters))
     }
     
     //MARK: - 서비스 이용약관 내용 API 호출
