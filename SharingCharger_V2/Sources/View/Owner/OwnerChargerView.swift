@@ -22,6 +22,10 @@ struct OwnerChargerView: View {
         .navigationBarTitle(Text("충전기 관리"), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
         .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
+        .onAppear {
+            ownerCharger.requestOwnerSummaryInfo()
+            ownerCharger.requestOwnerChargerList()
+        }
         .sheet(
             isPresented: $ownerCharger.showProfitPointsView,
             content: {
@@ -37,6 +41,8 @@ struct OwnerChargerSummaryInfo: View {
     @ObservedObject var ownerCharger: OwnerChargerViewModel
     
     var body: some View {
+        
+        let ownChargerCount = ownerCharger.ownChargerCount
         VStack {
             HStack {
                 Text("총 충전기 대수")
@@ -45,7 +51,7 @@ struct OwnerChargerSummaryInfo: View {
                 Spacer()
                 
                 HStack(spacing: 2) {
-                    Text("10")
+                    Text(String(ownChargerCount))
                         //.font(.title3)
                         .fontWeight(.bold)
                         .foregroundColor(Color("#8E44AD"))
@@ -103,12 +109,14 @@ struct ProfitPointsViewButton: View {
     @ObservedObject var ownerCharger: OwnerChargerViewModel
     
     var body: some View {
+        
+        let monthlyCumulativePoint = ownerCharger.monthlyCumulativePoint
         Button(
             action: {
                 ownerCharger.showProfitPointsView = true
             },
             label: {
-                Text("5,000p")
+                Text(numberFormatter(number: monthlyCumulativePoint) + "p")
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
@@ -119,6 +127,13 @@ struct ProfitPointsViewButton: View {
             }
         )
     }
+    //숫자에 콤마
+    func numberFormatter(number: Int) -> String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        
+        return numberFormatter.string(from: NSNumber(value: number))!
+    }
 }
 
 //MARK: - 소유주 충전기 목록
@@ -127,111 +142,74 @@ struct OwnerChargerList: View {
     
     var body: some View {
         ScrollView {
-            Button(
-                action: {
-                    
-                },
-                label: {
-                    HStack {
-                        Text("1")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundColor(Color("#8E44AD"))
-                        
-                        VStack(alignment: .leading) {
-                            HStack(spacing: 1) {
-                                Text("메티스 충전기 01")
-                                    .font(.headline)
-                                    .fontWeight(.bold)
-                                
-                                Text("(2E:92)")
-                                    .font(.subheadline)
-                            }
-                            
-                            Text("제주특별자치도 제주시 첨단로 8길 40")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            
-                            Text("주차장 입구")
-                                .font(.subheadline)
-                                .foregroundColor(Color.gray)
-                        }
-                        .padding(.horizontal, 5)
-                        
-                        Spacer()
-                        
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 20)
-                                .frame(width: 70, height: 25)
-                                .foregroundColor(Color("#3498DB"))    //충전기 상태에 따른 배경 색상
-                                .shadow(color: .gray, radius: 1, x: 1.2, y: 1.2)
-                            
-                            Text("대기중")
-                                .font(.subheadline)
-                                .foregroundColor(Color.white)
+            
+            let searchChargers = ownerCharger.chargers
+            
+            ForEach(searchChargers, id: \.self) {charger in
+                
+                let name: String = charger["name"]!                                         //충전기 명
+                let address: String = charger["address"]!                                   //주소
+                let description: String = charger["description"]!                           //설명
+                let bleNumber: String = charger["bleNumber"]!                               //ble번호
+                let currentStatusType: String = charger["currentStatusType"]!               //현재 충전기 상태
+                let typeColor: String = charger["typeColor"]!                               //충전기 상태별 Color
+                let index: String = charger["index"]!                                       //번호 (n번째 충전기) - 화면 표출용
+                
+                Button(
+                    action: {
+                        print("\(index) 클릭")
+                    },
+                    label: {
+                        HStack {
+                            Text(index)
+                                .font(.title3)
                                 .fontWeight(.bold)
-                        }
-                    }
-                    .foregroundColor(.black)
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                }
-            )
-            
-            HorizontalDividerline()
-            
-            Button(
-                action: {
-                    
-                },
-                label: {
-                    HStack {
-                        Text("2")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundColor(Color("#8E44AD"))
-                        
-                        VStack(alignment: .leading) {
-                            HStack(spacing: 1) {
-                                Text("메티스 충전기 02")
-                                    .font(.headline)
-                                    .fontWeight(.bold)
+                                .foregroundColor(Color("#8E44AD"))
+                            
+                            VStack(alignment: .leading) {
+                               
+                                HStack(spacing: 1) {
+                                    Text(name)
+                                        .font(.headline)
+                                        .fontWeight(.bold)
+                                    
+                                    Text(bleNumber.suffix(5))
+                                        .font(.subheadline)
+                                }
                                 
-                                Text("(2E:92)")
+                                Text(address)
                                     .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                
+                                Text(description)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color.gray)
                             }
+                            .padding(.horizontal, 5)
                             
-                            Text("제주특별자치도 제주시 첨단로 8길 40")
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+                            Spacer()
                             
-                            Text("주차장 입구")
-                                .font(.subheadline)
-                                .foregroundColor(Color.gray)
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 20)
+                                    .frame(width: 70, height: 25)
+                                    .foregroundColor(Color(typeColor))    //충전기 상태에 따른 배경 색상
+                                    .shadow(color: .gray, radius: 1, x: 1.2, y: 1.2)
+                                
+                                Text(currentStatusType)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color.white)
+                                    .fontWeight(.bold)
+                            }
                         }
-                        .padding(.horizontal, 5)
-                        
-                        Spacer()
-                        
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 20)
-                                .frame(width: 70, height: 25)
-                                .foregroundColor(Color("#C0392B"))    //충전기 상태에 따른 배경 색상
-                                .shadow(color: .gray, radius: 1, x: 1.2, y: 1.2)
-                            
-                            Text("사용중")
-                                .font(.subheadline)
-                                .foregroundColor(Color.white)
-                                .fontWeight(.bold)
-                        }
+                        .foregroundColor(.black)
+                        .padding(.horizontal)
+                        .padding(.vertical, 10)
                     }
-                    .foregroundColor(.black)
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                }
-            )
+                )
+                
+                HorizontalDividerline()
+            }
             
-            HorizontalDividerline()
         }
     }
 }

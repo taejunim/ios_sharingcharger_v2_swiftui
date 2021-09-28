@@ -52,6 +52,6 @@ class ChargerAPIService {
     /// - Returns: Owner Charger Summary Model
     public func requestOwnerSummaryInfo(ownerIdNo: String) -> Future<OwnerChargerSummary, AFError> {
         
-        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/dashboard/personal/\(ownerIdNo)", parameters: [:], contentType: "json"))
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/dashboard/personal/\(ownerIdNo)/card", parameters: [:], contentType: "json"))
     }
 }
