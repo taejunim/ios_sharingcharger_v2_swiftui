@@ -24,6 +24,18 @@ struct ChangePasswordView: View {
                 NewPasswordView(userInfo: userInfo)   //새 비밀번호 입력 화면
             }
         }
+        .popup(
+            isPresented: $userInfo.viewUtil.isShowToast,   //팝업 노출 여부
+            type: .floater(verticalPadding: 80),
+            position: .bottom,                          //팝업 위치
+            animation: .easeInOut(duration: 0.0),   //애니메이션 효과
+            autohideIn: 1,  //팝업 노출 시간
+            closeOnTap: false,
+            closeOnTapOutside: false,
+            view: {
+                userInfo.viewUtil.toast()    //Toast 팝업 화면
+            }
+        )
         .onAppear {
             userInfo.isSigned = isSigned   //로그인 여부
             userInfo.viewPath = "changePassword"
@@ -46,7 +58,16 @@ struct ChangeNextStepButton: View {
             label: {
                 Button(
                     action: {
-                        userInfo.isNewPassword = true
+                        userInfo.viewUtil.dismissKeyboard()  //키보드 닫기
+                        
+                        //유효성 체크
+//                        if userInfo.validationCheck() {
+//                            userInfo.isNewPassword = true   //다음 화면으로 넘어가기
+//                        }
+                        if userInfo.validationCheck() {
+                        userInfo.requestFindId()
+                        }
+                        //userInfo.isNewPassword = true   //다음 화면으로 넘어가기
                     },
                     label: {
                         Text("button.password.next.step".localized())
@@ -79,6 +100,18 @@ struct NewPasswordView: View {
             
             ChangeCompleteButton(userInfo: userInfo)  //비밀번호 변경 완료 버튼
         }
+        .popup(
+            isPresented: $userInfo.viewUtil.isShowToast,   //팝업 노출 여부
+            type: .floater(verticalPadding: 80),
+            position: .bottom,                          //팝업 위치
+            animation: .easeInOut(duration: 0.0),   //애니메이션 효과
+            autohideIn: 1,  //팝업 노출 시간
+            closeOnTap: false,
+            closeOnTapOutside: false,
+            view: {
+                userInfo.viewUtil.toast()    //Toast 팝업 화면
+            }
+        )
         .navigationBarTitle(Text(userInfo.isSigned ? "title.password.change".localized() : "title.password.step.two".localized()), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
         .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
@@ -131,8 +164,14 @@ struct ChangeCompleteButton: View {
     @ObservedObject var userInfo: UserInfoViewModel
     
     var body: some View {
+        
         Button(
             action: {
+                userInfo.viewUtil.dismissKeyboard()  //키보드 닫기
+                
+                if userInfo.passwordValidationCheck() {
+                    print("button click")
+                }
 //                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
 //                    self.presentationMode.wrappedValue.dismiss()
 //                }
