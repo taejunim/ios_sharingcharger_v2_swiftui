@@ -45,14 +45,17 @@
 "input.empty.email" = "아이디(이메일)를 입력하지 않았습니다.";
 "input.empty.currentPassword" = "현재 비밀번호를 입력하지 않았습니다.";
 "input.empty.newPassword" = "새 비밀번호를 입력하지 않았습니다.";
-"input.empty.confirm.NewPassword" = "새 비밀번호 확인을 입력하지 않았습니다.";
+"input.empty.confirmNewPassword" = "새 비밀번호 확인을 입력하지 않았습니다.";
 "input.empty.password" = "비밀번호를 입력하지 않았습니다.";
-"input.empty.confirm.password" = "비밀번호 확인을 입력하지 않았습니다.";
+"input.empty.confirmNewpassword" = "비밀번호 확인을 입력하지 않았습니다.";
 "input.empty.phone" = "휴대전화번호를 입력하지 않았습니다.";
 "input.empty.auth.number" = "인증번호를 입력하지 않았습니다.";
 
 "input.invalid.name" = "잘못된 이름입니다.\n올바른 이름을 입력하세요.";
 "input.invalid.email" = "잘못된 아이디(이메일)입니다.\n올바른 아이디(이메일)를 입력하세요.";
+"input.invalid.currentPassword" = "잘못된 현재 비밀번호입니다.\n올바른 비밀번호를 입력하세요.";
+"input.invalid.newPassword" = "잘못된 새 비밀번호입니다.\n올바른 비밀번호를 입력하세요.";
+"input.invalid.confirmNewPassword" = "잘못된 새 비밀번호 확인입니다.\n올바른 비밀번호를 입력하세요.";
 "input.invalid.password" = "잘못된 비밀번호입니다.\n올바른 비밀번호를 입력하세요.";
 "input.invalid.phone" = "잘못된 휴대전화번호입니다.\n올바른 휴대전화번호를 입력하세요.";
 "input.invalid.auth.number" = "잘못된 인증번호입니다.\n올바른 인증번호를 입력하세요.";

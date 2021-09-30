@@ -11,18 +11,18 @@ import Combine
 class PointViewModel: ObservableObject {
     public var didChange = PassthroughSubject<PointViewModel, Never>()
     
-    private let pointAPI = PointAPIService()  //포인트 API Service
-    
-    @Published var viewUtil = ViewUtil() //View Util
+    private let pointAPI = PointAPIService()        //포인트 API Service
     
     @Published var showSearchModal: Bool = false    //검색조건 Modal 활성 여부
-    @Published var isSearchReset: Bool = false{ //검색조건 초기화 여부
+    @Published var isSearchReset: Bool = false{     //검색조건 초기화 여부
         didSet {
-            resetPointSearchCondition()  //검색조건 초기화 실행
+            resetPointSearchCondition()             //검색조건 초기화 실행
         }
     }
+    @Published var isSearchStart: Bool = true       //조회 시작 여부
+    
     //MARK: - 포인트 이력 파라미터
-    @Published var currentPoint: Int = 0                //현재 잔여 포인트
+    @Published var currentPoint: String = ""            //현재 잔여 포인트
     @Published var chooseDate: String = "oneMonth"{     //조회기간 선택
         didSet {
             showSelectMonth()
@@ -32,15 +32,11 @@ class PointViewModel: ObservableObject {
     @Published var currentDate: Date = Date()           //date picker 종료 날짜(현재 날짜)
     @Published var selectPointType: String = "ALL"      //포인트 유형
     @Published var selectSort: String = "DESC"          //포인트 정렬
+    @Published var page: Int = 1                        //페이지 번호
     
     //MARK: - 포인트 이력
     @Published var point: [String:Any] = [:]
-    
     @Published var searchPoints: [[String:String]] = [] //조회환 포인트 정보 목록
-    
-//    var ageArr = [String]()
-//    var nameArr = [String]()
-//    var employedArr = [String]()
     
     //MARK: - 현재 사용자 포인트 조회
     func getCurrentPoint() {
@@ -50,14 +46,14 @@ class PointViewModel: ObservableObject {
         request.execute(
             //API 호출 성공
             onSuccess: { (point) in
-                self.currentPoint = Int(point) ?? 0
+                self.currentPoint = point 
             },
             //API 호출 실패
             onFailure: { (error) in
                 switch error {
                 case .responseSerializationFailed:
                     print(error)
-                //일시적인 서버 오류 및 네트워크 오류
+                    //일시적인 서버 오류 및 네트워크 오류
                 default:
                     print(error)
                     break
@@ -68,19 +64,17 @@ class PointViewModel: ObservableObject {
     
     
     //MARK: - 사용자 포인트 이력 조회
-    func getPointHistory() {
-        viewUtil.isLoading = true   //로딩 시작
-        searchPoints.removeAll()    //조회한 포인트 목록 마커 정보 초기화
+    func getPointHistory(page: Int) {
         
         let userIdNo: String = UserDefaults.standard.string(forKey: "userIdNo") ?? ""   //저장된 사용자 ID 번호
         
         let endDate: String = "yyyy-MM-dd".dateFormatter(formatDate: currentDate)   // 종료일자
-        
+      
         let parameters = [
             "startDate": "yyyy-MM-dd".dateFormatter(formatDate: selectMonth),   //조회 시작일자
             "endDate": endDate,                                                 //조회 종료일자
             "pointUsedType": selectPointType,                                   //포인트 구분
-            "page": "1",                                                        //페이지 번호
+            "page": String(page),                                               //페이지 번호
             "size": "10",                                                       //페이지 사이즈
             "sort": selectSort                                                  //정렬
         ]
@@ -93,7 +87,7 @@ class PointViewModel: ObservableObject {
         request.execute(
             //API 호출 성공
             onSuccess: { (history) in
-                
+              
                 for index in 0..<history.content.count {
                     
                     let getPoint = history.content[index]!
@@ -140,13 +134,19 @@ class PointViewModel: ObservableObject {
                 }
                 
                 self.searchPoints.append(contentsOf: searchPoints)  //조회 포인트 목록 추가
-            },
+                
+                //현재 페이지가 totalPage보다 클 때 추가 조회 방지
+                if self.page > history.totalPages-1{
+                    self.isSearchStart = false
+                }
+            }
+            ,
             //API 호출 실패
             onFailure: { (error) in
                 switch error {
                 case .responseSerializationFailed:
                     print(error)
-                //일시적인 서버 오류 및 네트워크 오류
+                    //일시적인 서버 오류 및 네트워크 오류
                 default:
                     print(error)
                     break
@@ -154,6 +154,8 @@ class PointViewModel: ObservableObject {
             }
         )
     }
+    
+    
     //MARK: - 검색조건 설정 초기화
     
     func resetPointSearchCondition() {
@@ -170,13 +172,15 @@ class PointViewModel: ObservableObject {
         }
         else if chooseDate == "oneMonth"{
             selectMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date())!
+            currentDate = Date()
         }
         else if chooseDate == "threeMonth"{
             selectMonth = Calendar.current.date(byAdding: .month, value: -3, to: Date())!
+            currentDate = Date()
         }
         else if chooseDate == "sixMonth"{
             selectMonth = Calendar.current.date(byAdding: .month, value: -6, to: Date())!
-            
+            currentDate = Date()
         }
         
     }

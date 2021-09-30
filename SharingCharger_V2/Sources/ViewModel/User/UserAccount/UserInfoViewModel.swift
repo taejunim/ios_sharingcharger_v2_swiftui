@@ -434,7 +434,7 @@ class UserInfoViewModel: ObservableObject {
             else {
                 //현재 비밀번호 유효성 검사
                 guard isCurrentPasswordValid() else {
-                    viewUtil.showToast(isShow: true, message: "input.invalid.password".message())
+                    viewUtil.showToast(isShow: true, message: "input.invalid.currentPassword".message())
                     return false
                 }
             }
@@ -448,20 +448,20 @@ class UserInfoViewModel: ObservableObject {
         else {
             //비밀번호 유효성 검사
             guard isPasswordValid() else {
-                viewUtil.showToast(isShow: true, message: "input.invalid.password".message())
+                viewUtil.showToast(isShow: true, message: "input.invalid.newPassword".message())
                 return false
             }
         }
         
         //비밀번호 확인 입력 여부 확인
         if confirmNewPassword.isEmpty {
-            viewUtil.showToast(isShow: true, message: "input.empty.confirm.NewPassword".message())
+            viewUtil.showToast(isShow: true, message: "input.empty.confirmNewPassword".message())
             return false
         }
         else {
             //비밀번호 확인 유효성 검사
             guard isConfirmPasswordValid() else {
-                viewUtil.showToast(isShow: true, message: "input.invalid.password".message())
+                viewUtil.showToast(isShow: true, message: "input.invalid.confirmNewPassword".message())
                 return false
             }
         }

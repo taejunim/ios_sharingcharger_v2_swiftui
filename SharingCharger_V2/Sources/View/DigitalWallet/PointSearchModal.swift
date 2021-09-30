@@ -52,9 +52,9 @@ struct PointSearchModal: View {
                                         selection: $pointViewModel.selectMonth,
                                         displayedComponents: [.date]
                                     )
-                                    .labelsHidden()
-                                    .accentColor(.black)
-                                    .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                                        .labelsHidden()
+                                        .accentColor(.black)
+                                        .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
                                     
                                     Spacer()
                                     
@@ -69,9 +69,9 @@ struct PointSearchModal: View {
                                         displayedComponents: [.date]
                                         
                                     )
-                                    .labelsHidden()
-                                    .accentColor(.black)
-                                    .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                                        .labelsHidden()
+                                        .accentColor(.black)
+                                        .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
                                 }
                                 .frame(maxWidth: .infinity)
                                 .disabled(pointViewModel.chooseDate != "ownPeriod" ? true : false)   //조회기간 선택에 따라 비활성화 변경
@@ -106,7 +106,7 @@ struct PointSearchModal: View {
             }
             .padding()
             
-            PointSearchButton(pointViewModel: pointViewModel) 
+            PointSearchButton(pointViewModel: pointViewModel)
         }
     }
 }
@@ -125,8 +125,8 @@ struct PointDatePicker: View {
                 Text("직접 선택").tag("ownPeriod")
             }
         )
-        .padding(.vertical)
-        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+            .padding(.vertical)
+            .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
         
     }
 }
@@ -144,8 +144,8 @@ struct PointTypePicker: View {
                 Text("구매 취소").tag("PURCHASE_CANCEL")
             }
         )
-        .padding(.vertical)
-        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+            .padding(.vertical)
+            .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
         Picker(
             selection: $pointViewModel.selectPointType, //포인트 유형 선택
             label: Text("유형 선택"),
@@ -155,8 +155,8 @@ struct PointTypePicker: View {
                 Text("포인트 회수").tag("WITHDRAW")
             }
         )
-        .padding(.vertical)
-        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+            .padding(.vertical)
+            .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
     }
 }
 //MARK: - 포인트 정렬 선택 Picker
@@ -173,7 +173,7 @@ struct PointSortPicker: View {
                     Text("과거순").tag("ASC")
                 }
             )
-            .pickerStyle(SegmentedPickerStyle())
+                .pickerStyle(SegmentedPickerStyle())
             
         }.padding(.vertical,25.0)
     }
@@ -188,8 +188,11 @@ struct PointSearchButton: View {
     var body: some View {
         Button(
             action: {
-                pointViewModel.getPointHistory()
-                presentationMode.wrappedValue.dismiss() //현재 창 닫기
+                pointViewModel.searchPoints.removeAll()                     //조회한 포인트 목록 초기화
+                pointViewModel.page = 1                                     //페이지 번호 초기화
+                pointViewModel.isSearchStart = true                         //조회 시작 여부
+                pointViewModel.getPointHistory(page: pointViewModel.page)   //포인트 목록 조회
+                presentationMode.wrappedValue.dismiss()                     //현재 창 닫기
             },
             label: {
                 Text("확인")

@@ -21,8 +21,12 @@ struct PointHistoryView: View {
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
         .navigationBarItems(leading: BackButton(), trailing: PointSearchModalButton(point: pointViewModel))  //커스텀 Back 버튼 추가
         .onAppear {
-            pointViewModel.getCurrentPoint()
-            pointViewModel.getPointHistory()
+            pointViewModel.searchPoints.removeAll()                     //조회한 포인트 목록 초기화
+            pointViewModel.page = 1                                     //페이지 번호 초기화
+            pointViewModel.isSearchStart = true                         //조회 시작 여부
+            
+            pointViewModel.getCurrentPoint()                            //현재 잔여 포인트 호출
+            pointViewModel.getPointHistory(page: pointViewModel.page)   //포인트 목록 첫 페이지 호출
         }
         .sheet(
             isPresented: $pointViewModel.showSearchModal,
@@ -32,7 +36,7 @@ struct PointHistoryView: View {
         )
     }
 }
-
+//MARK: - 포인트 검색 조건
 struct PointSearchModalButton: View {
     @ObservedObject var point: PointViewModel
     
@@ -51,7 +55,7 @@ struct PointSearchModalButton: View {
     }
 }
 
-//MARK: - 현재 잔여 포인트
+//MARK: - 현재 잔여 포인트, 포인트 이력
 struct remainPoints: View {
     @ObservedObject var pointViewModel: PointViewModel
     
@@ -67,7 +71,7 @@ struct remainPoints: View {
                 
                 Spacer()
                 
-                Text(numberFormatter(number: pointViewModel.currentPoint) + "p")
+                Text(pointViewModel.currentPoint.pointFormatter())
                     .foregroundColor(.white)
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                     .frame(width: 100, height: 40)
@@ -80,7 +84,7 @@ struct remainPoints: View {
         Divider()
         //포인트 이력
         ScrollView{
-            VStack(spacing: 10) {
+            LazyVStack {
                 let searchPoints = pointViewModel.searchPoints
                 
                 ForEach(searchPoints, id: \.self) {points in
@@ -92,7 +96,6 @@ struct remainPoints: View {
                     let typeCode: String = points["typeCode"]!
                     
                     let date = created.replacingOccurrences(of: "T", with: " ") //생성 날짜에서 T 제거
-                    let Point = Int(point)  //포인트 int형으로 변환
                     
                     HStack {
                         VStack(alignment: .leading){
@@ -112,7 +115,7 @@ struct remainPoints: View {
                                 Text("\(type)")
                                     .font(.title3)
                                 Spacer()
-                                Text(numberFormatter(number: Point!))
+                                Text(point.pointFormatter())
                                     .font(.body)
                                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                                     .foregroundColor(Color(typeColor))
@@ -130,17 +133,20 @@ struct remainPoints: View {
                         }
                         .padding(.vertical, 5.0)
                     }
+                    .onAppear{
+                        //조회 시작 여부 true일 경우 실행
+                        if pointViewModel.isSearchStart{
+                            //스크롤 하단 이동 시, 마지막 이력 정보일 때 추가 조회 실행
+                            if searchPoints.last == points{
+                                pointViewModel.page += 1    //한 페이지씩 추가
+                                pointViewModel.getPointHistory(page: pointViewModel.page)   //다음 페이지 호출
+                            }
+                        }
+                    }
                     Divider()
                 }
             }
         }
-    }
-    //숫자에 콤마
-    func numberFormatter(number: Int) -> String {
-        let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = .decimal
-        
-        return numberFormatter.string(from: NSNumber(value: number))!
     }
 }
 
