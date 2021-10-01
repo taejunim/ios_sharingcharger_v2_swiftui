@@ -80,4 +80,14 @@ class PointAPIService {
         
         return apiClient.requestText(route: APIRouter.get(useApi: "base", path: "/point/chargers/\(chargerId)/calculate", parameters: parameters, contentType: "text"))
     }
+    
+    //MARK: - 월별 수익 포인트 조회(소유주)
+    /// <#Description#>
+    /// - Parameters:
+    ///   - userIdNo: <#userIdNo description#>
+    ///   - parameters: <#parameters description#>
+    /// - Returns: <#description#>
+    public func requestProfitPoints(userIdNo: String, parameters: [String:String]) -> Future<PointHistory, AFError> {
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/dashboard/personal/\(userIdNo)/stat/point", parameters: parameters, contentType: "json"))
+    }
 }
