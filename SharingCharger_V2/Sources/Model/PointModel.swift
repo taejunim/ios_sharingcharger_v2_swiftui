@@ -49,3 +49,10 @@ struct PointHistorySort: Codable {
     let unsorted: Bool
     let empty: Bool
 }
+
+//MARK: - 월별 수익 포인트 정보
+struct ProfitPoint: Codable {
+    let day: String
+    let point: Int
+}
+

@@ -9,27 +9,27 @@ import SwiftUI
 
 struct OwnerChargerView: View {
     @Environment(\.presentationMode) var presentationMode   //Back 버튼 기능 추가에 필요
-    @ObservedObject var ownerCharger = OwnerChargerViewModel()    //충전기 관리 View Model
+    @ObservedObject var ownerChargerViewModel = OwnerChargerViewModel()    //충전기 관리 View Model
     
     var body: some View {
         VStack {
-            OwnerChargerSummaryInfo(ownerCharger: ownerCharger)  //소유주 충전기 요약 정보
+            OwnerChargerSummaryInfo(ownerChargerViewModel: ownerChargerViewModel)  //소유주 충전기 요약 정보
             
             Dividerline()
             
-            OwnerChargerList(ownerCharger: ownerCharger)  //소유주 충전기 목록
+            OwnerChargerList(ownerChargerViewModel: ownerChargerViewModel)  //소유주 충전기 목록
         }
         .navigationBarTitle(Text("충전기 관리"), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
         .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
         .onAppear {
-            ownerCharger.requestOwnerSummaryInfo()
-            ownerCharger.requestOwnerChargerList()
+            ownerChargerViewModel.requestOwnerSummaryInfo()
+            ownerChargerViewModel.requestOwnerChargerList()
         }
         .sheet(
-            isPresented: $ownerCharger.showProfitPointsView,
+            isPresented: $ownerChargerViewModel.showProfitPointsView,
             content: {
-                ProfitPointsView(ownerCharger: ownerCharger)
+                ProfitPointsView(ownerChargerViewModel: ownerChargerViewModel)
             }
         )
     }
@@ -38,11 +38,11 @@ struct OwnerChargerView: View {
 //MARK: - 소유주의 충전기 요약 정보
 ///NavigationView 문제로 화면 구성 변경
 struct OwnerChargerSummaryInfo: View {
-    @ObservedObject var ownerCharger: OwnerChargerViewModel
+    @ObservedObject var ownerChargerViewModel: OwnerChargerViewModel
     
     var body: some View {
         
-        let ownChargerCount = ownerCharger.ownChargerCount
+        let ownChargerCount = ownerChargerViewModel.ownChargerCount
         VStack {
             HStack {
                 Text("총 충전기 대수")
@@ -61,7 +61,7 @@ struct OwnerChargerSummaryInfo: View {
                 }
                 .padding(.trailing, 10)
                 
-                ChargerRegistViewButton(ownerCharger: ownerCharger)
+                ChargerRegistViewButton(ownerChargerViewModel: ownerChargerViewModel)
             }
             
             VerticalDividerline()
@@ -71,7 +71,7 @@ struct OwnerChargerSummaryInfo: View {
                     .fontWeight(.bold)
                 Spacer()
                 
-                ProfitPointsViewButton(ownerCharger: ownerCharger)
+                ProfitPointsViewButton(ownerChargerViewModel: ownerChargerViewModel)
             }
         }
         .padding()
@@ -80,7 +80,7 @@ struct OwnerChargerSummaryInfo: View {
 
 //MARK: - 충전기 등록 화면 이동 버튼
 struct ChargerRegistViewButton: View {
-    @ObservedObject var ownerCharger: OwnerChargerViewModel
+    @ObservedObject var ownerChargerViewModel: OwnerChargerViewModel
     
     var body: some View {
         NavigationLink(
@@ -106,14 +106,14 @@ struct ChargerRegistViewButton: View {
 
 //MARK: - 월별 수익 포인트 화면 이동 버튼
 struct ProfitPointsViewButton: View {
-    @ObservedObject var ownerCharger: OwnerChargerViewModel
+    @ObservedObject var ownerChargerViewModel: OwnerChargerViewModel
     
     var body: some View {
         
-        let monthlyCumulativePoint = ownerCharger.monthlyCumulativePoint
+        let monthlyCumulativePoint = ownerChargerViewModel.monthlyCumulativePoint
         Button(
             action: {
-                ownerCharger.showProfitPointsView = true
+                ownerChargerViewModel.showProfitPointsView = true
             },
             label: {
                 Text(numberFormatter(number: monthlyCumulativePoint) + "p")
@@ -138,12 +138,12 @@ struct ProfitPointsViewButton: View {
 
 //MARK: - 소유주 충전기 목록
 struct OwnerChargerList: View {
-    @ObservedObject var ownerCharger: OwnerChargerViewModel
+    @ObservedObject var ownerChargerViewModel: OwnerChargerViewModel
     
     var body: some View {
         ScrollView {
             
-            let searchChargers = ownerCharger.chargers
+            let searchChargers = ownerChargerViewModel.chargers
             
             ForEach(searchChargers, id: \.self) {charger in
                 

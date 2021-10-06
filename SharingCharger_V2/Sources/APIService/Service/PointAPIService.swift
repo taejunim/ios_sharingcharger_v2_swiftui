@@ -87,7 +87,7 @@ class PointAPIService {
     ///   - userIdNo: <#userIdNo description#>
     ///   - parameters: <#parameters description#>
     /// - Returns: <#description#>
-    public func requestProfitPoints(userIdNo: String, parameters: [String:String]) -> Future<PointHistory, AFError> {
+    public func requestProfitPoints(userIdNo: String, parameters: [String:String]) -> Future<[ProfitPoint], AFError> {
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/dashboard/personal/\(userIdNo)/stat/point", parameters: parameters, contentType: "json"))
     }
 }
