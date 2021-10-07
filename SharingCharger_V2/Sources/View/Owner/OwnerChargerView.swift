@@ -147,6 +147,7 @@ struct OwnerChargerList: View {
             
             ForEach(searchChargers, id: \.self) {charger in
                 
+                let id: String = charger["id"]!
                 let name: String = charger["name"]!                                         //충전기 명
                 let address: String = charger["address"]!                                   //주소
                 let description: String = charger["description"]!                           //설명
@@ -155,10 +156,8 @@ struct OwnerChargerList: View {
                 let typeColor: String = charger["typeColor"]!                               //충전기 상태별 Color
                 let index: String = charger["index"]!                                       //번호 (n번째 충전기) - 화면 표출용
                 
-                Button(
-                    action: {
-                        print("\(index) 클릭")
-                    },
+                NavigationLink(
+                    destination: ChargerDetailView(chargerId : id),
                     label: {
                         HStack {
                             Text(index)

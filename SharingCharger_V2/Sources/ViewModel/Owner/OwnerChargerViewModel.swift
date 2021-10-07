@@ -11,12 +11,16 @@ class OwnerChargerViewModel: ObservableObject {
     
     private let chargerAPI = ChargerAPIService()  //사용자 API Service
     private let pointAPIService = PointAPIService()  //포인트 API Service
+    
+    let ownerIdNo:String = UserDefaults.standard.string(forKey: "userIdNo") ?? ""   //저장된 사용자 ID 번호
+    
     @Published var viewUtil = ViewUtil() //View Util
     @Published var showRegistView: Bool = false
     @Published var showProfitPointsView: Bool = false
     @Published var ownChargerCount: Int = 0
     @Published var monthlyCumulativePoint: Int = 0
-    @Published var chargers: [[String:String]] = [] //조회환 포인트 정보 목록
+
+    @Published var chargers: [[String:String]] = [] //조회환 충전기 정보 목록
     @Published var isShowYearPopupView: Bool = false //년도 팝업 flag
     @Published var searchYear: String = "" //년도
     
@@ -27,10 +31,9 @@ class OwnerChargerViewModel: ObservableObject {
         viewUtil.isLoading = true   //로딩 시작
         chargers.removeAll()    //조회한 포인트 목록 마커 정보 초기화
         
-        let ownerIdNo:String = UserDefaults.standard.string(forKey: "userIdNo") ?? ""   //저장된 사용자 ID 번호
         let ownerType:String = UserDefaults.standard.string(forKey: "userType") ?? ""
         
-        var searchCharger:[String:String] = [:]    //조회한 포인트 정보
+        var searchCharger:[String:String] = [:]  
         var searchChargers:[[String:String]] = []
         
         //사용자 포인트 이력 조회 API 호출
@@ -42,6 +45,7 @@ class OwnerChargerViewModel: ObservableObject {
                 for index in 0..<charger.count {
                     
                     let charger = charger[index]
+                    let id = charger.id
                     let name = charger.name
                     let address = charger.address
                     let description = charger.description
@@ -67,6 +71,7 @@ class OwnerChargerViewModel: ObservableObject {
                     
                     //포인트 이력 정보
                     searchCharger = [
+                        "id": String(id!),
                         "name": name!,                           //충전기 명
                         "address": address!,                     //주소
                         "description": description!,             //설명
@@ -95,8 +100,6 @@ class OwnerChargerViewModel: ObservableObject {
         }
     
     func requestOwnerSummaryInfo() {
-        
-        let ownerIdNo:String = UserDefaults.standard.string(forKey: "userIdNo") ?? ""   //저장된 사용자 ID 번호
         
         //소유자 충전기 요약 정보 조회 API 호출
         let request = chargerAPI.requestOwnerSummaryInfo(ownerIdNo: ownerIdNo)
