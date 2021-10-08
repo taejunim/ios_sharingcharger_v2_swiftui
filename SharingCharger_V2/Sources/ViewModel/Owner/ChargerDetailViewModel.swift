@@ -14,13 +14,23 @@ class ChargerDetailViewModel: ObservableObject {
     @Published var viewUtil = ViewUtil() //View Util
     @Published var charger: [String:String] = [:] //조회환 포인트 정보 목록
     
+    @Published var chargerId:String = ""
+    
+    @Published var chargerName:String = ""
+    @Published var address:String = ""
+    @Published var detailAddresss:String = ""
+    @Published var parkingFeeDescription:String = ""
+    @Published var parkingFeeFlag:Bool = false
+    @Published var cableFlag:Bool = false
+    @Published var rangeOfFee:String = ""
+   
+    
     func requestOwnerCharger(chargerId: String) {
         
         viewUtil.isLoading = true   //로딩 시작
         
-        charger.removeAll()
-
-        var searchCharger:[String:String] = [:]    //조회한 포인트 정보
+        //charger.removeAll()
+        var searchCharger:[String:String] = [:]
         
         //소유자 충전기 요약 정보 조회 API 호출
         let request = chargerAPI.requestOwnerCharger(chargerId: chargerId)
@@ -30,8 +40,9 @@ class ChargerDetailViewModel: ObservableObject {
                     
                 let name = charger.name
                 let bleNumber = charger.bleNumber
-                let ownerName = charger.ownerName
+                let providerCompanyName = charger.providerCompanyName
                 let address = charger.address
+                let detailAddress = charger.detailAddress
                 var parkingFeeFlag = "무료주차"
                 let parkingFeeDescription = charger.parkingFeeDescription
                 let description = charger.description
@@ -41,15 +52,23 @@ class ChargerDetailViewModel: ObservableObject {
                 searchCharger = [
                     "name": name!,
                     "bleNumber": bleNumber!,
-                    "ownerName": ownerName!,
+                    "providerCompanyName": providerCompanyName!,
                     "address": address!,
                     "parkingFeeFlag": parkingFeeFlag,
                     "parkingFeeDescription": parkingFeeDescription!,
                     "description" : description!
                 ]
                 
+                self.chargerName = name!
+                self.address = address!
+                self.detailAddresss = detailAddress!
+                self.parkingFeeDescription = parkingFeeDescription!
+                self.parkingFeeFlag = charger.parkingFeeFlag!
+                self.cableFlag = charger.cableFlag!
+                self.rangeOfFee = charger.rangeOfFee!.replacingOccurrences(of: "p", with: "")
+                
+                print(charger)
                 self.charger = searchCharger
-                print(self.charger)
 
             },
             //API 호출 실패

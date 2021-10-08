@@ -144,7 +144,7 @@ struct OwnerChargerList: View {
         ScrollView {
             
             let searchChargers = ownerChargerViewModel.chargers
-            
+            VStack{
             ForEach(searchChargers, id: \.self) {charger in
                 
                 let id: String = charger["id"]!
@@ -208,7 +208,7 @@ struct OwnerChargerList: View {
                 
                 HorizontalDividerline()
             }
-            
+        }
         }
     }
 }

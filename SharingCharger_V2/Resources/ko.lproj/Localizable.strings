@@ -24,6 +24,7 @@
 "button.sign.in" = "로그인";
 "button.sign.up" = "회원가입";
 "button.regist" = "등록";
+"button.change" = "변경";
 "button.change.password" = "비밀번호 변경";
 "button.password.next.step" = "비밀번호 변경하기";
 "button.password.complete" = "비밀번호 변경 완료";

@@ -26,6 +26,9 @@ class OwnerChargerViewModel: ObservableObject {
     
     @Published var searchPoints: [[String:String]] = [] //조회환 포인트 정보 목록
     
+    
+    @Published var showPChargerDetailView: Bool = false
+    
     func requestOwnerChargerList() {
 
         viewUtil.isLoading = true   //로딩 시작
@@ -33,7 +36,7 @@ class OwnerChargerViewModel: ObservableObject {
         
         let ownerType:String = UserDefaults.standard.string(forKey: "userType") ?? ""
         
-        var searchCharger:[String:String] = [:]  
+        
         var searchChargers:[[String:String]] = []
         
         //사용자 포인트 이력 조회 API 호출
@@ -43,6 +46,8 @@ class OwnerChargerViewModel: ObservableObject {
             onSuccess: { (charger) in
                     
                 for index in 0..<charger.count {
+                    
+                    var searchCharger:[String:String] = [:]
                     
                     let charger = charger[index]
                     let id = charger.id
@@ -80,7 +85,8 @@ class OwnerChargerViewModel: ObservableObject {
                         "typeColor": typeColor,                  //type에 따른 color
                         "index": String(index + 1)
                     ]
-                 
+                    
+                    print(searchCharger)
                     searchChargers.append(searchCharger)
                 }
                 self.chargers.append(contentsOf: searchChargers)
