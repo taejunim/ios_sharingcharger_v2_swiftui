@@ -186,37 +186,22 @@ struct OwnerChargerOperateTimeSetting: View {
                 .lineSpacing(30)
             
             HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("요금 설정")
+                Text("현재 운영 시간")
+                    .frame(width : 130)
+                
+                Text(" ~ ")
             }
+            .frame(height: 50)
             HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Picker(
-                    selection: $chargerDetailViewModel.parkingFeeFlag, //주차 요금 여부
-                    label: Text("요금 설정"),
-                    content: {
-                        Text("없음").tag(false)
-                        Text("있음").tag(true)
-                        Text("있음").tag(true)
-                        
-                    }
-                )
-                    .pickerStyle(SegmentedPickerStyle())
+                Text("변경 예정 시간")
+                    .frame(width : 130)
+
+                Text(" ~ ")
+                
             }
+            .frame(height: 50)
             HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("주소")
-                    .frame(width: 100)
-                    .multilineTextAlignment(.leading)
-                Spacer()
-                TextField("주소", text: $chargerDetailViewModel.address)
-                    .autocapitalization(.none)    //첫 문자 항상 소문자
-                    .keyboardType(.namePhonePad)
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("상세 주소")
-                    .frame(width: 100)
-                Spacer()
-                TextField("상세 주소", text: $chargerDetailViewModel.detailAddresss)
-                    .autocapitalization(.none)    //첫 문자 항상 소문자
-                    .keyboardType(.namePhonePad)
+                Text("* 시간 변경시 2일 후 적용됩니다.")
             }
             
             Spacer()
@@ -324,9 +309,7 @@ struct OwnerChargerHistory: View {
                 Text("충전 이력")
                     .font(.title)
                     .fontWeight(.bold)
-                
                 Spacer()
-                
                 OwnerChargerHistorySearchModalButton(chargerDetailViewModel: chargerDetailViewModel)
             }
             
@@ -339,7 +322,6 @@ struct OwnerChargerHistory: View {
                         
                             Image("Charge-Position")
                                 .resizable()
-                                .renderingMode(.template)
                                 .frame(width: 20, height: 20)
                         
                             Text("충전기명 : ")
@@ -425,20 +407,24 @@ struct ChangeButton: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
     
     var body: some View {
-        Button(
-            action: {
-                chargerDetailViewModel.viewUtil.dismissKeyboard()  //키보드 닫기
-            },
-            label: {
-                Text("button.change".localized())
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.white)
-                    .padding(.horizontal)
-                    .frame(width: 200, height: 50, alignment: .center)
-                    .background(Color("#8E44AD"))
-            }
-        )
+        HStack{
+            Spacer()
+            Button(
+                action: {
+                    chargerDetailViewModel.viewUtil.dismissKeyboard()  //키보드 닫기
+                },
+                label: {
+                    Text("button.change".localized())
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.white)
+                        .padding(.horizontal)
+                        .frame(width: 200, height: 50, alignment: .center)
+                        .background(Color("#8E44AD"))
+                }
+            )
+            Spacer()
+        }
     }
 }
 
