@@ -44,19 +44,6 @@ class ChargerAPIService {
     //MARK: - [소유주 충전기 조회 API]
     //----------------------------
     
-    //MARK: - BLE 번호로 소유주 충전기 조회 API 호출
-    /// 소유주에게 할당된 충전기를 BLE 번호로 조회
-    /// - Parameter parameters:
-    ///   - bleNumber: BLE 번호
-    ///   - page: 페이지 번호
-    ///   - size: 한 페이지당 개수
-    ///   - sort: 정렬
-    /// - Returns: Owner Charger Model
-    public func requestSearchAssignedCharger(parameters: [String:String]) -> Future<[OwnerCharger], AFError> {
-    
-        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/ble-number", parameters: parameters, contentType: "json"))
-    }
-    
     //MARK: - 소유자 충전기 요약 정보 조회 API 호출
     /// 소유자가 보유한 충전기의 요약 정보 조회
     /// - Parameter ownerIdNo: 소유자 ID 번호(= 사용자 ID 번호)
@@ -106,6 +93,59 @@ class ChargerAPIService {
     
     
     //----------------------------
+    //MARK: - [소유주 충전기 할당 API]
+    //----------------------------
+    
+    //MARK: - BLE 번호로 소유주 충전기 조회 API 호출
+    /// 소유주에게 할당된 충전기를 BLE 번호로 조회
+    /// - Parameter parameters:
+    ///   - bleNumber: BLE 번호
+    ///   - page: 페이지 번호
+    ///   - size: 한 페이지당 개수
+    ///   - sort: 정렬
+    /// - Returns: Owner Charger Model
+    public func requestSearchAssignedCharger(parameters: [String:String]) -> Future<[OwnerCharger], AFError> {
+    
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/ble-number", parameters: parameters, contentType: "json"))
+    }
+    
+    //MARK: - 소유주 충전기 할당 API 호출
+    /// BLE 번호 조회 후, 해당 충전기의 할당 요청
+    /// - Parameters:
+    ///   - chargerId: 충전기 ID 번호
+    ///   - parameters:
+    ///     - name: 충전기 명
+    ///     - chargerType: 충전기 유형
+    ///       - BLE: Bluetooth Low Energy
+    ///       - MODEM: 모뎀
+    ///     - bleNumber: BLE 번호
+    ///     - description: 충전기 설명
+    ///     - address:  주소
+    ///     - detailAddress: 상세주소
+    ///     - sharedType: 공유 유형
+    ///       - SHARING: 전체 공유
+    ///       - PARTIAL_SHARING: 부분 공유
+    ///     - cableFlag: 케이블 유무
+    ///     - supplyCapacity: 충전 속도 유형
+    ///       - QUICK:  급속
+    ///       - STANDARD: 완속
+    ///       - SLOW: 저속
+    ///     - parkingFeeFlg: 주차 요금 여부
+    ///     - parkingFeeDescription: 주차 요금 설명
+    ///     - ownerType: 소유주 유형
+    ///       - Personal: 개인
+    ///       - Company: 회사
+    ///     - ownerName: 소유주 ID (이메일)
+    ///     - providerCompanyId: 충전기 공급 회사 ID
+    ///     - currentStatusType: 충전기 상태 (기본값: READY)
+    /// - Returns: Owner Charger Model
+    public func requestAssignedCharger(chargerId: String, parameters: [String:Any]) -> Future<OwnerCharger, AFError> {
+        
+        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/chargers/app/\(chargerId)/assign", parameters: parameters))
+    }
+    
+    
+    //----------------------------
     //MARK: - [소유주 충전기 수정 API]
     //----------------------------
     
@@ -113,11 +153,34 @@ class ChargerAPIService {
     /// 충전기의 정보 수정
     /// - Parameters:
     ///   - chargerId: 충전기 ID 번호
-    ///   - parameters: parameters description
+    ///   - parameters:
+    ///     - name: 충전기 명
+    ///     - chargerType: 충전기 유형
+    ///       - BLE: Bluetooth Low Energy
+    ///       - MODEM: 모뎀
+    ///     - bleNumber: BLE 번호
+    ///     - description: 충전기 설명
+    ///     - address:  주소
+    ///     - detailAddress: 상세주소
+    ///     - sharedType: 공유 유형
+    ///       - SHARING: 전체 공유
+    ///       - PARTIAL_SHARING: 부분 공유
+    ///     - cableFlag: 케이블 유무
+    ///     - supplyCapacity: 충전 속도 유형
+    ///       - QUICK:  급속
+    ///       - STANDARD: 완속
+    ///       - SLOW: 저속
+    ///     - parkingFeeFlg: 주차 요금 여부
+    ///     - parkingFeeDescription: 주차 요금 설명
+    ///     - ownerType: 소유주 유형
+    ///       - Personal: 개인
+    ///       - Company: 회사
+    ///     - ownerName: 소유주 ID (이메일)
+    ///     - providerCompanyId: 충전기 공급 회사 ID
     /// - Returns: Owner Charger Model
     public func requestUpdateCharger(chargerId: String, parameters: [String:Any]) -> Future<OwnerCharger, AFError> {
         
-        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/chargers/\(chargerId)/assign", parameters: parameters))
+        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/chargers/\(chargerId)", parameters: parameters))
     }
     
     //MARK: - 소유주 충전기별 충전 단가 수정 API 호출
