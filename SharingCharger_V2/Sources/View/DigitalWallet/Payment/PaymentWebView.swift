@@ -11,11 +11,10 @@ import UIKit
 
 struct PaymentWebView: UIViewRepresentable, WebViewHandlerDelegate {
     
-    //var webView: WKWebView //Web View
     var loadUrl: String //호출 URL
-    
     var message: ( _ type: String, _ code: String, _ content: String) -> () //JavaScript 메시지 - type: 메시지 타입, code: 메시지 코드, content: 메시지 내용
     
+    //MARK: - 웹 뷰 생성
     func makeUIView(context: Context) -> WKWebView {
         HTTPCookieStorage.shared.cookieAcceptPolicy = .always
         
@@ -31,16 +30,16 @@ struct PaymentWebView: UIViewRepresentable, WebViewHandlerDelegate {
         
         configuration.userContentController.add(self.makeCoordinator(), name: "myInterface")
         
-        debugPrint("Load URL : \(loadUrl)")
-        
         if let url = URL(string: loadUrl) {
-            webView.load(URLRequest(url: url))    // 지정된 URL 요청 개체에서 참조하는 웹 콘텐츠를로드하고 탐색
+            webView.load(URLRequest(url: url))
         }
         
         return webView
     }
     
+    //MARK: - 웹 뷰 업데이트
     func updateUIView(_ webView: WKWebView, context: Context) {
+        
     }
     
     func makeCoordinator() -> Coordinator {
@@ -48,11 +47,11 @@ struct PaymentWebView: UIViewRepresentable, WebViewHandlerDelegate {
     }
     
     func receivedJsonValueFromWebView(value: [String : Any?]) {
-        print("JSON 데이터가 웹으로부터 옴: \(value)")
+        print("JSON Data: \(value)")
     }
     
     func receivedStringValueFromWebView(value: String) {
-        print("String 데이터가 웹으로부터 옴: \(value)")
+        print("String Data: \(value)")
     }
     
     class Coordinator : NSObject, WKNavigationDelegate {
@@ -134,9 +133,9 @@ extension PaymentWebView.Coordinator: WKUIDelegate {
             let getCode = encodedMessage[..<encodedMessage.firstIndex(of: ":")!].trimmingCharacters(in: .whitespaces)
             let getContent = encodedMessage[encodedMessage.firstIndex(of: ":")!...].trimmingCharacters(in: [":"]).trimmingCharacters(in: .whitespaces)
 
-//            print("JavaScript Alert Encoding Message : \(encodedMessage)")
-//            print("JavaScript Alert Code : \(getCode)")
-//            print("JavaScript Alert Content : \(getContent)")
+            print("JavaScript Alert Encoding Message : \(encodedMessage)")
+            print("JavaScript Alert Code : \(getCode)")
+            print("JavaScript Alert Content : \(getContent)")
             
             self.webView.message("alert", getCode, getContent)
         }

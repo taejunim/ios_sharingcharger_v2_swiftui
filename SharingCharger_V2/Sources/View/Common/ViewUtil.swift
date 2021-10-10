@@ -72,6 +72,18 @@ class ViewUtil: ObservableObject {
         .cornerRadius(10)   //모서리 둥글게 처리
     }
     
+    func toastPopup(message: String) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Text(message)
+                .foregroundColor(Color.white)
+                .fontWeight(.bold)
+                .multilineTextAlignment(.center)
+        }
+        .padding(15)
+        .background(Color.black.opacity(0.5))   //배경 색상 및 투명도
+        .cornerRadius(10)   //모서리 둥글게 처리
+    }
+    
     //MARK: - Toast 팝업 호출
     /// Toast Popup 호출
     /// - Parameters:

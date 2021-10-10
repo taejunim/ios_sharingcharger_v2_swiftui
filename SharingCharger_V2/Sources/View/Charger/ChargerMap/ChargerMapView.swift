@@ -16,6 +16,7 @@ struct ChargerMapView: View {
     @ObservedObject var reservation = ReservationViewModel()    //예약 View Model
     @ObservedObject var point = PointViewModel()    //포인트 View Model
     @ObservedObject var purchase = PurchaseViewModel()  //포인트 구매 View Model
+    @ObservedObject var charging = ChargingViewModel()  //포인트 구매 View Model
     
     var body: some View {
         //로그아웃 시, 로그인 화면으로 이동
@@ -89,41 +90,51 @@ struct ChargerMapView: View {
                     FrameView(sideMenu: sideMenu, chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)
                     
                     //충전기 정보 Modal View
-                    ChargerInfoModal(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase)
-
-                    //사이드 메뉴 표시 여부에 따라 노출
-                    if sideMenu.isShowMenu {
-                        SideMenuView(sideMenu: sideMenu, reservation: reservation, point: point, purchase: purchase)    //사이드 메뉴
-                    }
+                    ChargerInfoModal(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase, point: point)
                     
                     //로딩 표시 여부에 따라 표출
                     if chargerMap.viewUtil.isLoading {
                         chargerMap.viewUtil.loadingView()  //로딩 화면
                     }
-
-                    //충전기 정보 Modal 화면에서 충전하기 진행 시, 잔여 포인트가 충분할 경우 '충전하기 알림창' 호출
-                    if reservation.showChargingAlert {
-                        ChargingAlert(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)   //충전하기 알림창
+                    
+                    //사이드 메뉴 표시 여부에 따라 노출
+                    if sideMenu.isShowMenu {
+                        SideMenuView(sideMenu: sideMenu, reservation: reservation, point: point, purchase: purchase)    //사이드 메뉴
                     }
                     
-                    //충전기 정보 Modal 화면에서 충전하기 진행 시, 잔여 포인트가 부족할 경우 '포인트 부족 알림창' 호출
-                    if purchase.showPointLackAlert {
-                        PointLackAlert(chargerMap: chargerMap, reservation: reservation, purchase: purchase)    //포인트 부족 알림창
-                    }
-                    
-                    //포인트 부족 알림창에서 포인트 충전 진행 시, '포인트 결제 금액 입력 알림창' 호출
-                    if purchase.showPaymentInputAlert {
-                        PaymentInputAlert(purchase: purchase)   //포인트 결제 금액 입력 알림창
-                    }
-                    
-                    //충전기 정보 Modal 화면에서 예약 취소 시, 예약 취소 알림창 호출
-                    if reservation.showCancelAlert {
-                        CancelReservationAlert(chargerMap: chargerMap, reservation: reservation)    //충전기 예약 취소 알림창
-                    }
-                    
-                    if chargerMap.showChargingView {
-                        ChargingView(chargerMap: chargerMap, reservation: reservation)
+                    //충전하기 버튼 클릭 시, 충전 화면 이동
+                    if chargerMap.isShowChargingView {
+                        ChargingView(chargerMap: chargerMap, reservation: reservation, charging: charging)
                             .transition(.move(edge: .trailing))   //노출 시작 위치
+                    }
+                    
+                    Group {
+                        //충전기 정보 Modal 화면에서 충전하기 진행 시, 잔여 포인트가 충분할 경우 '충전하기 알림창' 호출
+                        if reservation.isShowChargingAlert {
+                            ChargingAlert(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)   //충전하기 알림창
+                        }
+                        
+                        //충전기 정보 Modal 화면에서 예약 취소 시, 예약 취소 알림창 호출
+                        if reservation.isShowCancelAlert {
+                            CancelReservationAlert(chargerMap: chargerMap, reservation: reservation)    //충전기 예약 취소 알림창
+                        }
+                    }
+                    
+                    Group {
+                        //충전기 정보 Modal 화면에서 충전하기 진행 시, 잔여 포인트가 부족할 경우 '포인트 부족 알림창' 호출
+                        if purchase.isShowPointLackAlert {
+                            PointLackAlert(chargerMap: chargerMap, reservation: reservation, purchase: purchase)    //포인트 부족 알림창
+                        }
+                        
+                        //포인트 부족 알림창에서 포인트 충전 진행 시, '포인트 결제 금액 입력 알림창' 호출
+                        if purchase.isShowPaymentInputAlert {
+                            PaymentInputAlert(purchase: purchase, point: point, reservation: reservation)   //포인트 결제 금액 입력 알림창
+                        }
+                        
+                        //결제 완료 시, '결제 완료 알림창' 호출
+                        if purchase.showCompletionAlert {
+                            PaymentCompletionAlert(purchase: purchase, point: point, reservation: reservation)  //결제 완료 알림창
+                        }
                     }
                 }
                 .navigationBarHidden(true)
@@ -170,13 +181,13 @@ struct FrameView: View {
             HStack {
                 SideMenuButton(sideMenu: sideMenu)  //사이드 메뉴 버튼
                 Spacer().frame(width: 15)
-                MapAddress(chargerMap: chargerMap)  //지도 주소
+                MapAddressButton(chargerMap: chargerMap)  //지도 주소
             }
             .padding([.leading, .bottom, .trailing])
             
             HStack {
                 Spacer()
-                CurrentLocationButton(chargerMap: chargerMap, chargerSearch: chargerSearch) //현재 위치 이동 버튼
+                CurrentLocationButton(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation) //현재 위치 이동 버튼
             }
             .padding(.horizontal)
             
@@ -221,13 +232,13 @@ struct SideMenuButton: View {
 }
 
 //MARK: - 지도 주소
-struct MapAddress: View {
+struct MapAddressButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     
     var body: some View {
         Button(
             action: {
-                
+                chargerMap.isShowAddressSearchModal = true
             },
             label: {
                 HStack {
@@ -244,6 +255,13 @@ struct MapAddress: View {
                 .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
             }
         )
+        .sheet(
+            isPresented: $chargerMap.isShowAddressSearchModal,
+            content: {
+                //충전기 검색조건 팝업 창
+                AddressSearchModal(chargerMap: chargerMap)
+            }
+        )
     }
 }
 
@@ -251,6 +269,7 @@ struct MapAddress: View {
 struct CurrentLocationButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     @ObservedObject var chargerSearch: ChargerSearchViewModel
+    @ObservedObject var reservation: ReservationViewModel
     
     var body: some View {
         Button(
@@ -271,6 +290,8 @@ struct CurrentLocationButton: View {
                     //현재 위치 이동 실행 - 현재 위치 이동 시, 현재 위치의 충전기 목록 조회
                     chargerMap.currentLocation(chargerSearch.chargingStartDate!, chargerSearch.chargingEndDate!)
                 }
+                
+                reservation.getUserReservation()
             },
             label: {
                 ZStack {

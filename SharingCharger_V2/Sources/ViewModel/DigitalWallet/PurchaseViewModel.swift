@@ -14,9 +14,20 @@ class PurchaseViewModel: ObservableObject {
     
     @Published var viewUtil = ViewUtil()
     
-    @Published var showPointLackAlert: Bool = false //포인트 부족 알림창 활성 여부
-    @Published var showPaymentInputAlert: Bool = false  //결제 입력 알림창 활성 여부
+    @Published var parentView: String = ""  //결제 호출 화면
+    /// - parentView: 결제 팝업창을 호출한 상위 화면
+    ///   - pointLackAlert: 포인트 부족 알림창
+    ///   - reservationView:  예약 진행 화면
+    ///   - sideMenuView: 사이드 메뉴 화면
     
+    @Published var isShowPointLackAlert: Bool = false //포인트 부족 알림창 활성 여부
+    @Published var isShowPaymentInputAlert: Bool = false  //결제 입력 알림창 활성 여부
+    @Published var isShowPaymentModal: Bool = false   //결제 팝업창 호출 여부
+    @Published var showCompletionAlert: Bool = false    //결제 완료 알림창 호출 여부
+    
+    @Published var isCheckAmount: Bool = false  //결제 금액 확인 여부
+    @Published var isPayment: Bool = false  //결제 성공 여부
+    @Published var paymentUserIdNo: String = "" //결제 사용자 ID 번호
     @Published var paymentArray: [Int] = [10000, 30000, 50000]  //결제 금액 선택 목록
     @Published var isDirectlyInput: Bool = false    //직접입력 여부
     @Published var paymentAmount: Int = 0   //선택 결제 금액
@@ -28,13 +39,6 @@ class PurchaseViewModel: ObservableObject {
         }
     }
     
-    @Published var isCheckAmount: Bool = false  //결제 금액 확인 여부
-    @Published var isPayment: Bool = false  //결제 성공 여부
-    
-    @Published var paymentWebView = WKWebView(frame: .zero)
-    @Published var showPaymentModal: Bool = false
-    @Published var paymentUserIdNo: String = ""
-
     //MARK: - 직접 입력한 결제 금액 변경
     func changePaymentAmount() {
         //직접입력 금액이 빈값이 아니고 첫번째 숫자가 0이 아닐때만 결제 금액 변경
@@ -53,12 +57,11 @@ class PurchaseViewModel: ObservableObject {
         }
     }
     
-    func payment() {
-        
-    }
-    
+    //MARK: - 결제 금액 확인
+    /// 결제 창 호출 전 결제 금액을 선택을 하거나 직접입력한 결제 금액 확인 후 결제 팝업창 호출
     func checkPaymentAmount() {
         
+        //결제 금액이 0원인 경우
         if paymentAmount == 0 {
             isCheckAmount = false   //결제금액 확인 결과
             
@@ -74,7 +77,7 @@ class PurchaseViewModel: ObservableObject {
         //결제 금액이 0이 아닌 경우 결제 단계 실행
         else {
             isCheckAmount = true    //결제금액 확인 결과
-            showPaymentModal = true //결제 Web View 팝업창 호출
+            isShowPaymentModal = true //결제 Web View 팝업창 호출
             
             //포인트 구매 API 실행
 //            purchacePoint() { (result) in

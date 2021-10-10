@@ -9,16 +9,53 @@ import SwiftUI
 
 //MARK: - 충전 화면
 struct ChargingView: View {
-    @ObservedObject var viewOptionSet = ViewOptionSet()
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var reservation: ReservationViewModel
-    @ObservedObject var charging = ChargingViewModel()
+    @ObservedObject var viewUtil = ViewUtil()   //화면 유틸리티
+    @ObservedObject var viewOptionSet = ViewOptionSet() //화면 옵션 설정
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
     
     var body: some View {
-        NavigationView {
-            ChargerBLESearchView(chargerMap: chargerMap, reservation: reservation, charging: charging)
-        }
-        .onAppear {
+        ZStack {
+            NavigationView {
+                ChargerBLESearchView(chargerMap: chargerMap, reservation: reservation, charging: charging)  //충전기 BLE 검색 화면
+            }
+            .onAppear {
+                charging.userIdNo = reservation.userIdNo    //예약한 사용자 ID번호
+                charging.reservationId = reservation.reservationId  //예약 ID
+                charging.chargerId = reservation.reservedChargerId  //예약 충전기 ID
+                charging.bleNumber = reservation.reservedchargerBLENumber   //예약 충전기 BLE 번호
+                charging.chargerStatus = reservation.reservationStatus  //충전 예약 상태 - RESERVE: 예약, KEEP: 충전
+                charging.reservationStartDate = reservation.reservationStartDate    //예약 시작일시
+                charging.reservationEndDate = reservation.reservationEndDate    //예약 종료일시
+                
+                //사용자가 예약한 건에 대해 충전 상태인 경우
+                if charging.chargerStatus == "KEEP" {
+                    charging.isCharging = true  //충전 상태로 변경
+                    charging.chargeId = UserDefaults.standard.string(forKey: "chargeId")!   //사용자 정보에 저장된 충전 정보 ID
+                    charging.chargingStartDate = UserDefaults.standard.object(forKey: "chargingStartDate") as! Date //사용자 정보에 저장된 충전 시작일시 호출
+                }
+                else {
+                    charging.isCharging = false //충전 상태 초기화
+                }
+            }
+            .popup(
+                isPresented: $charging.isShowToast,   //팝업 노출 여부
+                type: .floater(verticalPadding: 80),
+                position: .bottom,
+                animation: .easeInOut(duration: 0.0),   //애니메이션 효과
+                autohideIn: 2,  //팝업 노출 시간
+                closeOnTap: false,
+                closeOnTapOutside: false,
+                view: {
+                    viewUtil.toastPopup(message: charging.showMessage)
+                }
+            )
+            
+            //로딩 화면 호출 여부에 따라 로딩 화면 호출
+            if charging.isLoading {
+                viewUtil.loadingView()  //로딩 화면
+            }
         }
     }
 }
@@ -47,17 +84,17 @@ struct ChargerBLESearchView: View {
                     
                     VerticalDividerline()
                     
-                    ConnectionGuide()
+                    ConnectionGuide()   //충전기 연결 가이드
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
             }
             
-            ChargerBLESearchButton(charging: charging)
+            ChargerBLESearchButton(charging: charging, chargerMap: chargerMap, reservation: reservation)  //충전기 BLE 검색 버튼
         }
         .navigationBarTitle(Text("충전기 검색"), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: BackMainButton(chargerMap: chargerMap))  //커스텀 Back 버튼 추가
+        .navigationBarItems(leading: BackMainButton(chargerMap: chargerMap, charging: charging, reservation: reservation))  //커스텀 Back 버튼 추가
     }
 }
 
@@ -148,18 +185,20 @@ struct ConnectionGuide: View {
     }
 }
 
-//MARK: - 충전기
+//MARK: - 충전기 BLE 검색 버튼
 struct ChargerBLESearchButton: View {
     @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var reservation: ReservationViewModel
     
     var body: some View {
         NavigationLink(
-            destination: ChargingControlView(charging: charging),
-            isActive: $charging.isConnect,
+            destination: ChargerBLEControlView(charging: charging, chargerMap: chargerMap, reservation: reservation),
+            isActive: $charging.isSearch,
             label: {
                 Button(
                     action: {
-                        charging.isConnect = true
+                        charging.searchChargerBLE()
                     },
                     label: {
                         Text("충전기 검색")
@@ -176,14 +215,31 @@ struct ChargerBLESearchButton: View {
     }
 }
 
+//MARK: - 충전기 지도 화면 이동 버튼
 struct BackMainButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var reservation: ReservationViewModel
     
     var body: some View {
         Button(
             action: {
                 withAnimation {
-                    chargerMap.showChargingView = false
+                    charging.isShowChargingResult = false
+                    chargerMap.isShowChargingView = false
+                }
+                
+                reservation.getUserReservation()
+                
+                //충전기 목록 재조회
+                charging.getCurrentDate() { (currentDate) in
+                    chargerMap.getChargerList(
+                        zoomLevel: 0,   //Zoom Level
+                        latitude: chargerMap.latitude,  //위도
+                        longitude: chargerMap.longitude,    //경도
+                        searchStartDate: currentDate,  //조회 시작일시
+                        searchEndDate: currentDate   //조회 종료일시
+                    ) { _ in }
                 }
             },
             label: {
@@ -194,48 +250,83 @@ struct BackMainButton: View {
                 .padding(.trailing)
             }
         )
+        .onDisappear {
+            reservation.getUserReservation()    //사용자 예약 정보 조회
+            
+            //충전기 목록 재조회
+            charging.getCurrentDate() { (currentDate) in
+                chargerMap.getChargerList(
+                    zoomLevel: 0,   //Zoom Level
+                    latitude: chargerMap.latitude,  //위도
+                    longitude: chargerMap.longitude,    //경도
+                    searchStartDate: currentDate,  //조회 시작일시
+                    searchEndDate: currentDate   //조회 종료일시
+                ) { _ in }
+            }
+        }
     }
 }
 
-struct ChargingControlView: View {
+//MARK: - 충전기 BLE 제어 화면
+struct ChargerBLEControlView: View {
     @Environment(\.presentationMode) var presentationMode   //Back 버튼 기능 추가에 필요
+    
     @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var reservation: ReservationViewModel
     
     var body: some View {
-        VStack {
-            ChargerBLEConnectionButton(charging: charging)  //충전기 BLE 연결 버튼
-            
-            HorizontalDividerline().padding(.vertical)
-            
-            ChargingInfoView()  //충전 정보
-            
-            HorizontalDividerline().padding(.vertical)
-            
-            Spacer()
-            
-            ChargingTimer() //충전 타이머
-            
-            Spacer()
-            
-            HStack {
-                Spacer()
+        ZStack {
+            VStack {
+                ChargerBLEConnectionButton(charging: charging)  //충전기 BLE 연결 버튼
                 
-                ChargeStartButton(charging: charging)   //충전 시작 버튼
+                HorizontalDividerline()
+                    .padding(.vertical)
+                
+                ChargingInfoView(charging: charging, chargerMap: chargerMap)  //충전 정보
+                
+                HorizontalDividerline()
+                    .padding(.vertical)
                 
                 Spacer()
                 
-                ChargeEndButton(charging: charging) //충전 종료 버튼
+                ChargingTimer(charging: charging) //충전 타이머
+                
+                Spacer()
+                
+                HStack {
+                    Spacer()
+                    
+                    ChargeStartButton(charging: charging)   //충전 시작 버튼
+                    
+                    Spacer()
+                    
+                    ChargeEndButton(charging: charging) //충전 종료 버튼
+                    
+                    Spacer()
+                }
+                .padding(.vertical)
                 
                 Spacer()
             }
-            .padding(.vertical)
+            .padding(.top, 10)
+            .navigationBarTitle(Text("충전"), displayMode: .inline) //Navigation Bar 타이틀
+            .navigationBarBackButtonHidden(true)
+            .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
             
-            Spacer()
+            //충전 종료 시, 충전 결과 팝업창 호출
+            if charging.isShowChargingResult {
+                ChargingResultAlert(charging: charging, chargerMap: chargerMap, reservation: reservation)
+            }
         }
-        .padding(.top, 10)
-        .navigationBarTitle(Text("충전"), displayMode: .inline) //Navigation Bar 타이틀
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
+        .onAppear {
+            //charging.isCharging = true
+        }
+        .onDisappear {
+            if charging.isConnect {
+                charging.disconnetChargerBLE()
+            }
+        }
     }
 }
 
@@ -246,38 +337,63 @@ struct ChargerBLEConnectionButton: View {
     var body: some View {
         Button(
             action: {
-                
+                charging.connectChargerBLE(bleNumber: charging.bleNumber)
             },
             label: {
-                Text("충전기 연결")
+                Text(!charging.isConnect ? "충전기 연결" : "충전기 연결됨")
                     .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, minHeight: 40)
-                    .background(Color(charging.isConnect ? "#BDBDBD" : "#1ABC9C"))
+                    .background(Color(!charging.isConnect ? "#1ABC9C" : "#535353"))
                     .cornerRadius(5.0)
                     .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
                     .padding(.horizontal)
             }
         )
         .padding(.top)
+        .disabled(charging.isConnect)
     }
 }
 
 //MARK: - 충전 정보
 struct ChargingInfoView: View {
+    @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel
+    
     var body: some View {
-        HStack {
-            VStack {
-                Text("충전기")
-                Text("충전기")
-                Text("충전기")
-                Text("충전기")
+        
+        VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 1) {
+                    //충전기 명
+                    Text(chargerMap.chargerName)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    //BLE 번호 - 뒷 번호 4자리 (##:##)
+                    Text("(" + charging.bleNumber.suffix(5) + ")")
+                    
+                    Spacer()
+                }
+                
+                Text(chargerMap.chargerAddress) //충전기 주소
+                    .foregroundColor(Color.gray)
+                
+                Text(chargerMap.chargerDetailAddress) //충전기 상세주소
+                    .foregroundColor(Color.gray)
             }
-            .padding(.horizontal, 10)
             
-            Spacer()
+            VStack(alignment: .leading, spacing: 3) {
+                Text("'예약 시작일시 :' yyyy-MM-dd HH:mm".dateFormatter(formatDate: charging.reservationStartDate!))
+                Text("'예약 종료일시 :' yyyy-MM-dd HH:mm".dateFormatter(formatDate: charging.reservationEndDate!))
+                
+                if charging.isCharging {
+                    Text("'충전 시작일시 :' yyyy-MM-dd HH:mm".dateFormatter(formatDate: charging.chargingStartDate))
+                }
+            }
+            .foregroundColor(Color.gray)
         }
         .padding(.horizontal)
     }
@@ -285,14 +401,22 @@ struct ChargingInfoView: View {
 
 //MARK: - 충전 타이머
 struct ChargingTimer: View {
+    @ObservedObject var charging: ChargingViewModel
+    @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()    //타이머
+    
     var body: some View {
         VStack {
-            Text("00:00")
+            Text("\(String(format: "%02d",charging.hoursRemaining)):\(String(format: "%02d",charging.minutesRemaining))")
                 .font(.system(size: 70))
                 .fontWeight(.bold)
                 .shadow(color: .gray, radius: 1, x: 1.8, y: 1.8)
+                .onReceive(timer) { _ in
+                    //타이머 시작 시에 실행
+                    if charging.isStartTimer {
+                        charging.chargingTimer()    //충전 시간 타이머 실행
+                    }
+                }
         }
-        //.padding(.vertical)
     }
 }
 
@@ -303,13 +427,13 @@ struct ChargeStartButton: View {
     var body: some View {
         Button(
             action: {
-                charging.isChargingStart = true
+                charging.requestStartCharging() //충전 시작 요청
             },
             label: {
                 VStack {
                     ZStack {
                         Circle()
-                            .foregroundColor(Color(charging.isChargingStart ? "#BDBDBD" : "#3498DB"))
+                            .foregroundColor(!charging.isConnect ? Color("#BDBDBD") : charging.isCharging ? Color("#BDBDBD") : Color("#3498DB"))
                             .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
                         
                         Image("Charge-State-Start")
@@ -320,13 +444,13 @@ struct ChargeStartButton: View {
                     .frame(width: 100 ,height: 100)
                     
                     Text("충전 시작")
-                        .foregroundColor(charging.isChargingStart ? Color("#BDBDBD") : Color.black)
-                        .fontWeight(charging.isChargingStart ? .none : .semibold)
+                        .foregroundColor(!charging.isConnect ? Color("#BDBDBD") : charging.isCharging ? Color("#BDBDBD") : Color.black)
+                        .fontWeight(!charging.isConnect ? .none : charging.isCharging ? .none : .semibold)
                         .shadow(color: .gray, radius: 1, x: 1.2, y: 1.2)
                 }
             }
         )
-        .disabled(charging.isChargingStart)
+        .disabled(!charging.isConnect ? true : charging.isCharging)
     }
 }
 
@@ -337,13 +461,13 @@ struct ChargeEndButton: View {
     var body: some View {
         Button(
             action: {
-                charging.isChargingStart = false
+                charging.requestEndCharging()   //충전 종료 요청 
             },
             label: {
                 VStack {
                     ZStack {
                         Circle()
-                            .foregroundColor(Color(!charging.isChargingStart ? "#BDBDBD" : "#C0392B"))
+                            .foregroundColor(!charging.isConnect ? Color("#BDBDBD") : !charging.isCharging ? Color("#BDBDBD") : Color("#C0392B"))
                             .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
                         
                         Image("Charge-State-End")
@@ -354,20 +478,19 @@ struct ChargeEndButton: View {
                     .frame(width: 100 ,height: 100)
                     
                     Text("충전 종료")
-                        .foregroundColor(!charging.isChargingStart ? Color("#BDBDBD") : Color.black)
-                        .fontWeight(!charging.isChargingStart ? .none : .semibold)
+                        .foregroundColor(!charging.isConnect ? Color("#BDBDBD") : !charging.isCharging ? Color("#BDBDBD") : Color.black)
+                        .fontWeight(!charging.isCharging ? .none : .semibold)
                         .shadow(color: .gray, radius: 1, x: 1.2, y: 1.2)
                 }
             }
         )
-        .disabled(!charging.isChargingStart)
+        .disabled(!charging.isCharging)
     }
 }
 
 struct ChargingView_Previews: PreviewProvider {
     
     static var previews: some View {
-        ChargingView(chargerMap: ChargerMapViewModel(), reservation: ReservationViewModel())
-        ChargingControlView(charging: ChargingViewModel())
+        ChargingView(chargerMap: ChargerMapViewModel(), reservation: ReservationViewModel(), charging: ChargingViewModel())
     }
 }

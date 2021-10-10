@@ -46,7 +46,7 @@
 "label.new.password" = "새 비밀번호";
 "label.new.password.confirm" = "새 비밀번호 확인";
 "label.current.password" = "현재 비밀번호";
-"label.agree" = "동의 함 ";
+"label.agree" = "동의 함 ";    //글자 수 맟추기 위해 공백 추가
 "label.disagree" = "동의 안함";
 "label.available" = "사용 가능";
 "label.not.available" = "사용 불가";

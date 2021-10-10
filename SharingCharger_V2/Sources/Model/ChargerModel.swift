@@ -83,6 +83,30 @@ struct OwnerChargerSummary: Codable {
     let monthlyCumulativePoint: Int
 }
 
+//MARK: - 충전기 충전 단가 정보
+struct ChargerUnitPrice: Codable {
+    let id: Int
+    let hour: String
+    let fee: Int
+}
+
+//MARK: - 충전기 이용시간 정보
+struct ChargerUsageTime: Codable {
+    let id: Int
+    let chargerId: Int
+    let chargerName: String
+    let openTime: String
+    let closeTime: String
+    let previousOpenTime: String
+    let previousCloseTime: String
+    let created: String
+    let updated: String
+}
+
+
+
+
+
 struct ChargerModel: Identifiable, Codable{
     let id: String
     let markerId: Int

@@ -16,8 +16,53 @@ enum APIRouter: URLRequestConvertible {
     case put(useApi: String, path: String, parameters: [String:Any])   //PUT
     case patch(useApi: String, path: String, parameters: [String:Any])   //PATCH
 
+    
+    static let baseApiUrl: String = "http://211.253.37.97:52340/api/v1"   //전기차 공유 충전기 API URL
+    //static let baseUrl: String = "https://monttak.co.kr/api/v1"   //전기차 공유 충전기 API URL
+    static let addressApiUrl: String = "https://dapi.kakao.com/v2/local"
+    static let kakaoAPIKey: String = "KakaoAK 4332dce3f2f8d3ee87e31884c5c5523d"
+    
     //MARK: - Base URL
-    static let baseUrl: String = "http://211.253.37.97:52340/api/v1"   //전기차 공유 충전기 API URL
+    private var baseURL: String {
+        switch self {
+        case .get(let useApi, _, _, _):
+            switch useApi {
+            case "base":
+                return APIRouter.baseApiUrl
+            case "address":
+                return APIRouter.addressApiUrl
+            default:
+                return APIRouter.baseApiUrl
+            }
+        case .post(let useApi, _, _, _):
+            switch useApi {
+            case "base":
+                return APIRouter.baseApiUrl
+            case "address":
+                return APIRouter.addressApiUrl
+            default:
+                return APIRouter.baseApiUrl
+            }
+        case .put(let useApi, _, _):
+            switch useApi {
+            case "base":
+                return APIRouter.baseApiUrl
+            case "address":
+                return APIRouter.addressApiUrl
+            default:
+                return APIRouter.baseApiUrl
+            }
+        case .patch(let useApi, _, _):
+            switch useApi {
+            case "base":
+                return APIRouter.baseApiUrl
+            case "address":
+                return APIRouter.addressApiUrl
+            default:
+                return APIRouter.baseApiUrl
+            }
+        }
+    }
     
     //MARK: - HTTP Method
     private var method: HTTPMethod {
@@ -67,7 +112,7 @@ enum APIRouter: URLRequestConvertible {
     /// - Returns: URLRequest
     func asURLRequest() throws -> URLRequest {
         //MARK: - URL
-        let url = try APIRouter.baseUrl.asURL()   //API URL
+        let url = try baseURL.asURL()   //API URL
         var urlRequest = URLRequest(url: url.appendingPathComponent(path))  //Base URL + Path
         
         //MARK: - Method
@@ -75,7 +120,7 @@ enum APIRouter: URLRequestConvertible {
 
         //MARK: - Headers
         switch self {
-        case .get( _, _, _, let contentType):
+        case .get(let useApi, _, _, let contentType):
             //Content-Type에 따른 Headers 설정
             if contentType == "json" {
                 urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -83,6 +128,10 @@ enum APIRouter: URLRequestConvertible {
             }
             else if contentType == "text" {
                 urlRequest.setValue("text/plain;charset=UTF-8", forHTTPHeaderField: "Content-Type")
+            }
+            
+            if useApi  == "address" {
+                urlRequest.setValue(APIRouter.kakaoAPIKey, forHTTPHeaderField: "Authorization")
             }
         case .post( _, _, _, let contentType):
             if contentType == "json" {

@@ -15,17 +15,20 @@ class ReservationViewModel: ObservableObject {
     
     @Published var viewUtil = ViewUtil() //View Util
     
-    @Published var showChargingAlert: Bool = false
-    @Published var showCancelAlert: Bool = false
+    @Published var isShowChargingAlert: Bool = false    //충전 진행 알림창 호출 여부
+    @Published var isShowConfirmAlert: Bool = false //예약 확인 알림창 호출 여부
+    @Published var isShowCancelAlert: Bool = false  //예약 취소 알림창 호출 여부
     
     @Published var userIdNo: String = ""    //사용자 ID 번호
     @Published var isUserReservation: Bool = false  //사용자 예약 여부
     @Published var isReservable: Bool = false   //예약 가능 여부
+    @Published var isReservationResult: Bool = false
     
     @Published var reservationId: String = ""   //예약 ID 번호
     @Published var reservationType: String = ""  //충전 예약 유형
     @Published var reservedChargerId: String = ""  //예약 충전기 번호
     @Published var reservedChargerName: String = ""     //예약 충전기 명
+    @Published var reservedchargerBLENumber: String = ""    //예약 충전기 BLE 번호
     @Published var chargerLatitude: Double? //충전기 위도(Y좌표)
     @Published var chargerLongitude: Double?    //충전기 경도(X좌표)
     @Published var reservationStartDate: Date?  //예약 시작일시
@@ -44,6 +47,23 @@ class ReservationViewModel: ObservableObject {
     @Published var textRemainingPoint: String = ""  //예약 후 잔여 포인트
     @Published var textNeedPoint: String = ""   //필요 포인트(부족 포인트) 텍스트
     
+    //MARK: 현재 일시(서버 시간 기준) 조회
+    func getCurrentDate(completion: @escaping (Date) -> Void) {
+        //현재 일시 API 호출
+        let request = reservationAPI.requestCurrentDate()
+        request.execute(
+            //API 호출 성공
+            onSuccess: { (currentDate) in
+                let formatDate = "yyyy-MM-dd HH:mm:ss".toDateFormatter(formatString: currentDate)!
+                completion(formatDate)
+            },
+            //API 호출 실패
+            onFailure: { (error) in
+                completion(Date())
+            }
+        )
+    }
+    
     //MARK: - 사용자의 현재 예약 정보 조회
     func getUserReservation() {
         //사용자의 충전기 예약 정보 호출
@@ -51,28 +71,35 @@ class ReservationViewModel: ObservableObject {
         request.execute(
             //API 호출 성공
             onSuccess: { (reservation) in
-                self.isUserReservation = true   //사용자 예약 여부
-                
-                self.reservationId = String(reservation.id) //예약 ID
-                self.reservedChargerId = String(reservation.chargerId)  //예약 충전기 ID
-                self.reservedChargerName = reservation.chargerName!  //예약 충전기 명
-                self.chargerLatitude = reservation.gpxY
-                self.chargerLongitude = reservation.gpsX
-                
-                let formatStartDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: reservation.startDate!) //충전 시작일시 - Date 형식으로 변환
-                let formatEndDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: reservation.endDate!) //충전 종료일시 - Date 형식으로 변환
+                let formatStartDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: reservation.startDate!) //예약 시작일시 - Date 형식으로 변환
+                let formatEndDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: reservation.endDate!) //예약 종료일시 - Date 형식으로 변환
 
-                self.reservationStartDate = formatStartDate //예약 충전 시작일시
-                self.reservationEndDate = formatEndDate //예약 충전 종료일시
-                
-                self.reservationStatus = reservation.state! //예약 상태
-                
-                self.setReservationInfo()   //예약 정보 텍스트 설정
-                self.textExpectedPoint = String(reservation.expectPoint!)   //예상 차감 포인트 텍스트
+                self.getCurrentDate() { (currentDate) in
+                    //현재 일시가 예약 종료 일시를 지나지 않은 경우에만 사용자 예약 정보 노출
+                    if currentDate < formatEndDate! {
+                        self.isUserReservation = true   //사용자 예약 여부
+                        
+                        self.reservationId = String(reservation.id) //예약 ID
+                        self.reservedChargerId = String(reservation.chargerId)  //예약 충전기 ID
+                        self.reservedChargerName = reservation.chargerName!  //예약 충전기 명
+                        self.reservedchargerBLENumber = reservation.bleNumber!  //예약 충전기 BLE 번호
+                        self.chargerLatitude = reservation.gpxY //충전기 위도
+                        self.chargerLongitude = reservation.gpsX    //충전기 경도
+                        
+                        self.reservationStartDate = formatStartDate //예약 시작일시
+                        self.reservationEndDate = formatEndDate //예약 종료일시
+                        self.reservationStatus = reservation.state! //예약 상태
+                        
+                        self.setReservationInfo()   //예약 정보 텍스트 설정
+                        self.textExpectedPoint = String(reservation.expectPoint!)   //예상 차감 포인트 텍스트
+                    }
+                    else {
+                        self.isUserReservation = false
+                    }
+                }
             },
             //API 호출 실패
             onFailure: { (error) in
-                print(error)
                 switch error {
                 case .responseSerializationFailed:
                     self.isUserReservation = false  //사용자 예약 여부
@@ -126,28 +153,36 @@ class ReservationViewModel: ObservableObject {
         }
     }
     
+    //MARK: - 충전 포인트 확인
+    /// 사용자의 현재 보유 포인트와 예상 차감 포인트를 확인 후 충전이 가능한지 여부 확인
+    /// - Parameters:
+    ///   - chargerId: 충전기 ID
+    ///   - chargingStartDate: 충전 시작일시
+    ///   - chargingEndDate: 충전 종료일시
+    ///   - completion: 충전 가능 여부(Bool)
     func checkChargingPoint(chargerId: String, _ chargingStartDate: Date, _ chargingEndDate: Date, completion: @escaping (Bool) -> Void) {
+        //사용자 포인트 API 호출
         getUserPoint() { (userPoint) in
-            print(userPoint)
+            //예상 차감 포인트 API 호출
             self.gerExpectedPoint(chargerId: chargerId, chargingStartDate, chargingEndDate) { (expectedPoint) in
+
+                let remainingPoint = Int(userPoint)! - Int(expectedPoint)!  //차감 후 잔여 포인트
                 
-                let remainingPoint = Int(userPoint)! - Int(expectedPoint)!
-                
-                print(expectedPoint)
-                print(remainingPoint)
-                
+                //차감 후 잔여 포인트가 0 이상인 경우
                 if remainingPoint >= 0 {
-                    self.textRemainingPoint = String(remainingPoint)
-                    completion(true)
+                    self.textRemainingPoint = String(remainingPoint)    //차감 후, 잔여 포인트
+                    completion(true)    //충전 가능
                 }
+                //차감 후 잔여 포인트가 0미만인 경우
                 else {
-                    self.textNeedPoint = String(remainingPoint)
-                    completion(false)
+                    self.textNeedPoint = String(remainingPoint) //필요 포인트
+                    completion(false)   //충전 불가
                 }
             }
         }
     }
     
+    //MARK: - 사용자 포인트 호출
     func getUserPoint(completion: @escaping (String) -> Void) {
         let request = pointAPI.requestCurrentDate(userIdNo: userIdNo)
         request.execute(
@@ -159,6 +194,12 @@ class ReservationViewModel: ObservableObject {
     }
     
     //MARK: - 예상 차감 포인트 조회
+    /// <#Description#>
+    /// - Parameters:
+    ///   - chargerId: <#chargerId description#>
+    ///   - chargingStartDate: <#chargingStartDate description#>
+    ///   - chargingEndDate: <#chargingEndDate description#>
+    ///   - completion: <#completion description#>
     func gerExpectedPoint(chargerId: String, _ chargingStartDate: Date, _ chargingEndDate: Date, completion: @escaping (String) -> Void) {
         let startDate = "yyyy-MM-dd'T'HH:mm:ss".dateFormatter(formatDate: chargingStartDate) //충전 시작일시 변환
         let endDate = "yyyy-MM-dd'T'HH:mm:ss".dateFormatter(formatDate: chargingEndDate) //충전 종료일시 변환
@@ -180,7 +221,7 @@ class ReservationViewModel: ObservableObject {
     }
     
     //MARK: - 충전 예약 실행
-    func reservation(chargerId: String, _ chargingStartDate: Date, _ chargingEndDate: Date, completion: @escaping (UserReservation) -> Void) {
+    func reservation(chargerId: String, _ chargingStartDate: Date, _ chargingEndDate: Date, completion: @escaping (String, UserReservation?) -> Void) {
         
         let startDate = "yyyy-MM-dd'T'HH:mm:ss.sss'Z'".dateFormatter(formatDate: chargingStartDate) //충전 시작일시 변환
         let endDate = "yyyy-MM-dd'T'HH:mm:ss.sss'Z'".dateFormatter(formatDate: chargingEndDate) //충전 종료일시 변환
@@ -200,19 +241,20 @@ class ReservationViewModel: ObservableObject {
             let request = self.reservationAPI.requestReservation(parameters: parameters)
             request.execute(
                 //API 호출 성공
-                onSuccess: { [self] (reservation) in
+                onSuccess: { (reservation) in
                     UserDefaults.standard.set(self.reservationType, forKey: "reservationType") //충전 예약 유형 - 사용자 정보 저장
-                    completion(reservation)
+                    completion("success", reservation)
                     
-                    self.getUserReservation()   //사용자 예약 정보 호출
+                    //self.getUserReservation()   //사용자 예약 정보 호출
                 },
                 //API 호출 실패
                 onFailure: { (error) in
                     switch error {
                     case .responseSerializationFailed:
-                        print(error)
+                        completion("fail", nil)
                     //일시적인 서버 오류 및 네트워크 오류
                     default:
+                        completion("error", nil)
                         self.viewUtil.showToast(isShow: true, message: "server.error".message())
                         break
                     }
@@ -222,25 +264,49 @@ class ReservationViewModel: ObservableObject {
     }
     
     //MARK: - 즉시 충전 취소
-    func cancelInstantCharge(completion: @escaping (UserReservation) -> Void) {
+    func cancelInstantCharge(completion: @escaping (String) -> Void) {
         let request = reservationAPI.requestCancelInstantCharge(reservationId: self.reservationId)
         request.execute(
             //API 호출 성공
-            onSuccess: { (cancel) in
-                completion(cancel)
-                self.viewUtil.showToast(isShow: true, message: "해당 예약 건이 정상적으로 취소되었습니다.")
+            onSuccess: { (result) in
                 self.textReservationDate = ""
                 self.reservedChargerName = ""
+                
+                completion("success")
             },
             //API 호출 실패
             onFailure: { (error) in
                 switch error {
                 case .responseSerializationFailed:
-                    print(error)
-                    self.viewUtil.showToast(isShow: true, message: "해당 예약 건의 취소가 실패하였습니다.\n즉시 충전 건은 10분 이내에만 취소 가능하며, 자세한 사항은 관리자에게 문의 바랍니다.")
+                    completion("fail")
                 //일시적인 서버 오류 및 네트워크 오류
                 default:
-                    self.viewUtil.showToast(isShow: true, message: "server.error".message())
+                    completion("error")
+                    break
+                }
+            }
+        )
+    }
+    
+    //MARK: - 충전기 예약 취소
+    func cancelReservation(completion: @escaping (String) -> Void) {
+        let request = reservationAPI.requestCancelReservation(reservationId: self.reservationId)
+        request.execute(
+            //API 호출 성공
+            onSuccess: { (result) in
+                self.textReservationDate = ""
+                self.reservedChargerName = ""
+                
+                completion("success")
+            },
+            //API 호출 실패
+            onFailure: { (error) in
+                switch error {
+                case .responseSerializationFailed:
+                    completion("fail")
+                //일시적인 서버 오류 및 네트워크 오류
+                default:
+                    completion("error")
                     break
                 }
             }

@@ -9,6 +9,7 @@
 	</dict>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>kakaomap</string>
 		<string>naversearchapp</string>
 		<string>naversearchthirdlogin</string>
 		<string>kakaokompassauth</string>

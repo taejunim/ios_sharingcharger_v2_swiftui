@@ -32,7 +32,7 @@ class ChargerMapViewModel: ObservableObject {
     @Published var moveToChargerId: String = "" //해당 충전기의 위치로 이동할 충전기 ID
     
     //MARK: - 충전기 조회 변수
-    @Published var isShowSearchModal: Bool = false  //검색조건 Modal 창 노출 여부
+    @Published var isShowSearchModal: Bool = false  //검색조건 Modal 창 호출 여부
     @Published var currentDate: Date = Date()   //현재 일시
     @Published var charger: [String:Any] = [:]  //충전기 정보
     @Published var chargers: [[String:Any]] = []    //충전기 정보 목록
@@ -57,7 +57,8 @@ class ChargerMapViewModel: ObservableObject {
     @Published var chargerStatus: String = ""   //충전기 상태
     @Published var isFavorites: Bool = false    //즐겨찾기 표시 여부
     
-    @Published var showChargingView: Bool = false   //충전 화면 노출 여부
+    @Published var isShowChargingView: Bool = false   //충전 화면 호출 여부
+    @Published var isShowAddressSearchModal: Bool = false    //주소 검색 Modal 창 호출 여부
     
     //MARK: - 현재 일시(서버 시간 기준) 조회
     /// - Parameter completion: Current Date 서버 기준 현재 일시
@@ -276,6 +277,46 @@ class ChargerMapViewModel: ObservableObject {
         mapView.addPOIItems(poiItems)   //지도에 POIItems(마커) 추가
     }
     
+    //MARK: - 선택한 충전기로 지도 이동 및 마커 선택 표시
+    /// 하단 조회된 충전기 목록에서 충전기 선택 시, 해당 충전기로 지도 이동 및 충전기 마커 선택 표시 처리
+    /// - Parameter chargerId: 선택한 충전기 ID
+    func moveToSelectedCharger(chargerId: String) {
+        //현재 위치 지도 중심으로 이동
+        mapView.setMapCenter(
+            MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
+            animated: true
+        )
+        
+        mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
+        
+        mapView.select(mapView.findPOIItem(byTag: Int(chargerId)!), animated: true)   //마커 선택 표시 처리
+    }
+    
+    //MARK: - 예약한 충전기로 이동
+    func moveToReservedCharger(chargerId: String, latitude: Double, longitude: Double) {
+        //충전기 위치 지도 중심으로 이동
+        mapView.setMapCenter(
+            MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
+            animated: true
+        )
+        
+        mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
+        
+        //충전기 목록 조회
+        getChargerList(zoomLevel: 0, latitude: latitude, longitude: longitude, searchStartDate: currentDate, searchEndDate: currentDate) { _ in
+            self.mapView.select(self.mapView.findPOIItem(byTag: Int(chargerId)!), animated: true)   //마커 선택 표시 처리
+        }
+    }
+    
+    //MARK: - 충전기 선택 해제
+    /// 지도에서 선택한 충전기의 선택 해제 처리
+    /// - Parameter chargerId: 선택된 충전기 ID
+    func deselectedCharger(chargerId: String) {
+        if chargerId != "" {
+            mapView.deselect(mapView.findPOIItem(byTag: Int(chargerId)!))   //선택 해제 처리
+        }
+    }
+    
     //MARK: - 선택된 충전기
     /// 지도에서 충전기 마커 선택 시, 실행
     /// - Parameter chargerId: 선택한 충전기 ID
@@ -365,43 +406,42 @@ class ChargerMapViewModel: ObservableObject {
         }
     }
     
-    //MARK: - 선택한 충전기로 지도 이동 및 마커 선택 표시
-    /// 하단 조회된 충전기 목록에서 충전기 선택 시, 해당 충전기로 지도 이동 및 충전기 마커 선택 표시 처리
-    /// - Parameter chargerId: 선택한 충전기 ID
-    func moveToSelectedCharger(chargerId: String) {
-        //현재 위치 지도 중심으로 이동
-        mapView.setMapCenter(
-            MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
-            animated: true
-        )
+    func launchNavigation() {
+        var kakaoMap = "kakaomap://"
+        let appCheckURL = URL(string: kakaoMap)
         
-        mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
-        
-        mapView.select(mapView.findPOIItem(byTag: Int(chargerId)!), animated: true)   //마커 선택 표시 처리
-    }
-    
-    //MARK: - 충전기 선택 해제
-    /// 지도에서 선택한 충전기의 선택 해제 처리
-    /// - Parameter chargerId: 선택된 충전기 ID
-    func deselectedCharger(chargerId: String) {
-        if chargerId != "" {
-            mapView.deselect(mapView.findPOIItem(byTag: Int(chargerId)!))   //선택 해제 처리
+        //카카오맵 설치된 경우
+        if UIApplication.shared.canOpenURL(appCheckURL!) {
+            kakaoMap.append("route?by=CAR")
+            kakaoMap.append("&sp=" + String(self.latitude) + "," + String(self.longitude))
+            kakaoMap.append("&ep=" + String(self.chargerLatitude!) + "," + String(self.chargerLongitude!))
+            
+            let navigationUrl = URL(string: kakaoMap)
+            
+            UIApplication.shared.open(navigationUrl!, options: [:] , completionHandler: nil)
         }
-    }
-    
-    //MARK: - 예약한 충전기로 이동
-    func moveToReservedCharger(chargerId: String, latitude: Double, longitude: Double) {
-        //충전기 위치 지도 중심으로 이동
-        mapView.setMapCenter(
-            MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
-            animated: true
-        )
-        
-        mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
-        
-        //충전기 목록 조회
-        getChargerList(zoomLevel: 0, latitude: latitude, longitude: longitude, searchStartDate: currentDate, searchEndDate: currentDate) { _ in
-            self.mapView.select(self.mapView.findPOIItem(byTag: Int(chargerId)!), animated: true)   //마커 선택 표시 처리
+        //카카오맵 설치되지 않은 경우 App Store 이동
+        else {
+            let dialog = UIAlertController(title:"", message : "카카오맵이 설치되어있지 않습니다.\n설치를 위해 App Store로 이동하시겠습니까?", preferredStyle: .alert)
+            
+            dialog
+                .addAction(
+                    UIAlertAction(title: "취소", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
+                        return
+                    }
+                )
+            dialog
+                .addAction(
+                    UIAlertAction(title: "확인", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
+                        let appStoreUrl = URL(string: "https://apps.apple.com/kr/app/id304608425")
+                        
+                        if UIApplication.shared.canOpenURL(appStoreUrl!) {
+                            UIApplication.shared.open(appStoreUrl!, options: [:], completionHandler: nil)
+                        }
+                    }
+                )
+            
+            UIApplication.shared.windows.filter {$0.isKeyWindow}.first!.rootViewController?.present(dialog, animated: true, completion: nil)
         }
     }
 }

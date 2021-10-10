@@ -111,4 +111,13 @@ class UserAPIService {
 
         return apiClient.requestText(route: APIRouter.get(useApi: "base", path: "/policy/privacy", parameters: [:], contentType: "text"))
     }
+    
+    //MARK: - 소유주 전환 API 호출
+    /// 일반 사용자에서 소유주로 전환 API 호출
+    /// - Parameter userId: 사용자 ID 번호
+    /// - Returns: User Model
+    public func requestSwitchOwner(userIdNo: String) -> Future<User, AFError> {
+        
+        return apiClient.request(route: APIRouter.post(useApi: "base", path: "/userType/Personal/\(userIdNo)", parameters: [:], contentType: "json"))
+    }
 }

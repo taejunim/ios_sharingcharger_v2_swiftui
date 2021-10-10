@@ -26,8 +26,8 @@
 "non.duplicate.id" = "사용 가능한 아이디(이메일)입니다.";
 "duplicate.id" = "이미 사용중인 아이디(이메일)입니다.";
 
-//MARK: - 비밀번호 메시지
-"fail.findId" = "일치하는 회원 정보가 없습니다.";
+//MARK: - 회원정보 메시지
+"mismatch.user" = "일치하는 회원 정보가 없습니다.";
 "mismatch.password" = "비밀번호가 일치하지 않습니다.\n확인 후 다시 입력하세요.";
 "mismatch.current.password" = "현재 비밀번호가 일치하지 않습니다.\n확인 후 다시 입력하세요.";
 "success.change.password" = "비밀번호 변경이 완료되었습니다.";
@@ -38,24 +38,19 @@
 "auth.fail" = "인증이 실패하였습니다.\n인증 재요청하세요.";
 "auth.not.complete" = "인증이 완료되지 않았습니다.";
 "auth.mismatch.number" = "입력하신 인증번호가 일치하지 않습니다.\n확인 후 다시 입력하세요.";
-"auth.in.progress" = "인증 진행 중입니다. \n인증 진행이 끝난 뒤 확인해 주세요.";
+"auth.in.progress" = "인증 진행 중입니다.\n인증 진행 후 확인해 주세요.";
 
 //MARK: - 입력 항목 메시지
 "input.empty.name" = "이름을 입력하지 않았습니다.";
 "input.empty.email" = "아이디(이메일)를 입력하지 않았습니다.";
-"input.empty.currentPassword" = "현재 비밀번호를 입력하지 않았습니다.";
-"input.empty.newPassword" = "새 비밀번호를 입력하지 않았습니다.";
-"input.empty.confirmNewPassword" = "새 비밀번호 확인을 입력하지 않았습니다.";
 "input.empty.password" = "비밀번호를 입력하지 않았습니다.";
-"input.empty.confirmNewpassword" = "비밀번호 확인을 입력하지 않았습니다.";
+"input.empty.confirm.password" = "비밀번호 확인을 입력하지 않았습니다.";
+"input.empty.current.password" = "현재 비밀번호를 입력하지 않았습니다.";
 "input.empty.phone" = "휴대전화번호를 입력하지 않았습니다.";
 "input.empty.auth.number" = "인증번호를 입력하지 않았습니다.";
 
-"input.invalid.name" = "잘못된 이름입니다.\n올바른 이름을 입력하세요.";
-"input.invalid.email" = "잘못된 아이디(이메일)입니다.\n올바른 아이디(이메일)를 입력하세요.";
-"input.invalid.currentPassword" = "잘못된 현재 비밀번호입니다.\n올바른 비밀번호를 입력하세요.";
-"input.invalid.newPassword" = "잘못된 새 비밀번호입니다.\n올바른 비밀번호를 입력하세요.";
-"input.invalid.confirmNewPassword" = "잘못된 새 비밀번호 확인입니다.\n올바른 비밀번호를 입력하세요.";
-"input.invalid.password" = "잘못된 비밀번호입니다.\n올바른 비밀번호를 입력하세요.";
-"input.invalid.phone" = "잘못된 휴대전화번호입니다.\n올바른 휴대전화번호를 입력하세요.";
-"input.invalid.auth.number" = "잘못된 인증번호입니다.\n올바른 인증번호를 입력하세요.";
+"input.invalid.name" = "잘못된 형식의 이름입니다.\n올바른 이름을 입력하세요.";
+"input.invalid.email" = "잘못된 형식의 아이디(이메일)입니다.\n올바른 아이디(이메일)를 입력하세요.";
+"input.invalid.password" = "잘못된 형식의 비밀번호입니다.\n올바른 비밀번호를 입력하세요.";
+"input.invalid.phone" = "잘못된 형식의 휴대전화번호입니다.\n올바른 휴대전화번호를 입력하세요.";
+"input.invalid.auth.number" = "잘못된 형식의 인증번호입니다.\n올바른 인증번호를 입력하세요.";

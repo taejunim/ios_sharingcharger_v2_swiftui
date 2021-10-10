@@ -7,13 +7,14 @@
 
 import SwiftUI
 
+//MARK: - 사이드 메뉴
 struct SideMenuView: View {
     @Environment(\.presentationMode) var presentationMode
     
-    @ObservedObject var sideMenu: SideMenuViewModel
-    @ObservedObject var reservation: ReservationViewModel
-    @ObservedObject var point: PointViewModel
-    @ObservedObject var purchase: PurchaseViewModel
+    @ObservedObject var sideMenu: SideMenuViewModel //사이드 메뉴 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
+    @ObservedObject var point: PointViewModel   //포인트 View Model
+    @ObservedObject var purchase: PurchaseViewModel //포인트 구매 View Model
     
     @State var dragOffset = CGSize.zero //Drag Offset
     
@@ -21,13 +22,16 @@ struct SideMenuView: View {
         ZStack {
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
+                    //우측 불투명 배경
                     Rectangle()
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .foregroundColor(Color.black.opacity(0.2))
                         .onTapGesture {
-                            sideMenu.isShowMenu = false
-                        }.edgesIgnoringSafeArea(.all)
+                            sideMenu.isShowMenu = false //사이드 메뉴 비활성화
+                        }
+                        .edgesIgnoringSafeArea(.all)
                     
+                    //좌측 사이드 메뉴 배경
                     Rectangle()
                         .foregroundColor(Color.white.opacity(0.85))
                         .frame(width: geometry.size.width/1.15, height: geometry.size.height)
@@ -37,11 +41,13 @@ struct SideMenuView: View {
                         .gesture(
                             DragGesture()
                                 .onChanged { gesture in
-                                if gesture.translation.width < 0 {
+                                    //드래그 이동 시, 사이드 메뉴 영역 좌측으로 이동
+                                    if gesture.translation.width < 0 {
                                         dragOffset.width = gesture.translation.width
                                     }
                                 }
                                 .onEnded { gesture in
+                                    //드래그 이동이 끝난 후, 이동 위치에 따라 사이드 메뉴 비활성화
                                     if gesture.translation.width < -120 {
                                         withAnimation {
                                             sideMenu.isShowMenu = false
@@ -58,17 +64,17 @@ struct SideMenuView: View {
             
             GeometryReader { geometry in
                 VStack {
-                    UserProfile(sideMenu: sideMenu)
+                    UserProfile(sideMenu: sideMenu) //사용자 프로필
                     
                     Dividerline()
                     
-                    UserPoint(point: point, purchase: purchase)
+                    UserPoint(point: point, purchase: purchase) //사용자 포인트 현황
                     
-                    UserReservationInfo(reservation: reservation)
+                    UserReservationInfo(reservation: reservation)   //사용자 예약 현황
                     
                     Dividerline()
                     
-                    MenuList(sideMenu: sideMenu, point: point, purchase: purchase)
+                    MenuList(sideMenu: sideMenu, point: point, purchase: purchase)  //메뉴 목록
                         .padding(.horizontal)
                     
                     Spacer()
@@ -81,6 +87,7 @@ struct SideMenuView: View {
     }
 }
 
+//MARK: - 사용자 프로필
 struct UserProfile: View {
     @ObservedObject var sideMenu: SideMenuViewModel
     
@@ -94,7 +101,7 @@ struct UserProfile: View {
                 
                 Spacer()
                 
-                UserSettingButton(sideMenu: sideMenu)
+                UserSettingMenuButton(sideMenu: sideMenu)   //사용자 설정 메뉴 버튼
             }
             
             HStack {
@@ -110,12 +117,13 @@ struct UserProfile: View {
     }
 }
 
-struct UserSettingButton: View {
+//MARK: - 사용자 설정 메뉴 버튼
+struct UserSettingMenuButton: View {
     @ObservedObject var sideMenu: SideMenuViewModel
     
     var body: some View {
         NavigationLink(
-            destination: UserSettingView(sideMenu: sideMenu),
+            destination: UserSettingView(sideMenu: sideMenu),   //사용자 설정 화면
             label: {
                 Image("Button-Setting")
                     .resizable()
@@ -143,36 +151,28 @@ struct UserPoint: View {
                 .fontWeight(.bold)
             
             //포인트 구매 버튼
-            PointPaymentButton(purchase: purchase)
-                .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+            Button(
+                action: {
+                    purchase.parentView = "sideMenuView"
+                    purchase.isShowPaymentInputAlert = true   //포인트 결제 진행 알림창 열기
+                },
+                label: {
+                    Text("충전하기")
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.white)
+                        .padding(.horizontal)
+                        .frame(minWidth: 100, minHeight: 30)
+                        .background(Color("#3498DB"))
+                        .cornerRadius(5.0)
+                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                }
+            )
         }
         .padding(.horizontal)
         .padding(.vertical, 5)
         .onAppear {
             point.getCurrentPoint()
         }
-    }
-}
-
-//MARK: - 포인트 구매 버튼
-struct PointPaymentButton: View {
-    @ObservedObject var purchase: PurchaseViewModel
-    
-    var body: some View {
-        Button(
-            action: {
-                purchase.showPaymentInputAlert = true   //포인트 결제 진행 알림창 열기
-            },
-            label: {
-                Text("충전하기")
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.white)
-                    .padding(.horizontal)
-                    .frame(minWidth: 100, minHeight: 30)
-                    .background(Color("#3498DB"))
-                    .cornerRadius(5.0)
-            }
-        )
     }
 }
 
@@ -248,7 +248,7 @@ struct MenuList: View {
 struct ChargerUseHistoryMenuButton: View {
     var body: some View {
         NavigationLink(
-            destination: ChargerUseHistoryView(),
+            destination: ChargerUseHistoryView(),   //충전기 사용 이력 화면
             label: {
                 HStack {
                     Text("충전기 사용 이력")
@@ -267,7 +267,7 @@ struct ChargerUseHistoryMenuButton: View {
 struct DigitalWalletMenuButton: View {
     var body: some View {
         NavigationLink(
-            destination: DigitalWalletView(),
+            destination: DigitalWalletView(),   //전자지갑 화면
             label: {
                 HStack {
                     Text("전자지갑")
@@ -286,7 +286,7 @@ struct DigitalWalletMenuButton: View {
 struct FavoritesMenuButton: View {
     var body: some View {
         NavigationLink(
-            destination: FavoritesView(),
+            destination: FavoritesView(),   //즐겨찾기 화면
             label: {
                 HStack {
                     Text("즐겨찾기")
@@ -305,7 +305,7 @@ struct FavoritesMenuButton: View {
 struct IdentificationMenuButton: View {
     var body: some View {
         NavigationLink(
-            destination: IdentificationView(),
+            destination: IdentificationView(),  //회원 증명서 화면
             label: {
                 HStack {
                     Text("회원 증명서")
@@ -345,7 +345,7 @@ struct CustomerServiceMenuButton: View {
 struct NoticeMenuButton: View {
     var body: some View {
         NavigationLink(
-            destination: NoticeView(),
+            destination: NoticeView(),  //공지사항 화면
             label: {
                 HStack {
                     Text("공지사항")
@@ -364,7 +364,7 @@ struct NoticeMenuButton: View {
 struct OwnerChargerMenuButton: View {
     var body: some View {
         NavigationLink(
-            destination: OwnerChargerView(),
+            destination: OwnerChargerView(),    //소유주 충전기 관리 화면
             label: {
                 HStack {
                     Text("충전기 관리")

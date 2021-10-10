@@ -9,57 +9,93 @@ import SwiftUI
 
 struct ReservationView: View {
     @Environment(\.presentationMode) var presentationMode
+    @ObservedObject var viewUtil = ViewUtil()
     
     @ObservedObject var chargerMap: ChargerMapViewModel
     @ObservedObject var chargerSearch: ChargerSearchViewModel
     @ObservedObject var reservation: ReservationViewModel
-    @ObservedObject var purchase: PurchaseViewModel
+    @ObservedObject var point: PointViewModel
+    @ObservedObject var purchase = PurchaseViewModel()
     
     var body: some View {
-        VStack {
-            ScrollView {
-                VStack {
-                    HStack {
-                        Text("결제 정보 확인")
-                            .font(.title2)
-                            .fontWeight(.bold)
+        ZStack {
+            VStack {
+                ScrollView {
+                    VStack {
+                        HStack {
+                            Text("결제 정보 확인")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                            
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 10)
                         
-                        Spacer()
+                        ReservedChargerSummaryInfo(chargerMap: chargerMap, chargerSearch: chargerSearch)
+                        
+                        VerticalDividerline()
+                        
+                        ReservationPointInfo(reservation: reservation, purchase: purchase)
+                        
+                        VerticalDividerline()
+                        
+                        Precautions()
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                    
-                    ReservedChargerSummaryInfo(chargerMap: chargerMap, chargerSearch: chargerSearch)
-                    
-                    VerticalDividerline()
-                    
-                    ReservationPointInfo(reservation: reservation)
-                    
-                    VerticalDividerline()
-                    
-                    Precautions()
+                }
+                
+                ReservationButton(reservation: reservation)
+            }
+            .navigationBarTitle(Text("예약 진행"), displayMode: .inline) //Navigation Bar 타이틀
+            .navigationBarBackButtonHidden(true)
+            .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
+            .onAppear {
+                reservation.reservationType = chargerSearch.searchType  //충전 유형
+
+                let chargingStartDate = chargerSearch.chargingStartDate!
+                let chargingEndDate = chargerSearch.chargingEndDate!
+                
+                reservation.reservationStartDate = chargingStartDate
+                reservation.reservationEndDate = chargingEndDate
+                reservation.reservedChargerId = chargerMap.selectChargerId
+                
+                //포인트 확인 후 예약 가능 여부 판별
+                reservation.checkChargingPoint(chargerId: chargerMap.selectChargerId, chargingStartDate, chargingEndDate) { (isReservable) in
+                    reservation.isReservable = isReservable
                 }
             }
+            .popup(
+                isPresented: $reservation.viewUtil.isShowToast,   //팝업 노출 여부
+                type: .floater(verticalPadding: 80),
+                position: .bottom,
+                animation: .easeInOut(duration: 0.0),   //애니메이션 효과
+                autohideIn: 1,  //팝업 노출 시간
+                closeOnTap: false,
+                closeOnTapOutside: false,
+                view: {
+                    reservation.viewUtil.toast()
+                }
+            )
             
-            ReservationButton(reservation: reservation)
-        }
-        .navigationBarTitle(Text("예약 진행"), displayMode: .inline) //Navigation Bar 타이틀
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
-        .onAppear {
-            reservation.reservationType = chargerSearch.searchType  //충전 유형
-
-            let chargingStartDate = chargerSearch.chargingStartDate!
-            let chargingEndDate = chargerSearch.chargingEndDate!
+            //포인트 부족 알림창에서 포인트 충전 진행 시, '포인트 결제 금액 입력 알림창' 호출
+            if purchase.isShowPaymentInputAlert {
+                PaymentInputAlert(purchase: purchase, point: point, reservation: reservation)   //포인트 결제 금액 입력 알림창
+            }
             
-            //포인트 확인 후 예약 가능 여부 판별
-            reservation.checkChargingPoint(chargerId: chargerMap.selectChargerId, chargingStartDate, chargingEndDate) { (isReservable) in
-                reservation.isReservable = isReservable
+            //결제 완료 시, '결제 완료 알림창' 호출
+            if purchase.showCompletionAlert {
+                PaymentCompletionAlert(purchase: purchase, point: point, reservation: reservation)  //결제 완료 알림창
+            }
+            
+            //예약 완료 버튼 클릭 시, '예약 확인 알림창' 호출
+            if reservation.isShowConfirmAlert {
+                ReservationConfirmAlert(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)    //예약 알림창
             }
         }
     }
 }
 
+//MARK: - 예약할 충전기 요약 정보
 struct ReservedChargerSummaryInfo: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     @ObservedObject var chargerSearch: ChargerSearchViewModel
@@ -109,6 +145,7 @@ struct ReservedChargerSummaryInfo: View {
 
 struct ReservationPointInfo: View {
     @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var purchase: PurchaseViewModel
     
     var body: some View {
         VStack(spacing: 1) {
@@ -169,12 +206,32 @@ struct ReservationPointInfo: View {
                         .foregroundColor(Color("#C0392B"))
                         .frame(minHeight: 30)
                 }
+                
+                VerticalDividerline()
+                
+                Button(
+                    action: {
+                        purchase.parentView = "reservationView"
+                        purchase.isShowPaymentInputAlert = true
+                    },
+                    label: {
+                        Text("포인트 충전")
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.white)
+                            .padding(.horizontal)
+                            .frame(maxWidth: .infinity, minHeight: 30)
+                            .background(Color("#C0392B"))
+                            .cornerRadius(5.0)
+                            .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                    }
+                )
             }
         }
         .padding(.horizontal)
     }
 }
 
+//MARK: - 주의사항
 struct Precautions: View {
     var body: some View {
         VStack(spacing: 10) {
@@ -194,13 +251,14 @@ struct Precautions: View {
     }
 }
 
+//MARK: - 예약 완료 버튼
 struct ReservationButton: View {
     @ObservedObject var reservation: ReservationViewModel
     
     var body: some View {
         Button(
             action: {
-                
+                reservation.isShowConfirmAlert = true
             },
             label: {
                 Text("예약 완료")
@@ -218,6 +276,6 @@ struct ReservationButton: View {
 
 struct ReservationView_Previews: PreviewProvider {
     static var previews: some View {
-        ReservationView(chargerMap: ChargerMapViewModel(), chargerSearch: ChargerSearchViewModel(), reservation: ReservationViewModel(), purchase: PurchaseViewModel())
+        ReservationView(chargerMap: ChargerMapViewModel(), chargerSearch: ChargerSearchViewModel(), reservation: ReservationViewModel(), point: PointViewModel())
     }
 }

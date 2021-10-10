@@ -12,66 +12,80 @@ import ExytePopupView
 struct SignInView: View {
     @ObservedObject var signInViewModel = SignInViewModel() //로그인 View Model
     @ObservedObject var location = Location()
-    @ObservedObject var bluetooth = Bluetooth()
+    @ObservedObject var charging = ChargingViewModel()
     
     var body: some View {
         if signInViewModel.signInStatus == "success" {
             ChargerMapView()
         }
         else {
-            ZStack {
-                NavigationView {
+            NavigationView {
+                ZStack {
                     VStack {
-                        SignInEntryField(signInViewModel: signInViewModel)  //로그인 정보 입력 창
+                        //시작 화면 이미지
+                        Image("LaunchImage-Top")
+                            .resizable()
+                            .scaledToFit()
                         
-                        HStack {
-                            SignInButton(signInViewModel: signInViewModel)  //로그인 버튼
-                            
-                            Spacer().frame(width: 1)    //버튼 사이 간격
-                            
-                            SignUpButton()  //회원가입 버튼
+                        Spacer()
+                        
+                        VStack {
+                            SignInEntryField(signInViewModel: signInViewModel)  //로그인 정보 입력 창
+
+                            HStack {
+                                SignInButton(signInViewModel: signInViewModel)  //로그인 버튼
+
+                                Spacer().frame(width: 1)    //버튼 사이 간격
+
+                                SignUpButton()  //회원가입 버튼
+                            }
+
+                            HStack {
+                                Spacer()
+
+                                FindAccountViewButton(signInViewModel: signInViewModel)
+
+                                Text("/")
+                                    .font(.subheadline)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(Color.gray)
+
+                                ChangePasswordButton(signInViewModel: signInViewModel)  //비밀번호 변경 버튼
+
+                                Spacer()
+                            }
+                            .padding(.top)
                         }
+                        .padding()
                         
-                        HStack {
-                            Spacer()
-                            
-                            FindAccountViewButton(signInViewModel: signInViewModel)
-                            
-                            Text("/")
-                                .font(.caption)
-                                .fontWeight(.bold)
-                                .foregroundColor(Color.gray)
-                            
-                            ChangePasswordButton(signInViewModel: signInViewModel)  //비밀번호 변경 버튼
-                            
-                            Spacer()
-                        }
-                        .padding(.top)
-                        
+                        Spacer()
+                        Spacer()
+                        Spacer()
+                        Spacer()
                     }
-                    .padding()
+                    
+                    //로딩 표시 여부에 따라 표출
+                    if signInViewModel.viewUtil.isLoading {
+                        signInViewModel.viewUtil.loadingView()  //로딩 화면
+                    }
                 }
                 .navigationBarHidden(true)
-                
-                //로딩 표시 여부에 따라 표출
-                if signInViewModel.viewUtil.isLoading {
-                    signInViewModel.viewUtil.loadingView()  //로딩 화면
+                .edgesIgnoringSafeArea([.bottom, .horizontal])
+                .popup(
+                    isPresented: $signInViewModel.viewUtil.isShowToast,   //팝업 노출 여부
+                    type: .floater(verticalPadding: 80),
+                    position: .bottom,
+                    animation: .easeInOut(duration: 0.0),   //애니메이션 효과
+                    autohideIn: 1,  //팝업 노출 시간
+                    closeOnTap: false,
+                    closeOnTapOutside: false,
+                    view: {
+                        signInViewModel.viewUtil.toast()
+                    }
+                )
+                .onAppear {
+                    location.startLocation()
                 }
-            }
-            .popup(
-                isPresented: $signInViewModel.viewUtil.isShowToast,   //팝업 노출 여부
-                type: .floater(verticalPadding: 80),
-                position: .bottom,
-                animation: .easeInOut(duration: 0.0),   //애니메이션 효과
-                autohideIn: 1,  //팝업 노출 시간
-                closeOnTap: false,
-                closeOnTapOutside: false,
-                view: {
-                    signInViewModel.viewUtil.toast()
-                }
-            )
-            .onAppear {
-                location.startLocation()
             }
         }
     }
@@ -97,30 +111,6 @@ struct SignInButton: View {
     @ObservedObject var signInViewModel: SignInViewModel
     
     var body: some View {
-//        NavigationLink(
-//            destination: ChargerMapView(), //충전기 메인 화면 이동
-//            isActive: $signInViewModel.viewUtil.isNextView,
-//            label: {
-//                Button(
-//                    action: {
-//                        signInViewModel.viewUtil.dismissKeyboard()  //키보드 닫기
-//
-//                        //아이디(이메일), 비밀번호 유효성 검사
-//                        if signInViewModel.validation() {
-//                            signInViewModel.signIn()    //로그인 실행
-//                        }
-//                    },
-//                    label: {
-//                        Text("button.sign.in".localized())
-//                            .fontWeight(.bold)
-//                            .foregroundColor(Color.white)
-//                            .padding(.horizontal)
-//                            .frame(maxWidth: .infinity, maxHeight: 35)
-//                            .background(Color("#3498DB"))
-//                    }
-//                )
-//            }
-//        )
         Button(
             action: {
                 signInViewModel.viewUtil.dismissKeyboard()  //키보드 닫기
@@ -135,7 +125,7 @@ struct SignInButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 35)
+                    .frame(maxWidth: .infinity, minHeight: 35)
                     .background(Color("#3498DB"))
             }
         )
@@ -152,7 +142,7 @@ struct SignUpButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(/*@START_MENU_TOKEN@*/.horizontal/*@END_MENU_TOKEN@*/)
-                    .frame(maxWidth: .infinity, maxHeight: 35)
+                    .frame(maxWidth: .infinity, minHeight: 35)
                     .background(Color("#5E5E5E"))
             }
         )
@@ -171,7 +161,7 @@ struct FindAccountViewButton: View {
                     Spacer()
                     
                     Text("아이디 찾기")
-                        .font(.caption)
+                        .font(.subheadline)
                         .fontWeight(.bold)
                         .foregroundColor(Color.gray)
                         .underline()
@@ -192,7 +182,7 @@ struct ChangePasswordButton: View {
             label: {
                 HStack {
                     Text("button.change.password".localized())
-                        .font(.caption)
+                        .font(.subheadline)
                         .fontWeight(.bold)
                         .foregroundColor(Color.gray)
                         .underline()

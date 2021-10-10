@@ -11,11 +11,20 @@ import SwiftUI
 struct LaunchScreen: View {
     var body: some View {
         ZStack {
-            //시작 화면 이미지
-            Image("LaunchImage")
-                .resizable()
+            VStack {
+                //시작 화면 이미지
+                Image("LaunchImage-Top")
+                    .resizable()
+                    .scaledToFit()
+                
+                Spacer()
+                
+                Image("LaunchImage-Bottom")
+                    .resizable()
+                    .scaledToFit()
+            }  
         }
-        .edgesIgnoringSafeArea(.all)
+        .edgesIgnoringSafeArea([.bottom, .horizontal])
     }
 }
 

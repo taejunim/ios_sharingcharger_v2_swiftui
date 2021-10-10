@@ -3,25 +3,28 @@
 //  SharingCharger_V2
 //
 //  Created by KJ on 2021/08/09.
+//  Updated by 김재연 on 2021/08/09.
+//  Updated by KJ on 2021/10/07.
 //
 
 import Foundation
 
 class UserInfoViewModel: ObservableObject {
     private let userAPI = UserAPIService()  //사용자 API Service
+    
     @Published var viewUtil = ViewUtil() //View Util
     
     @Published var result: String = ""  //결과 상태
-    @Published var viewPath: String = ""
-    @Published var viewTitle: String = ""
+    @Published var viewPath: String = ""    //상단 화면 경로
+    @Published var viewTitle: String = ""   //상단 화면 타이틀
     @Published var isShowToast: Bool = false    //Toast 팝업 호출 여부
     
     @Published var isValidation: Bool = false   //유효성 검사 여부
-    @Published var showFindAccountPopup: Bool = false
-    @Published var isFindAccount: Bool = false
+    @Published var showFindAccountPopup: Bool = false   //아이디 찾기 팝업창 호출 여부
+    @Published var isFindAccount: Bool = false  //아이디 찾기 결과 여부
     
-    @Published var isSigned: Bool = false
-    @Published var isNewPassword: Bool = false
+    @Published var isSigned: Bool = false   //로그인 여부
+    @Published var isShowNewPassword: Bool = false  //새 비밀번호 입력 화면 이동 여부
     
     @Published var name: String = ""             //이름
     @Published var email: String = ""            //이메일 - 아이디
@@ -86,8 +89,8 @@ class UserInfoViewModel: ObservableObject {
                 else if self.viewPath == "changePassword"{
                     //아이디가 조회되지 않을 경우
                     if findId.count == 0 {
-                        self.viewUtil.showToast(isShow: true, message: "fail.findId".message()) //조회 실패 메시지
-                        self.isNewPassword = false  //비밀번호 변경 완료 화면으로 넘어가지 않음
+                        self.viewUtil.showToast(isShow: true, message: "mismatch.user".message()) //조회 실패 메시지
+                        self.isShowNewPassword = false  //비밀번호 변경 완료 화면으로 넘어가지 않음
                     }else{
                         //조회된 아이디 수만큼 출력
                         for index in 0..<findId.count {
@@ -98,10 +101,10 @@ class UserInfoViewModel: ObservableObject {
                             self.searchIds.append(self.searchId)    //조회한 아이디를 배열에 저장
 
                             if self.email == findId.username!{
-                                self.isNewPassword = true   //아이디가 일치할 경우
+                                self.isShowNewPassword = true   //아이디가 일치할 경우
                             }else{
-                                self.isNewPassword = false //아이디가 일치하지 않을 경우
-                                self.viewUtil.showToast(isShow: true, message: "fail.findId".message()) //조회 실패 메시지
+                                self.isShowNewPassword = false //아이디가 일치하지 않을 경우
+                                self.viewUtil.showToast(isShow: true, message: "mismatch.user".message()) //조회 실패 메시지
                             }
                         }
                     }
@@ -125,8 +128,8 @@ class UserInfoViewModel: ObservableObject {
                 }
                 //비밀번호 변경 화면일 경우
                 if self.viewPath == "changePassword"{
-                    self.viewUtil.showToast(isShow: true, message: "fail.findId".message()) //조회 실패 메시지 출력
-                    self.isNewPassword = false   //비밀번호 변경 완료 화면으로 넘어가지 않음
+                    self.viewUtil.showToast(isShow: true, message: "mismatch.user".message()) //조회 실패 메시지 출력
+                    self.isShowNewPassword = false   //비밀번호 변경 완료 화면으로 넘어가지 않음
                 }
                 
                 self.viewUtil.isLoading = false //로딩 종료
@@ -428,13 +431,13 @@ class UserInfoViewModel: ObservableObject {
         if isSigned == true{
             //현재 비밀번호 입력 여부 확인
             if currentPassword.isEmpty {
-                viewUtil.showToast(isShow: true, message: "input.empty.currentPassword".message())
+                viewUtil.showToast(isShow: true, message: "input.empty.current.password".message())
                 return false
             }
             else {
                 //현재 비밀번호 유효성 검사
                 guard isCurrentPasswordValid() else {
-                    viewUtil.showToast(isShow: true, message: "input.invalid.currentPassword".message())
+                    viewUtil.showToast(isShow: true, message: "input.invalid.password".message())
                     return false
                 }
             }
@@ -442,26 +445,26 @@ class UserInfoViewModel: ObservableObject {
        
         //새 비밀번호 입력 여부 확인
         if newPassword.isEmpty {
-            viewUtil.showToast(isShow: true, message: "input.empty.newPassword".message())
+            viewUtil.showToast(isShow: true, message: "input.empty.password".message())
             return false
         }
         else {
             //비밀번호 유효성 검사
             guard isPasswordValid() else {
-                viewUtil.showToast(isShow: true, message: "input.invalid.newPassword".message())
+                viewUtil.showToast(isShow: true, message: "input.invalid.password".message())
                 return false
             }
         }
         
         //비밀번호 확인 입력 여부 확인
         if confirmNewPassword.isEmpty {
-            viewUtil.showToast(isShow: true, message: "input.empty.confirmNewPassword".message())
+            viewUtil.showToast(isShow: true, message: "input.empty.confirm.password".message())
             return false
         }
         else {
             //비밀번호 확인 유효성 검사
             guard isConfirmPasswordValid() else {
-                viewUtil.showToast(isShow: true, message: "input.invalid.confirmNewPassword".message())
+                viewUtil.showToast(isShow: true, message: "input.invalid.password".message())
                 return false
             }
         }

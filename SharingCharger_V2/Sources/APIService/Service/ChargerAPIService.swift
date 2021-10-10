@@ -12,6 +12,10 @@ import PromisedFuture
 class ChargerAPIService {
     let apiClient = APIClient() //API Client - 공통 API 호출
 
+    //----------------------------
+    //MARK: - [충전기 API]
+    //----------------------------
+    
     //MARK: - 충전기 목록 조회 API 호출
     /// 검색조건에 따른 충전 및 예약 가능한 충전기 목록 조회
     /// - Parameter parameters:
@@ -33,6 +37,24 @@ class ChargerAPIService {
     public func requestCharger(chargerId: String) -> Future<Charger, AFError> {
         
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/app/chargers/\(chargerId)", parameters: [:], contentType: "json"))
+    }
+    
+    
+    //----------------------------
+    //MARK: - [소유주 충전기 조회 API]
+    //----------------------------
+    
+    //MARK: - BLE 번호로 소유주 충전기 조회 API 호출
+    /// 소유주에게 할당된 충전기를 BLE 번호로 조회
+    /// - Parameter parameters:
+    ///   - bleNumber: BLE 번호
+    ///   - page: 페이지 번호
+    ///   - size: 한 페이지당 개수
+    ///   - sort: 정렬
+    /// - Returns: Owner Charger Model
+    public func requestSearchAssignedCharger(parameters: [String:String]) -> Future<[OwnerCharger], AFError> {
+    
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/ble-number", parameters: parameters, contentType: "json"))
     }
     
     //MARK: - 소유자 충전기 요약 정보 조회 API 호출
@@ -62,5 +84,65 @@ class ChargerAPIService {
     public func requestOwnerCharger(chargerId: String) -> Future<OwnerCharger, AFError> {
     
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/\(chargerId)", parameters: [:], contentType: "json"))
+    }
+    
+    //MARK: - 소유주 충전기별 충전 단가 조회 API 호출
+    /// 소유주의 충전기 이용시간 조회
+    /// - Parameter chargerId: 충전기 ID 번호
+    /// - Returns: Charger Unit Price Model
+    public func requestUnitPrice(chargerId: String) -> Future<[ChargerUnitPrice], AFError> {
+    
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/\(chargerId)/prices", parameters: [:], contentType: "json"))
+    }
+    
+    //MARK: - 소유주 충전기별 이용시간 조회 API 호출
+    /// 소유주의 충전기 이용시간 조회
+    /// - Parameter chargerId: 충전기 ID 번호
+    /// - Returns: Charger Usage Time Model
+    public func requestUsageTime(chargerId: String) -> Future<ChargerUsageTime, AFError> {
+    
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/\(chargerId)/allowTime", parameters: [:], contentType: "json"))
+    }
+    
+    
+    //----------------------------
+    //MARK: - [소유주 충전기 수정 API]
+    //----------------------------
+    
+    //MARK: - 소유주 충전기별 정보 수정 API 호출
+    /// 충전기의 정보 수정
+    /// - Parameters:
+    ///   - chargerId: 충전기 ID 번호
+    ///   - parameters: parameters description
+    /// - Returns: Owner Charger Model
+    public func requestUpdateCharger(chargerId: String, parameters: [String:Any]) -> Future<OwnerCharger, AFError> {
+        
+        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/chargers/\(chargerId)/assign", parameters: parameters))
+    }
+    
+    //MARK: - 소유주 충전기별 충전 단가 수정 API 호출
+    /// 충전기의 충전 단가 수정
+    /// - Parameters:
+    ///   - chargerId: 충전기 ID 번호
+    ///   - parameters:
+    ///     - userId: 소유주 ID 번호
+    ///     - price: 변경할 충전 단가
+    /// - Returns: Charger Unit Price Model
+    public func requestUpdateUnitPrice(chargerId: String, parameters: [String:Any]) -> Future<[ChargerUnitPrice], AFError> {
+        
+        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/chargers/\(chargerId)/prices", parameters: parameters))
+    }
+    
+    //MARK: - 소유주 충전기별 이용시간 수정 API 호출
+    /// 충전기의 이용시간 수정
+    /// - Parameters:
+    ///   - chargerId: 충전기 ID 번호
+    ///   - parameters:
+    ///     - openTime: 이용 시작시간
+    ///     - closeTime: 이용 종료시간
+    /// - Returns: Charger Usage Time Model
+    public func requestUpdateUsageTime(chargerId: String, parameters: [String:Any]) -> Future<ChargerUsageTime, AFError> {
+        
+        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/chargers/\(chargerId)/allowTime", parameters: parameters))
     }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PointSearchModal: View {
-    @ObservedObject var pointViewModel: PointViewModel //Point View Model
+    @ObservedObject var point: PointViewModel //Point View Model
     
     var body: some View {
         VStack {
@@ -20,7 +20,7 @@ struct PointSearchModal: View {
                     
                     //초기화 버튼
                     RefreshButton() { (isSearchReset) in
-                        pointViewModel.isSearchReset = isSearchReset //초기화 여부
+                        point.isSearchReset = isSearchReset //초기화 여부
                     }
                 }
                 .padding(.bottom)
@@ -44,12 +44,12 @@ struct PointSearchModal: View {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("조회기간")
                                     .font(.body)
-                                PointDatePicker(pointViewModel: pointViewModel)
+                                PointDatePicker(point: point)
                                 HStack {
                                     //조회 시작일자
                                     DatePicker(
                                         "",
-                                        selection: $pointViewModel.selectMonth,
+                                        selection: $point.selectMonth,
                                         displayedComponents: [.date]
                                     )
                                         .labelsHidden()
@@ -65,7 +65,7 @@ struct PointSearchModal: View {
                                     //조회 종료일자
                                     DatePicker(
                                         "",
-                                        selection: $pointViewModel.currentDate,
+                                        selection: $point.currentDate,
                                         displayedComponents: [.date]
                                         
                                     )
@@ -74,7 +74,7 @@ struct PointSearchModal: View {
                                         .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
                                 }
                                 .frame(maxWidth: .infinity)
-                                .disabled(pointViewModel.chooseDate != "ownPeriod" ? true : false)   //조회기간 선택에 따라 비활성화 변경
+                                .disabled(point.chooseDate != "ownPeriod" ? true : false)   //조회기간 선택에 따라 비활성화 변경
                             }
                             Spacer()
                         }
@@ -85,7 +85,7 @@ struct PointSearchModal: View {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("유형")
                                     .font(.body)
-                                PointTypePicker(pointViewModel: pointViewModel)
+                                PointTypePicker(point: point)
                             }
                             Spacer()
                         }
@@ -95,7 +95,7 @@ struct PointSearchModal: View {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("정렬")
                                     .font(.body)
-                                PointSortPicker(pointViewModel: pointViewModel)
+                                PointSortPicker(point: point)
                             }
                             Spacer()
                         }
@@ -106,17 +106,17 @@ struct PointSearchModal: View {
             }
             .padding()
             
-            PointSearchButton(pointViewModel: pointViewModel)
+            PointSearchButton(point: point)
         }
     }
 }
 //MARK: - 포인트 조회기간 선택 Picker
 struct PointDatePicker: View {
-    @ObservedObject var pointViewModel: PointViewModel
+    @ObservedObject var point: PointViewModel
     
     var body: some View {
         Picker(
-            selection: $pointViewModel.chooseDate, //조회기간 선택
+            selection: $point.chooseDate, //조회기간 선택
             label: Text("조회기간 선택"),
             content: {
                 Text("1개월").tag("oneMonth")
@@ -132,11 +132,11 @@ struct PointDatePicker: View {
 }
 //MARK: - 포인트 유형 선택 Picker
 struct PointTypePicker: View {
-    @ObservedObject var pointViewModel: PointViewModel
+    @ObservedObject var point: PointViewModel
     
     var body: some View {
         Picker(
-            selection: $pointViewModel.selectPointType, //포인트 유형 선택
+            selection: $point.selectPointType, //포인트 유형 선택
             label: Text("유형 선택"),
             content: {
                 Text("전체").tag("ALL")
@@ -147,7 +147,7 @@ struct PointTypePicker: View {
             .padding(.vertical)
             .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
         Picker(
-            selection: $pointViewModel.selectPointType, //포인트 유형 선택
+            selection: $point.selectPointType, //포인트 유형 선택
             label: Text("유형 선택"),
             content: {
                 Text("포인트 환전").tag("EXCHANGE")
@@ -161,12 +161,12 @@ struct PointTypePicker: View {
 }
 //MARK: - 포인트 정렬 선택 Picker
 struct PointSortPicker: View {
-    @ObservedObject var pointViewModel: PointViewModel
+    @ObservedObject var point: PointViewModel
     
     var body: some View {
         VStack (alignment:.leading){
             Picker(
-                selection: $pointViewModel.selectSort, //포인트 유형 선택
+                selection: $point.selectSort, //포인트 유형 선택
                 label: Text("정렬 선택"),
                 content: {
                     Text("최신순").tag("DESC")
@@ -183,15 +183,15 @@ struct PointSortPicker: View {
 struct PointSearchButton: View {
     @Environment(\.presentationMode) var presentationMode
     
-    @ObservedObject var pointViewModel: PointViewModel
+    @ObservedObject var point: PointViewModel
     
     var body: some View {
         Button(
             action: {
-                pointViewModel.searchPoints.removeAll()                     //조회한 포인트 목록 초기화
-                pointViewModel.page = 1                                     //페이지 번호 초기화
-                pointViewModel.isSearchStart = true                         //조회 시작 여부
-                pointViewModel.getPointHistory(page: pointViewModel.page)   //포인트 목록 조회
+                point.searchPoints.removeAll()                     //조회한 포인트 목록 초기화
+                point.page = 1                                     //페이지 번호 초기화
+                point.isSearchStart = true                         //조회 시작 여부
+                point.getPointHistory(page: point.page)   //포인트 목록 조회
                 presentationMode.wrappedValue.dismiss()                     //현재 창 닫기
             },
             label: {
@@ -208,6 +208,6 @@ struct PointSearchButton: View {
 }
 struct PointSearchModal_Previews: PreviewProvider {
     static var previews: some View {
-        PointSearchModal(pointViewModel: PointViewModel())
+        PointSearchModal(point: PointViewModel())
     }
 }

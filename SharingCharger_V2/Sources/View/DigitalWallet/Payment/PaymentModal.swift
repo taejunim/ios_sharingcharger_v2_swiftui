@@ -7,24 +7,30 @@
 
 import SwiftUI
 
+//MARK: - 결제 팝업 화면
 struct PaymentModal: View {
     @Environment(\.presentationMode) var presentationMode
+    
     @ObservedObject var purchase: PurchaseViewModel
+    @ObservedObject var point: PointViewModel
+    @ObservedObject var reservation: ReservationViewModel
     
     var body: some View {
-        VStack {
+        ZStack {
             PaymentWebView(
                 loadUrl: "https://devevzone.evzcharge.com/api/user/jeju_pay?product_amt=\(purchase.paymentAmount)&sp_user_define1=\(purchase.paymentUserIdNo)",
-                //loadUrl: "http://172.30.1.29:8080",
                 message: { (type, code, content) in
-                    
                     //메시지 유형 - 알림
                     if type == "alert" {
     
                         //결제 창에서 취소 클릭 시, 현재 창 닫기
-                        if code == "W002" {
+                        if code == "W002" || code == "W324" || code == "W344" {
                             withAnimation {
                                 self.presentationMode.wrappedValue.dismiss()    //현재 화면 닫기
+                                //purchase.showPaymentInputAlert = false //포인트 충전 알림창 닫기
+                                purchase.isPayment = false   //결제 성공 여부
+                                
+                                //purchase.showCompletionAlert = true
                             }
                         }
                         //코드가 없는 메시지
@@ -37,6 +43,13 @@ struct PaymentModal: View {
                         //결제 성공
                         if code == "success" {
                             print("Payment Result: \(code) - \(content)")
+                            
+                            withAnimation {
+                                self.presentationMode.wrappedValue.dismiss()    //현재 화면 닫기
+                                
+                                purchase.isShowPaymentInputAlert = false //포인트 충전 알림창 닫기
+                                purchase.isPayment = true   //결제 성공 여부
+                            }
                         }
                         //결제 실패
                         else if code == "fail" {
@@ -51,6 +64,6 @@ struct PaymentModal: View {
 
 struct PaymentModal_Previews: PreviewProvider {
     static var previews: some View {
-        PaymentModal(purchase: PurchaseViewModel())
+        PaymentModal(purchase: PurchaseViewModel(), point: PointViewModel(), reservation: ReservationViewModel())
     }
 }
