@@ -325,12 +325,11 @@ struct CustomerServiceMenuButton: View {
     var body: some View {
         Button(
             action: {
-                
+                showEmailDialog()
             },
             label: {
                 HStack {
                     Text("고객센터")
-                    
                     Spacer()
                 }
                 .foregroundColor(Color.black)
@@ -338,6 +337,33 @@ struct CustomerServiceMenuButton: View {
                 .padding(.vertical, 5)
             }
         )
+    }
+    
+    func showEmailDialog() {
+        
+        let dialog = UIAlertController(title:"", message : "문의사항이 있으시면\n아래의 문의하기 버튼을 클릭해주세요.", preferredStyle: .alert)
+        
+        dialog
+            .addAction(
+                UIAlertAction(title: "닫기", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
+                    return
+                }
+            )
+        
+        dialog
+            .addAction(
+                UIAlertAction(title: "문의하기", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
+                    
+                    let bodyContent: String = "App Version : \(String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String))</br>"
+                    + "Model Name : \(UIDevice.modelName)</br>"
+                    + "OS Version : \(UIDevice.current.systemVersion)</br>"
+                    + "이메일 : \(UserDefaults.standard.string(forKey: "userId") ?? "")</br>"
+                    EmailHelper.shared.sendEmail(subject: "[몬딱충전 문의] : 제목을 입력해주세요.", body: bodyContent, to: "tjlim@metisinfo.co.kr")
+                    return
+                }
+            )
+        
+        UIApplication.shared.windows.filter {$0.isKeyWindow}.first!.rootViewController?.present(dialog, animated: true, completion: nil)
     }
 }
 
