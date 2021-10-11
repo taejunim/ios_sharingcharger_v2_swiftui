@@ -81,7 +81,7 @@ class ChargeAPIService {
     ///     - size: 페이즈 사이즈
     ///     - sort: 정렬
     /// - Returns: Charge Info Model
-    public func requestChargeHistory(userIdNo: String, parameters: [String:String]) -> Future<[ChargeInfo], AFError> {
+    public func requestChargeHistory(userIdNo: String, parameters: [String:String]) -> Future<ChargingHistory, AFError> {
         
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/recharges/users/\(userIdNo)/history", parameters: parameters, contentType: "json"))
     }
@@ -92,7 +92,7 @@ class ChargeAPIService {
     ///   - userIdNo: 소유주 ID 번호
     ///   - parameters: Charge Info Model
     /// - Returns:
-    public func requestOwnerChargeHistory(userIdNo: String, parameters: [String:String]) -> Future<[ChargeInfo], AFError> {
+    public func requestOwnerChargeHistory(userIdNo: String, parameters: [String:String]) -> Future<ChargingHistory, AFError> {
         
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/recharges/owner/\(userIdNo)", parameters: parameters, contentType: "json"))
     }

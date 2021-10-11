@@ -154,7 +154,7 @@ class AddressSearchViewModel: ObservableObject {
             "x": longitude,    //중심 좌표의 X값 혹은 longitude
             "y": latitude,    //중심 좌표의 Y값 혹은 latitude
             //"radius": "20000",    //중심 좌표부터의 반경거리. 특정 지역을 중심으로 검색 - 0m~20000m
-            "page": String(page + 1),    //결과 페이지 번호 - 1~45 (기본값: 1)
+            "page": String(page),    //결과 페이지 번호 - 1~45 (기본값: 1)
             "size": String(size),   //한 페이지에 보여질 문서의 개수 - 1~15 (기본값: 15)
             "sort": "distance"  //결과 정렬 순서 - distance 또는 accuracy (기본값: accuracy)
         ]

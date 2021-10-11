@@ -59,23 +59,6 @@ struct ReservationContent: Codable {
     let updated: String?    //수정 일자
 }
 
-// MARK: - 페이징 정보
-struct Pageable: Codable {
-    let sort: Sort
-    let pageNumber: Int?
-    let ageSize: Int?
-    let offset: Int?
-    let unpaged: Bool?
-    let paged: Bool?
-}
-
-// MARK: - 정렬 정보
-struct Sort: Codable {
-    let sorted: Bool?
-    let unsorted: Bool?
-    let empty: Bool?
-}
-
 //MARK: - 사용자 예약 정보
 struct UserReservation: Codable {
     let id: Int

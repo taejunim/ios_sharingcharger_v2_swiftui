@@ -183,16 +183,16 @@ struct AddressSearchList: View {
                         Button(
                             action: {
                                 self.presentationMode.wrappedValue.dismiss()    //화면 닫기
-                                
+
                                 let latitude = Double(place["latitude"]!)!  //선택한 장소의 위도
                                 let longitude = Double(place["longitude"]!)!    //선택한 장소의 경도
-                                
+
                                 //선택한 위치의 지도 중심으로 이동
                                 chargerMap.mapView.setMapCenter(
                                     MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
                                     animated: true
                                 )
-                                
+
                                 chargerMap.mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
 
                                 //선택한 위치의 충전기 목록 조회
@@ -213,32 +213,31 @@ struct AddressSearchList: View {
                                                 .scaledToFit()
                                                 .frame(width: 20, height: 20)
                                         }
-                                        
+
                                         //주소 장소명
                                         Text(place["placeName"]!)
                                             .font(.callout)
                                             .fontWeight(.semibold)
                                             .foregroundColor(Color.black)
-                                        
+
                                         Spacer().frame(width: 4)
-                                        
+
                                         //카테고리
                                         Text(place["category"]!)
                                             .font(.caption)
                                             .foregroundColor(Color.gray)
                                     }
-                                    
-                                    
+
                                     HStack(spacing: 5) {
                                         //검색 위치와의 거리
                                         Text(place["distance"]!)
                                             .font(.footnote)
                                             .foregroundColor(Color.black)
-                                        
+
                                         Text("|")
                                             .font(.footnote)
                                             .foregroundColor(Color.gray)
-                                        
+
                                         //도로명 주소가 있는 경우 도로명 주소 노출
                                         if place["roadAddress"]! != "" {
                                             //도로명 주소
@@ -256,7 +255,7 @@ struct AddressSearchList: View {
                                                     .padding(.horizontal, 5)
                                                     .padding(.vertical, 1)
                                                     .border(Color.gray, width: 0.5)
-                                                
+
                                                 //지번 주소
                                                 Text(place["address"]!)
                                                     .font(.footnote)
@@ -264,7 +263,7 @@ struct AddressSearchList: View {
                                             }
                                         }
                                     }
-                                    
+
                                     //지번 주소가 있는 경우 노출
                                     if place["address"]! != "" {
                                         //도로명 주소가 있는 경우에만 노출, 도로명 주소가 없는 경우 도로명 주소 위치에 지번 주소 노출
@@ -277,7 +276,7 @@ struct AddressSearchList: View {
                                                     .padding(.horizontal, 5)
                                                     .padding(.vertical, 1)
                                                     .border(Color.gray, width: 0.5)
-                                                
+
                                                 //지번 주소
                                                 Text(place["address"]!)
                                                     .font(.footnote)
@@ -285,7 +284,7 @@ struct AddressSearchList: View {
                                             }
                                         }
                                     }
-                                    
+
                                     if place["phone"]! != "" {
                                         //전화 번호
                                         Text(place["phone"]!)
@@ -294,7 +293,6 @@ struct AddressSearchList: View {
                                     }
                                 }
                                 .padding(.horizontal)
-                                
                             }
                         )
                         .onAppear {
@@ -302,6 +300,8 @@ struct AddressSearchList: View {
                             if !addressSearch.isLastPage {
                                 //스크롤의 마지막 항목인 경우에만 실행
                                 if places.last == place {
+                                    addressSearch.page = addressSearch.page + 1
+                                    
                                     addressSearch.addNextAddressList()  //다음 주소 목록 추가
                                 }
                             }

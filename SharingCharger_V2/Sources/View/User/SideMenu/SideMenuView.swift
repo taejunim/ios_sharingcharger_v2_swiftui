@@ -224,7 +224,7 @@ struct MenuList: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             
-            ChargerUseHistoryMenuButton()   //충전기 사용 이력 메뉴 버튼
+            ChargingHistoryMenuButton()   //충전기 사용 이력 메뉴 버튼
             
             DigitalWalletMenuButton()   //전자지갑 메뉴 버튼
             
@@ -245,10 +245,10 @@ struct MenuList: View {
 }
 
 //MARK: - 충전기 사용 이력 메뉴 버튼
-struct ChargerUseHistoryMenuButton: View {
+struct ChargingHistoryMenuButton: View {
     var body: some View {
         NavigationLink(
-            destination: ChargerUseHistoryView(),   //충전기 사용 이력 화면
+            destination: ChargingHistoryView(),   //충전기 사용 이력 화면
             label: {
                 HStack {
                     Text("충전기 사용 이력")
