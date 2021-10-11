@@ -13,10 +13,11 @@ struct ChargerDetailView: View {
     @ObservedObject var chargerDetailViewModel = ChargerDetailViewModel()
         
     @State var chargerId:String
+    @State var sharedType:String
     
     var body: some View {
         VStack(spacing: 0) {
-            OwnerChargerDetailMenu(chargerDetailViewModel: chargerDetailViewModel, chargerId: chargerId)
+            OwnerChargerDetailMenu(chargerDetailViewModel: chargerDetailViewModel, chargerId: chargerId, sharedType: sharedType)
         }
         .navigationBarTitle(Text("충전기 관리"), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)        //기본 Back 버튼 숨김
@@ -29,6 +30,7 @@ struct ChargerDetailView: View {
 struct OwnerChargerDetailMenu: View{
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
     @State var chargerId:String
+    @State var sharedType:String
     
     @State var isShowChargerDetailMain:Bool = true
     @State var isShowChargerPriceSetting:Bool = false
@@ -53,6 +55,7 @@ struct OwnerChargerDetailMenu: View{
                         .renderingMode(.template)
                         .frame(width: 40, height: 40)
                         .padding(5)
+                        .foregroundColor(isShowChargerDetailMain ? Color("#8E44AD"): .black)
                 }
             )
             Spacer()
@@ -71,24 +74,29 @@ struct OwnerChargerDetailMenu: View{
                             .renderingMode(.template)
                             .frame(width: 40, height: 40)
                             .padding(5)
+                            .foregroundColor(isShowChargerPriceSetting ? Color("#8E44AD"): .black)
                         }
                 )
-                Button(
-                    action: {
-                        isShowChargerDetailMain = false
-                        isShowChargerPriceSetting = false
-                        isShowChargerOperateTimeSetting = true
-                        isShowChargerInformationEdit = false
-                        isShowChargerHistory = false
-                    },
-                    label: {
-                        Image("Button-Clock")
-                            .resizable()
-                            .renderingMode(.template)
-                            .frame(width: 40, height: 40)
-                            .padding(5)
-                        }
-                )
+                
+                if(sharedType == "PARTIAL_SHARING"){
+                    Button(
+                        action: {
+                            isShowChargerDetailMain = false
+                            isShowChargerPriceSetting = false
+                            isShowChargerOperateTimeSetting = true
+                            isShowChargerInformationEdit = false
+                            isShowChargerHistory = false
+                        },
+                        label: {
+                            Image("Button-Clock")
+                                .resizable()
+                                .renderingMode(.template)
+                                .frame(width: 40, height: 40)
+                                .padding(5)
+                                .foregroundColor(isShowChargerOperateTimeSetting ? Color("#8E44AD"): .black)
+                            }
+                    )
+                }
                 Button(
                     action: {
                         isShowChargerDetailMain = false
@@ -103,6 +111,7 @@ struct OwnerChargerDetailMenu: View{
                             .renderingMode(.template)
                             .frame(width: 40, height: 40)
                             .padding(5)
+                            .foregroundColor(isShowChargerInformationEdit ? Color("#8E44AD"): .black)
                         }
                 )
                 Button(
@@ -119,14 +128,15 @@ struct OwnerChargerDetailMenu: View{
                             .renderingMode(.template)
                             .frame(width: 40, height: 40)
                             .padding(5)
+                            .foregroundColor(isShowChargerHistory ? Color("#8E44AD"): .black)
                         }
                 )
             }
         }
-            .padding(.trailing, 10)
-            .padding(.top, 10)
-            .padding(.leading, 10)
-            .padding(.bottom, 10)
+        .padding(.trailing, 10)
+        .padding(.top, 10)
+        .padding(.leading, 10)
+        .padding(.bottom, 10)
             
 
         //선택된 메뉴에 따라 내부 Content Show/Hide
@@ -154,6 +164,6 @@ struct OwnerChargerDetailMenu: View{
 struct ChargerDetailView_Previews: PreviewProvider {
     
     static var previews: some View {
-        ChargerDetailView(chargerId: "")
+        ChargerDetailView(chargerId: "", sharedType: "")
     }
 }

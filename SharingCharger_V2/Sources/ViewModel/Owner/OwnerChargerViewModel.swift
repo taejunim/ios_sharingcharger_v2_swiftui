@@ -48,7 +48,7 @@ class OwnerChargerViewModel: ObservableObject {
                 for index in 0..<charger.count {
                     
                     var searchCharger:[String:String] = [:]
-                    
+                    print(charger)
                     let charger = charger[index]
                     let id = charger.id
                     let name = charger.name
@@ -56,6 +56,7 @@ class OwnerChargerViewModel: ObservableObject {
                     let description = charger.description
                     let currentStatusType = charger.currentStatusType
                     let bleNumber = charger.bleNumber
+                    let sharedType = charger.sharedType
                     var type: String = ""
                     var typeColor: String = ""
 
@@ -83,10 +84,10 @@ class OwnerChargerViewModel: ObservableObject {
                         "bleNumber": bleNumber!,                 //ble번호
                         "currentStatusType": type,               //현재 충전기 상태
                         "typeColor": typeColor,                  //type에 따른 color
+                        "sharedType": sharedType!,                //상시 충전 가능 여부
                         "index": String(index + 1)
                     ]
                     
-                    print(searchCharger)
                     searchChargers.append(searchCharger)
                 }
                 self.chargers.append(contentsOf: searchChargers)

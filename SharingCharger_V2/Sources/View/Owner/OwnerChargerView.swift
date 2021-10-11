@@ -155,9 +155,10 @@ struct OwnerChargerList: View {
                 let currentStatusType: String = charger["currentStatusType"]!               //현재 충전기 상태
                 let typeColor: String = charger["typeColor"]!                               //충전기 상태별 Color
                 let index: String = charger["index"]!                                       //번호 (n번째 충전기) - 화면 표출용
+                let sharedType: String = charger["sharedType"]!
                 
                 NavigationLink(
-                    destination: ChargerDetailView(chargerId : id),
+                    destination: ChargerDetailView(chargerId : id, sharedType : sharedType),
                     label: {
                         HStack {
                             Text(index)
