@@ -123,8 +123,12 @@ struct ChargerFavoritesButton: View {
         Button(
             action: {
                 if !chargerMap.isFavorites {
-                    chargerMap.isFavorites.toggle()
                     chargerMap.addFavorites()
+                    chargerMap.isFavorites = true
+                }
+                else {
+                    chargerMap.deleteFavorites()
+                    chargerMap.isFavorites = false
                 }
             },
             label: {

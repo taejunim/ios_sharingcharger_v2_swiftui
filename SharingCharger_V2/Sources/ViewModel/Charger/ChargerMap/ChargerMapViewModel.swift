@@ -445,13 +445,18 @@ class ChargerMapViewModel: ObservableObject {
         }
     }
     
+    //MARK: - 즐겨찾기 호출
+    func getFavorites() {
+        
+    }
+    
     //MARK: - 즐겨찾기 추가
     func addFavorites() {
         
     }
     
-    //MARK: - 즐겨찾기 호출
-    func getFavorites() {
+    //MARK: - 즐겨찾기 삭제
+    func deleteFavorites() {
         
     }
 }
