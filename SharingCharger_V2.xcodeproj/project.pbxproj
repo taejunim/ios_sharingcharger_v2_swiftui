@@ -124,6 +124,7 @@
 		2BBF2AEF27105397005140FB /* ChargerDetailContentVIew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BBF2AEE27105397005140FB /* ChargerDetailContentVIew.swift */; };
 		2BC430AE26EF0DDF00D9924A /* ChargerSearchInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC430AD26EF0DDF00D9924A /* ChargerSearchInfo.swift */; };
 		2BEF6F6126D7C29200DAD506 /* SlideOverModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEF6F6026D7C29200DAD506 /* SlideOverModal.swift */; };
+		DAC03A63271446E500031D27 /* EmailHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC03A62271446E500031D27 /* EmailHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -270,6 +271,7 @@
 		2BC430AD26EF0DDF00D9924A /* ChargerSearchInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerSearchInfo.swift; sourceTree = "<group>"; };
 		2BEF6F6026D7C29200DAD506 /* SlideOverModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideOverModal.swift; sourceTree = "<group>"; };
 		CDEF0B35A43A34C13EA7E802 /* Pods_SharingCharger_V2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SharingCharger_V2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAC03A62271446E500031D27 /* EmailHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -295,6 +297,7 @@
 				2B85151D26CF6DEF00B6AD0E /* Location.swift */,
 				2B85151F26CF92F700B6AD0E /* Permission.swift */,
 				2B91F06427151967009321C5 /* EmailHelper.swift */,
+				DAC03A62271446E500031D27 /* EmailHelper.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -931,6 +934,7 @@
 				2B92BC51270082130082E5EE /* DigitalWalletView.swift in Sources */,
 				2BAAC08126FCAD660013B254 /* PaymentWebView.swift in Sources */,
 				2B3FD82826DDF3D6000203F1 /* PointAPIService.swift in Sources */,
+				DAC03A63271446E500031D27 /* EmailHelper.swift in Sources */,
 				2B938FA227016495000C8F61 /* ChargerRegistViewModel.swift in Sources */,
 				2BAAC08326FCB70E0013B254 /* PaymentModal.swift in Sources */,
 				2BAC25CC26B3C26D00A91FDF /* SharingCharger_V2App.swift in Sources */,
@@ -1112,7 +1116,7 @@
 				CODE_SIGN_ENTITLEMENTS = SharingCharger_V2/SharingCharger_V2.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SharingCharger_V2/Preview Content\"";
-				DEVELOPMENT_TEAM = P439X3ST2G;
+				DEVELOPMENT_TEAM = C846JVNTZN;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1124,7 +1128,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.metisinfo.SharedCharger;
+				PRODUCT_BUNDLE_IDENTIFIER = krco.metisinfo.SharedCharger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/SharingCharger_V2/Library/KakaoMapBridgingHeader.h";
 				SWIFT_VERSION = 5.0;
@@ -1142,7 +1146,7 @@
 				CODE_SIGN_ENTITLEMENTS = SharingCharger_V2/SharingCharger_V2.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SharingCharger_V2/Preview Content\"";
-				DEVELOPMENT_TEAM = P439X3ST2G;
+				DEVELOPMENT_TEAM = C846JVNTZN;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1154,7 +1158,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.metisinfo.SharedCharger;
+				PRODUCT_BUNDLE_IDENTIFIER = krco.metisinfo.SharedCharger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/SharingCharger_V2/Library/KakaoMapBridgingHeader.h";
 				SWIFT_VERSION = 5.0;
