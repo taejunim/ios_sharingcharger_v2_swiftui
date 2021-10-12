@@ -51,6 +51,7 @@ struct ChargingHistoryContent: Codable {
     let reservationEndDate: String
     let startRechargeDate: String?
     let endRechargeDate: String?
+    let ownerPoint: Int?
     let reservationPoint: Int?
     let rechargePoint: Int?
     let refundPoint: Int?

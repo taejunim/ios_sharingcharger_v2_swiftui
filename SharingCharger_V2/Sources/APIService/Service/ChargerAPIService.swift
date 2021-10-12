@@ -213,6 +213,6 @@ class ChargerAPIService {
     /// - Returns: Charger Usage Time Model
     public func requestUpdateUsageTime(chargerId: String, parameters: [String:Any]) -> Future<ChargerUsageTime, AFError> {
         
-        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/chargers/\(chargerId)/allowTime", parameters: parameters))
+        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/charger/\(chargerId)/allowTime", parameters: parameters))
     }
 }

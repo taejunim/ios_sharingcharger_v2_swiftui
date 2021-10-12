@@ -187,6 +187,7 @@ struct OwnerChargerPriceSetting: View {
 //소유주 충전기 운영 시간 설정
 struct OwnerChargerOperateTimeSetting: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
+    @ObservedObject var viewUtil = ViewUtil()
     @State var chargerId:String
     
     var body: some View {
@@ -205,21 +206,25 @@ struct OwnerChargerOperateTimeSetting: View {
                 //변경 예정 시간
                 DatePicker(
                  "",
-                 selection: $chargerDetailViewModel.selectMonth,
+                 selection: $chargerDetailViewModel.previousOpenTime,
                     displayedComponents: [.hourAndMinute]
                  )
                  .labelsHidden()
                  .accentColor(.black)
+                 .disabled(true)
                  .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
                 Text(" ~ ")
                 //변경 예정 시간
                 DatePicker(
                  "",
-                 selection: $chargerDetailViewModel.selectMonth,
+                 selection: $chargerDetailViewModel.previousCloseTime
+                    
+                    ,
                     displayedComponents: [.hourAndMinute]
                  )
                  .labelsHidden()
                  .accentColor(.black)
+                 .disabled(true)
                  .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
             }
             .frame(height: 50)
@@ -230,7 +235,7 @@ struct OwnerChargerOperateTimeSetting: View {
                 //변경 예정 시간
                 DatePicker(
                  "",
-                 selection: $chargerDetailViewModel.selectMonth,
+                 selection: $chargerDetailViewModel.openTime,
                     displayedComponents: [.hourAndMinute]
                  )
                  .labelsHidden()
@@ -240,7 +245,7 @@ struct OwnerChargerOperateTimeSetting: View {
                 //변경 예정 시간
                 DatePicker(
                  "",
-                 selection: $chargerDetailViewModel.selectMonth,
+                 selection: $chargerDetailViewModel.closeTime,
                     displayedComponents: [.hourAndMinute]
                  )
                  .labelsHidden()
@@ -254,15 +259,28 @@ struct OwnerChargerOperateTimeSetting: View {
             
             Spacer()
             
-            ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "time", chargerId: chargerId)
+            ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "time", chargerId: chargerId, viewUtil: viewUtil)
                 
         }.padding(10)
+        .popup(
+            isPresented: $viewUtil.isShowToast,   //팝업 노출 여부
+            type: .floater(verticalPadding: 80),
+            position: .bottom,
+            animation: .easeInOut(duration: 0.0),   //애니메이션 효과
+            autohideIn: 2,  //팝업 노출 시간
+            closeOnTap: false,
+            closeOnTapOutside: false,
+            view: {
+                viewUtil.toast()
+            }
+        )
     }
 }
 
 //소유주 충전기 정보 수정
 struct OwnerChargerInformationEdit: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
+    @ObservedObject var viewUtil = ViewUtil()
     @State var chargerId:String
     
     var body: some View {
@@ -300,7 +318,7 @@ struct OwnerChargerInformationEdit: View {
                     .frame(width: 100)
                     .font(.subheadline)
                 Spacer()
-                TextField("상세 주소", text: $chargerDetailViewModel.detailAddresss)
+                TextField("상세 주소", text: $chargerDetailViewModel.detailAddress)
                     .autocapitalization(.none)    //첫 문자 항상 소문자
                     .keyboardType(.namePhonePad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -349,9 +367,21 @@ struct OwnerChargerInformationEdit: View {
             
             Spacer()
             
-            ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "information", chargerId: chargerId)
+            ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "information", chargerId: chargerId, viewUtil: viewUtil)
                 
         }.padding(10)
+        .popup(
+            isPresented: $viewUtil.isShowToast,   //팝업 노출 여부
+            type: .floater(verticalPadding: 80),
+            position: .bottom,
+            animation: .easeInOut(duration: 0.0),   //애니메이션 효과
+            autohideIn: 2,  //팝업 노출 시간
+            closeOnTap: false,
+            closeOnTapOutside: false,
+            view: {
+                viewUtil.toast()
+            }
+        )
     }
 }
 
@@ -374,8 +404,11 @@ struct OwnerChargerHistory: View {
             
             //포인트 이력
             ScrollView {
+                
                 LazyVStack {
+                    let histories = chargerDetailViewModel.histories
                     
+                    ForEach(histories, id: \.self) { history in
                     VStack(alignment: .leading){
                         HStack {
                         
@@ -385,7 +418,7 @@ struct OwnerChargerHistory: View {
                         
                             Text("충전기명 : ")
                                 .font(.caption)
-                            Text("메티스 충전기 01")
+                            Text(history["chargerName"]!)
                                 .font(.caption)
                             Spacer()
                         }
@@ -407,7 +440,7 @@ struct OwnerChargerHistory: View {
                         
                             Text("충전 번호 : ")
                                 .font(.caption)
-                            Text("10")
+                            Text(history["id"]!)
                                 .font(.caption)
                             Spacer()
                         }
@@ -424,14 +457,16 @@ struct OwnerChargerHistory: View {
                                 HStack{
                                     Text("예약 일자 : ")
                                         .font(.caption)
-                                    Text("2021-10-06 19:24 ~ 2021-10-06 23:24")
+                                    Text(history["reservationPeriod"]!)
                                         .font(.caption)
+                                    Spacer()
                                 }
                                 HStack{
                                     Text("충전 일자 : ")
                                         .font(.caption)
-                                    Text("2021-10-06 19:24 ~ 2021-10-06 23:24")
+                                    Text(history["rechargePeriod"]!)
                                         .font(.caption)
+                                    Spacer()
                                 }
                             }
                             Spacer()
@@ -446,12 +481,12 @@ struct OwnerChargerHistory: View {
                         
                             Text("수익 포인트 : ")
                                 .font(.caption)
-                            Text("42 p")
+                            Text(history["ownerPoint"]!)
                                 .font(.caption)
                             Spacer()
                         }
                         Dividerline()
-                    }
+                    }}
                 }.padding(.vertical, 8.0)
             }
             
@@ -459,9 +494,11 @@ struct OwnerChargerHistory: View {
         .sheet(
             isPresented: $chargerDetailViewModel.showSearchModal,
             content: {
-                OwnerChargerHistorySearchModal(chargerDetailViewModel: chargerDetailViewModel) //포인트 검색조건 Modal 창
+                OwnerChargerHistorySearchModal(chargerDetailViewModel: chargerDetailViewModel, chargerId: chargerId) //포인트 검색조건 Modal 창
             }
-        )
+        ).onAppear(){
+            chargerDetailViewModel.requestOwnerChargeHistory(chargerId: chargerId)
+        }
         
         Spacer()
     }
@@ -472,7 +509,7 @@ struct ChangeButton: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
     @State var chargerDetailPage: String
     @State var chargerId:String
-    @ObservedObject var viewUtil = ViewUtil()
+    @ObservedObject var viewUtil: ViewUtil
     var body: some View {
         
         HStack{
@@ -496,10 +533,38 @@ struct ChangeButton: View {
                         }
                         break
                     case "time" :
-                        chargerDetailViewModel.requestUpdateUsageTime()
+                        if(chargerDetailViewModel.closeTime < chargerDetailViewModel.openTime){viewUtil.showToast(isShow: true, message: "운영시간을 확인하여 주십시오.")}
+                        else{
+                            chargerDetailViewModel.requestUpdateUsageTime(chargerId: chargerId){ (completion) in
+                                switch(completion){
+                                    case "success" :
+                                        viewUtil.showToast(isShow: true, message: "충전기 운영 시간 변경에 성공하셨습니다.")
+                                    break
+                                    case "failure" :
+                                        viewUtil.showToast(isShow: true, message: "충전기 운영 시간 변경에 실패하셨습니다. 다시 시도하여 주십시오.")
+                                    break
+                                    default : break
+                                }
+                            }
+                        }
                         break
                     case "information" :
-                        chargerDetailViewModel.requestUpdateCharger()
+                        
+                        if(chargerDetailViewModel.chargerName == "" ) { viewUtil.showToast(isShow: true, message: "충전기명을 입력하여 주십시오.") }
+                        else if(chargerDetailViewModel.address == "") { viewUtil.showToast(isShow: true, message: "충전기 주소를 입력하여 주십시오.") }
+                        else {
+                            chargerDetailViewModel.requestUpdateCharger(chargerId: chargerId) { (completion) in
+                                switch(completion){
+                                    case "success" :
+                                        viewUtil.showToast(isShow: true, message: "충전기 정보 변경에 성공하셨습니다.")
+                                        break
+                                    case "failure" :
+                                        viewUtil.showToast(isShow: true, message: "충전기 단가 정보 변경에 실패하셨습니다. 다시 시도하여 주십시오.")
+                                        break
+                                default : break
+                                }
+                            }
+                        }
                         break
                         default : break
                     }
@@ -542,14 +607,15 @@ struct OwnerChargerHistorySearchModalButton: View {
 struct OwnerChargerHistorySearchButton: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
+    @State var chargerId:String
     
     var body: some View {
         Button(
             action: {
-                //point.searchPoints.removeAll()                     //조회한 포인트 목록 초기화
+                chargerDetailViewModel.histories.removeAll()                     //조회한 포인트 목록 초기화
                 chargerDetailViewModel.page = 1                      //페이지 번호 초기화
-                //point.isSearchStart = true                         //조회 시작 여부
-                //point.getPointHistory(page: point.page)   //포인트 목록 조회
+                chargerDetailViewModel.isSearchStart = true                         //조회 시작 여부
+                chargerDetailViewModel.requestOwnerChargeHistory(chargerId: chargerId)
                 presentationMode.wrappedValue.dismiss()                     //현재 창 닫기
             },
             label: {
@@ -568,6 +634,7 @@ struct OwnerChargerHistorySearchButton: View {
 //소유주 충전 이력 검색조건
 struct OwnerChargerHistorySearchModal: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
+    @State var chargerId:String
     
     var body: some View {
         
@@ -670,6 +737,6 @@ struct OwnerChargerHistorySearchModal: View {
         }
         Spacer()
         
-        OwnerChargerHistorySearchButton(chargerDetailViewModel: chargerDetailViewModel)
+        OwnerChargerHistorySearchButton(chargerDetailViewModel: chargerDetailViewModel, chargerId: chargerId)
     }
 }

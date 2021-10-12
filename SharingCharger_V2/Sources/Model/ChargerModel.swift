@@ -93,7 +93,7 @@ struct OwnerChargerSummary: Codable {
     let currentPoint: Int
     let monthlyReserveCount: Int
     let monthlyRechargeCount: Int
-    let monthlyRechargeKwh: Int
+    let monthlyRechargeKwh: Double
     let monthlyChargerErrorCount: Int
     let monthlyCumulativePoint: Int
 }
