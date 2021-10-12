@@ -12,7 +12,6 @@ struct SharingCharger_V2App: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-            //ChargingView(chargerMap: ChargerMapViewModel(), reservation: ReservationViewModel(), charging: ChargingViewModel())
         }
     }
 }

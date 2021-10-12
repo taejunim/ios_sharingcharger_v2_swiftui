@@ -82,6 +82,7 @@ class ViewUtil: ObservableObject {
         .padding(15)
         .background(Color.black.opacity(0.5))   //배경 색상 및 투명도
         .cornerRadius(10)   //모서리 둥글게 처리
+        .padding(.horizontal)
     }
     
     //MARK: - Toast 팝업 호출

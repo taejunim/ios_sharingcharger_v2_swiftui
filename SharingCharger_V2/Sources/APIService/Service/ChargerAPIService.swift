@@ -56,13 +56,20 @@ class ChargerAPIService {
     //MARK: - 소유자 충전기 목록 조회 API 호출
     /// 소유자가 등록한 충전기 목록 조회
     /// - Parameters:
-    ///   - ownerIdNo: 소유자 ID 번호(= 사용자 ID 번호)
+    ///   - ownerIdNo: 소유자 ID 번호 (= 사용자 ID 번호)
     ///   - ownerType: 소유자 유형
+    ///   - parameters:
+    ///     - page: 페이지 번호
+    ///     - size: 한 페이지당 사이즈
+    ///     - sort: 정렬
+    ///       - DESC
+    ///       - ASC
     /// - Returns: Owner Charger Model Array
-    public func requestOwnerChargerList(ownerIdNo: String, ownerType: String) -> Future<[OwnerCharger], AFError> {
+    public func requestOwnerChargerList(ownerIdNo: String, ownerType: String, parameters: [String:String]) -> Future<OwnerChargers, AFError> {
     
-        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/owner/dashboard/\(ownerIdNo)/\(ownerType)", parameters: [:], contentType: "json"))
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/owner/\(ownerIdNo)/\(ownerType)", parameters: parameters, contentType: "json"))
     }
+    
     
     //MARK: - 소유자 충전기별 상세 조회 API 호출
     /// 소유자의 충전기 개별 조회

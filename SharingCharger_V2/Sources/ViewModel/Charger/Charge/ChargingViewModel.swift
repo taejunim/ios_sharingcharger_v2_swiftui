@@ -190,11 +190,13 @@ class ChargingViewModel: NSObject, ObservableObject {
             }
             //블루투스 전원 확인 - Power OFF
             else {
+                isLoading = false
                 toastMessage(message: "블루투스 전원이 꺼져 있습니다.\n블루투스 전원을 확인해주세요.")    //블루투스 전원 확인 메시지
             }
         }
         //블루투스 사용 권한 확인 - 권한 없음
         else {
+            isLoading = false
             toastMessage(message: "블루투스 사용 권한이 없습니다.\n블루투스 권한 설정을 확인해주세요.") //블루투스 사용 권한 확인 메시지
         }
     }

@@ -39,6 +39,21 @@ struct Charger: Codable {
     let updated: String?    //수정 일자
 }
 
+//MARK: - 소유주 충전기 정보 목록
+struct OwnerChargers: Codable {
+    let content: [OwnerCharger]
+    let pageable: Pageable
+    let totalPages: Int
+    let totalElements: Int
+    let last: Bool
+    let numberOfElements: Int
+    let first: Bool
+    let sort: Sort
+    let size: Int
+    let number: Int
+    let empty: Bool
+}
+
 //MARK: - 소유자 충전기 정보
 struct OwnerCharger: Codable {
     let id: Int?    //충전기 ID
