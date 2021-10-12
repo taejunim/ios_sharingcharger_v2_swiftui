@@ -116,9 +116,13 @@ struct PointPaymentButton: View {
 
 //MARK: - 포인트 이체 메뉴 버튼
 struct PointTransferMenuButton: View {
+    @State var isShowAlert: Bool = false
+        
     var body: some View {
-        NavigationLink(
-            destination: PointHistoryView(),
+        Button(
+            action: {
+                isShowAlert = true
+            },
             label: {
                 Text("포인트 이체")
                     .fontWeight(.bold)
@@ -130,7 +134,29 @@ struct PointTransferMenuButton: View {
                     .shadow(color: .black, radius: 1, x: 1.2, y: 1.2)
             }
         )
-        .disabled(true)
+        .alert(
+            isPresented: $isShowAlert,
+            content: {
+                Alert(
+                    title: Text("서비스 이용 불가"),
+                    message: Text("해당 기능은 추후 서비스 지원될 예정입니다.\n자세한 사항은 고객 센터에 문의 바랍니다."),
+                    dismissButton: .destructive(Text("확인"))
+                )
+            }
+        )
+//        NavigationLink(
+//            destination: PointHistoryView(),
+//            label: {
+//                Text("포인트 이체")
+//                    .fontWeight(.bold)
+//                    .foregroundColor(Color.white)
+//                    .padding(.horizontal)
+//                    .frame(minWidth: 120, minHeight: 30)
+//                    .background(Color("#3498DB"))
+//                    .cornerRadius(5.0)
+//                    .shadow(color: .black, radius: 1, x: 1.2, y: 1.2)
+//            }
+//        )
     }
 }
 

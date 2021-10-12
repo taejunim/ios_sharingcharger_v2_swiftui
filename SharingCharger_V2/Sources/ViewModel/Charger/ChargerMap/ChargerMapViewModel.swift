@@ -444,4 +444,14 @@ class ChargerMapViewModel: ObservableObject {
             UIApplication.shared.windows.filter {$0.isKeyWindow}.first!.rootViewController?.present(dialog, animated: true, completion: nil)
         }
     }
+    
+    //MARK: - 즐겨찾기 추가
+    func addFavorites() {
+        
+    }
+    
+    //MARK: - 즐겨찾기 호출
+    func getFavorites() {
+        
+    }
 }

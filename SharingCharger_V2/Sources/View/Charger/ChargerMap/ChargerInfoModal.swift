@@ -122,7 +122,10 @@ struct ChargerFavoritesButton: View {
     var body: some View {
         Button(
             action: {
-                chargerMap.isFavorites.toggle()
+                if !chargerMap.isFavorites {
+                    chargerMap.isFavorites.toggle()
+                    chargerMap.addFavorites()
+                }
             },
             label: {
                 Image(chargerMap.isFavorites ? "Charger-Favorite-Fill" : "Charger-Favorite")

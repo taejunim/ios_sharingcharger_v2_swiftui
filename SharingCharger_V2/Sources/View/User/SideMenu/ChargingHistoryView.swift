@@ -24,7 +24,7 @@ struct ChargingHistoryView: View {
                             .foregroundColor(Color("#BDBDBD"))
                         
                         if chargingHistory.isSearch {
-                            Text("검색 결과가 없습니다.")
+                            Text("검색 조건에 맞는 검색 결과가 없습니다.")
                                 .font(.subheadline)
                                 .foregroundColor(Color.gray)
                         }
@@ -47,6 +47,9 @@ struct ChargingHistoryView: View {
                     chargingHistory.setSearchDate(endDate: currentDate) //검색일자 설정
                     chargingHistory.getChargingHistory()    //충전 이력 조회
                 }
+            }
+            .onDisappear {
+                chargingHistory.reset() //검색 조건 및 결과 초기화
             }
             .sheet(
                 isPresented: $chargingHistory.isShowSearchModal,

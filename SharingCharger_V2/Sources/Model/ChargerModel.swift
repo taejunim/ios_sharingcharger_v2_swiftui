@@ -103,9 +103,19 @@ struct ChargerUsageTime: Codable {
     let updated: String
 }
 
-
-
-
+struct AssignedCharger: Codable {
+    let content: [OwnerCharger]
+    let pageable: Pageable
+    let totalPages: Int
+    let totalElements: Int
+    let last: Bool
+    let numberOfElements: Int
+    let first: Bool
+    let sort: Sort
+    let size: Int
+    let number: Int
+    let empty: Bool
+}
 
 struct ChargerModel: Identifiable, Codable{
     let id: String

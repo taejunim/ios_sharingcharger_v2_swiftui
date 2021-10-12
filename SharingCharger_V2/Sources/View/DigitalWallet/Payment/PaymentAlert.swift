@@ -131,6 +131,8 @@ struct PaymentInputAlert:View {
     @ObservedObject var point: PointViewModel
     @ObservedObject var reservation: ReservationViewModel
     
+    @State var isShowAlert: Bool = false
+    
     let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -266,9 +268,10 @@ struct PaymentInputAlert:View {
                             Button(
                                 action: {
                                     purchase.viewUtil.dismissKeyboard()  //키보드 닫기
-                                    purchase.checkPaymentAmount()   //결제금액 확인 후 결제 진행 실행
+                                    //purchase.checkPaymentAmount()   //결제금액 확인 후 결제 진행 실행
                                     
                                     //purchase.showPaymentModal = true
+                                    isShowAlert = true
                                 },
                                 label: {
                                     Text("결제 진행")
@@ -279,6 +282,16 @@ struct PaymentInputAlert:View {
                                         .background(Color("#3498DB"))
                                         .cornerRadius(5.0)
                                         .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                                }
+                            )
+                            .alert(
+                                isPresented: $isShowAlert,
+                                content: {
+                                    Alert(
+                                        title: Text("서비스 이용 불가"),
+                                        message: Text("해당 기능은 추후 서비스 지원될 예정입니다.\n자세한 사항은 고객 센터에 문의 바랍니다."),
+                                        dismissButton: .destructive(Text("확인"))
+                                    )
                                 }
                             )
                         }

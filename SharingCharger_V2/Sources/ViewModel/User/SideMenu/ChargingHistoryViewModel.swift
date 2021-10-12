@@ -19,14 +19,20 @@ class ChargingHistoryViewModel: ObservableObject {
     @Published var isShowSearchModal: Bool = false
     @Published var isDirectlySelect: Bool = false
     
-    @Published var searchStartDate: Date?
-    @Published var searchEndDate: Date?
+    @Published var currentDate: Date = Date()
+    @Published var searchStartDate: Date = Date()
+    @Published var searchEndDate: Date = Date()
     @Published var page: Int = 1
     @Published var size: Int = 10
     @Published var selectSort: String = "DESC"
     @Published var totalCount: Int = 0  //총 검색 개수
     @Published var totalPages: Int = 0
     @Published var searchPeriod: Int = -30
+    @Published var selectPeriod: String = "oneMonth" {
+        didSet {
+            setSearchPeriod()
+        }
+    }
     
     func getCurrentDate(completion: @escaping (Date) -> Void) {
         //현재 일시 API 호출
@@ -52,6 +58,29 @@ class ChargingHistoryViewModel: ObservableObject {
         searchEndDate = endDate
     }
     
+    func setSearchPeriod() {
+        isDirectlySelect = false
+        
+        if selectPeriod == "oneMonth" {
+            searchPeriod = -30
+        }
+        else if selectPeriod == "threeMonths" {
+            searchPeriod = -90
+        }
+        else if selectPeriod == "sixMonths" {
+            searchPeriod = -180
+        }
+        else if selectPeriod == "directly" {
+            isDirectlySelect = true
+        }
+        
+        if !isDirectlySelect {
+            self.getCurrentDate() { currentDate in
+                self.setSearchDate(endDate: currentDate)
+            }
+        }
+    }
+    
     //MARK: - 충전 이력 조회
     func getChargingHistory() {
         //조회 페이지가 1인 경우 실행
@@ -63,8 +92,8 @@ class ChargingHistoryViewModel: ObservableObject {
         let userIdNo = UserDefaults.standard.string(forKey: "userIdNo")!    //사용자 ID 번호
         
         let parameters = [
-            "startDate": "yyyy-MM-dd".dateFormatter(formatDate: searchStartDate!),  //조회 시작일자
-            "endDate": "yyyy-MM-dd".dateFormatter(formatDate: searchEndDate!),  //조회 종료일자
+            "startDate": "yyyy-MM-dd".dateFormatter(formatDate: searchStartDate),  //조회 시작일자
+            "endDate": "yyyy-MM-dd".dateFormatter(formatDate: searchEndDate),  //조회 종료일자
             "page": String(page),   //페이지
             "size": String(size),   //한 페이지당 수
             "sort": selectSort    //정렬
@@ -143,5 +172,14 @@ class ChargingHistoryViewModel: ObservableObject {
                 self.histories.removeAll()
             }
         )
+    }
+    
+    func reset() {
+        isSearch = false
+        page = 1
+        totalCount = 0
+        totalPages = 0
+        selectPeriod = "oneMonth"
+        selectSort = "DESC"
     }
 }

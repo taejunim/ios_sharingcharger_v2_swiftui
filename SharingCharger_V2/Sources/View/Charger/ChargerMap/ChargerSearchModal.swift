@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//MARK: - 충전기 검색 팝업 창
 struct ChargerSearchModal: View {
     @Environment(\.presentationMode) var presentationMode
     
@@ -327,7 +328,7 @@ struct ChargerSearchButton: View {
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, maxHeight: 40)
-                    .background(Color("#3498DB"))   //회원가입 정보 입력에 따른 배경색상 변경
+                    .background(Color("#3498DB"))
             }
         )
     }

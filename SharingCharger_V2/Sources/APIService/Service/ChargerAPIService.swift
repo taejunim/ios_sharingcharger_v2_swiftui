@@ -104,7 +104,7 @@ class ChargerAPIService {
     ///   - size: 한 페이지당 개수
     ///   - sort: 정렬
     /// - Returns: Owner Charger Model
-    public func requestSearchAssignedCharger(parameters: [String:String]) -> Future<[OwnerCharger], AFError> {
+    public func requestSearchAssignedCharger(parameters: [String:String]) -> Future<AssignedCharger, AFError> {
     
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/ble-number", parameters: parameters, contentType: "json"))
     }

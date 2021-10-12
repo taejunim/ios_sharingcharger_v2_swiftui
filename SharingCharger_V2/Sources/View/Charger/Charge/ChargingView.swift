@@ -38,6 +38,8 @@ struct ChargingView: View {
                 else {
                     charging.isCharging = false //충전 상태 초기화
                 }
+                
+                charging.searchChargerBLE() //충전기 검색
             }
             .popup(
                 isPresented: $charging.isShowToast,   //팝업 노출 여부
@@ -320,7 +322,7 @@ struct ChargerBLEControlView: View {
             }
         }
         .onAppear {
-            //charging.isCharging = true
+            charging.connectChargerBLE(bleNumber: charging.bleNumber)   //충전기 연결
         }
         .onDisappear {
             if charging.isConnect {
