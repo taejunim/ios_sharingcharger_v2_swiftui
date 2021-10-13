@@ -25,7 +25,7 @@ class ChargerDetailViewModel: ObservableObject {
     @Published var parkingFeeDescription:String = ""
     @Published var parkingFeeFlag:Bool = false
     @Published var cableFlag:Bool = false
-    @Published var rangeOfFee:String = ""
+    @Published var rangeOfFee:Int = 0
     @Published var gpsX:Double = 0.0
     @Published var gpsY:Double = 0.0
     @Published var description:String = ""
@@ -44,7 +44,13 @@ class ChargerDetailViewModel: ObservableObject {
     @Published var closeTime: Date = Date()
     
     //소유주 단가변경
-    @Published var unitPrice:String = "2,000"   //선택 변경 금액
+    @Published var stringUnitPrice:String = "2,000" {   //선택 변경 금액
+        didSet {
+            checkIsDirectInput()
+        }
+    }
+    @Published var unitPrice:Int = 2000
+    @Published var isDirectlyInput: Bool = false    //직접입력 여부
     
     //소유주 충전이력
     @Published var totalCount: Int = 0  //총 검색 개수
@@ -102,7 +108,7 @@ class ChargerDetailViewModel: ObservableObject {
                 self.parkingFeeDescription = parkingFeeDescription!
                 self.parkingFeeFlag = charger.parkingFeeFlag!
                 self.cableFlag = charger.cableFlag!
-                self.rangeOfFee = charger.rangeOfFee!.replacingOccurrences(of: "p", with: "")
+                self.rangeOfFee = Int(charger.rangeOfFee!.replacingOccurrences(of: "p", with: "")) ?? 0
                 self.gpsX = charger.gpsX ?? 0.0
                 self.gpsY = charger.gpsY ?? 0.0
                 self.description = charger.description ?? ""
@@ -200,7 +206,7 @@ class ChargerDetailViewModel: ObservableObject {
                 UIAlertAction(title: "확인", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
                     
                     let userId:Int = Int(UserDefaults.standard.string(forKey: "userIdNo")!)!   //저장된 사용자 ID 번호
-                    let unitPrice:Int = Int(self.unitPrice.replacingOccurrences(of: ",", with: ""))!
+                    let unitPrice:Int = self.unitPrice
                     
                     let parameters = [
                         "price": unitPrice,
@@ -280,7 +286,6 @@ class ChargerDetailViewModel: ObservableObject {
     
     func requestOwnerChargeHistory(chargerId : String) {
         
-        print(chargerId)
         let userIdNo:String = UserDefaults.standard.string(forKey: "userIdNo")!   //저장된 사용자 ID 번호
         let userId:String = UserDefaults.standard.string(forKey: "userId")!   //저장된 사용자 ID 번호
         
@@ -292,7 +297,7 @@ class ChargerDetailViewModel: ObservableObject {
             "startDate": "yyyy-MM-dd".dateFormatter(formatDate: self.selectMonth),   //조회 시작일자
             "endDate": "yyyy-MM-dd".dateFormatter(formatDate: self.currentDate)      //조회 종료일자
         ]
-        print(parameters)
+
         let request = chargeAPI.requestOwnerChargeHistory(userIdNo: userIdNo, parameters: parameters)
         request.execute(onSuccess:{(chargingHistory) in
         
@@ -388,6 +393,15 @@ class ChargerDetailViewModel: ObservableObject {
             if chooseDate == "oneMonth"         { selectMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date())!}
             else if chooseDate == "threeMonth"  { selectMonth = Calendar.current.date(byAdding: .month, value: -3, to: Date())!}
             else if chooseDate == "sixMonth"    { selectMonth = Calendar.current.date(byAdding: .month, value: -6, to: Date())!}
+        }
+    }
+    
+    func checkIsDirectInput() {
+        if stringUnitPrice != "2,000" && stringUnitPrice != "1,500" && stringUnitPrice != "1,000"{
+            isDirectlyInput = true
+        } else {
+            unitPrice = Int(stringUnitPrice.replacingOccurrences(of: ",", with: "")) ?? 0
+            isDirectlyInput = false
         }
     }
 }

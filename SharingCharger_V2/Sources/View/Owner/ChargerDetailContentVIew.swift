@@ -119,6 +119,12 @@ struct OwnerChargerPriceSetting: View {
     @ObservedObject var viewUtil = ViewUtil()
     @State var chargerId:String
     @State var selectedFee = 0
+    let numberFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        
+        return formatter
+    }()
     
     var body: some View {
     
@@ -133,7 +139,7 @@ struct OwnerChargerPriceSetting: View {
             }
             HStack(alignment: VerticalAlignment.top , spacing: 10){
                 Picker(
-                    selection: $chargerDetailViewModel.unitPrice, //주차 요금 여부
+                    selection: $chargerDetailViewModel.stringUnitPrice,
                     label: Text("요금 설정"),
                     content: {
                         Text("2,000").tag("2,000")
@@ -149,7 +155,7 @@ struct OwnerChargerPriceSetting: View {
                     .frame(width: 100)
                     .multilineTextAlignment(.leading)
                 Spacer()
-                TextField("현재 단가", text: $chargerDetailViewModel.rangeOfFee)
+                TextField("현재 단가", value: $chargerDetailViewModel.rangeOfFee, formatter: numberFormatter)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .disabled(true)
@@ -158,9 +164,17 @@ struct OwnerChargerPriceSetting: View {
                 Text("변경 단가")
                     .frame(width: 100)
                 Spacer()
-                TextField("변경 단가", text: $chargerDetailViewModel.unitPrice)
-                    .keyboardType(.decimalPad)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                if chargerDetailViewModel.isDirectlyInput {
+                    TextField("변경 단가", value: $chargerDetailViewModel.unitPrice, formatter : numberFormatter)
+                        .keyboardType(.decimalPad)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                }
+                else {
+                    TextField("변경 단가", text: $chargerDetailViewModel.stringUnitPrice)
+                        .keyboardType(.decimalPad)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .disabled(true)
+                }
             }
             
             Spacer()
