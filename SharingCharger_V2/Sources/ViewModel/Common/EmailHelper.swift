@@ -18,21 +18,30 @@ class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
     }
     
     func sendEmail(subject:String, body:String, to:String){
+        
         if !MFMailComposeViewController.canSendMail() {
-            print("No mail account found")
-            // Todo: Add a way to show banner to user about no mail app found or configured
-            // Utilities.showErrorBanner(title: "No mail account found", subtitle: "Please setup a mail account")
-            return //EXIT
+            
+            let dialog = UIAlertController(title:"", message : "메일 앱에 로그인 되어 있지 않습니다.\n로그인 후 다시 시도해주세요.", preferredStyle: .alert)
+            
+            dialog
+                .addAction(
+                    UIAlertAction(title: "닫기", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
+                        return
+                    }
+                )
+            
+            UIApplication.shared.windows.filter {$0.isKeyWindow}.first!.rootViewController?.present(dialog, animated: true, completion: nil)
+            
+        } else {
+            let picker = MFMailComposeViewController()
+            
+            picker.setSubject(subject)
+            picker.setMessageBody(body, isHTML: true)
+            picker.setToRecipients([to])
+            picker.mailComposeDelegate = self
+            
+            EmailHelper.getRootViewController()?.present(picker, animated: true, completion: nil)
         }
-        
-        let picker = MFMailComposeViewController()
-        
-        picker.setSubject(subject)
-        picker.setMessageBody(body, isHTML: true)
-        picker.setToRecipients([to])
-        picker.mailComposeDelegate = self
-        
-        EmailHelper.getRootViewController()?.present(picker, animated: true, completion: nil)
     }
     
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {

@@ -385,7 +385,7 @@ struct CustomerServiceMenuButton: View {
                     + "Model Name : \(UIDevice.modelName)</br>"
                     + "OS Version : \(UIDevice.current.systemVersion)</br>"
                     + "이메일 : \(UserDefaults.standard.string(forKey: "userId") ?? "")</br>"
-                    EmailHelper.shared.sendEmail(subject: "[몬딱충전 문의] : 제목을 입력해주세요.", body: bodyContent, to: "tjlim@metisinfo.co.kr")
+                    EmailHelper.shared.sendEmail(subject: "[몬딱충전 문의] : 제목을 입력해주세요.", body: bodyContent, to: "jichul@metisinfo.co.kr")
                     return
                 }
             )
