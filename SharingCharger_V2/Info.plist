@@ -15,11 +15,11 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>KAKAO_APP_KEY</key>
-	<string>3bb3a033d0be7eb29b8b8058e0fda7a1</string>
+	<string>ce0bdec84ca19f1aeb18f20e243bdd9d</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaomap</string>
