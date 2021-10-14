@@ -235,6 +235,8 @@ struct SideMenuButton: View {
 struct MapAddressButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
     
+    @State var viewPath: String = "chargerMap"
+    
     var body: some View {
         Button(
             action: {
@@ -258,8 +260,7 @@ struct MapAddressButton: View {
         .sheet(
             isPresented: $chargerMap.isShowAddressSearchModal,
             content: {
-                //충전기 검색조건 팝업 창
-                AddressSearchModal(chargerMap: chargerMap)
+                AddressSearchModal(chargerMap: chargerMap, regist: ChargerRegistViewModel(), viewPath: $viewPath) //주소 검색 모달 창
             }
         )
     }
