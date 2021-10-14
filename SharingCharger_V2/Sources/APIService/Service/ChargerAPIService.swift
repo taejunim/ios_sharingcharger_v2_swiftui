@@ -148,7 +148,7 @@ class ChargerAPIService {
     /// - Returns: Owner Charger Model
     public func requestAssignedCharger(chargerId: String, parameters: [String:Any]) -> Future<OwnerCharger, AFError> {
         
-        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/chargers/app/\(chargerId)/assign", parameters: parameters))
+        return apiClient.request(route: APIRouter.put(useApi: "base", path: "/chargers/\(chargerId)/assign", parameters: parameters))
     }
     
     

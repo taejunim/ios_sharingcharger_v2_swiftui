@@ -10,8 +10,11 @@ import SwiftUI
 struct AddressSearchModal: View {
     @Environment(\.presentationMode) var presentationMode
     
-    @ObservedObject var chargerMap: ChargerMapViewModel
     @ObservedObject var addressSearch = AddressSearchViewModel()
+    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var regist: ChargerRegistViewModel
+    
+    @Binding var viewPath: String
     
     var body: some View {
         VStack(spacing: 1) {
@@ -21,13 +24,14 @@ struct AddressSearchModal: View {
             
             VerticalDividerline()   //구분선 - Vertical
             
-            AddressSearchList(addressSearch: addressSearch, chargerMap: chargerMap) //주소검색 목록
+            AddressSearchList(addressSearch: addressSearch, chargerMap: chargerMap, regist: regist) //주소검색 목록
             
             Spacer()
         }
         .onAppear {
-            addressSearch.getLoacation()    //현재 사용자 위치 호출
+            addressSearch.viewPath = viewPath
             
+            addressSearch.getLoacation()    //현재 사용자 위치 호출
             addressSearch.mapCenterLatitude = chargerMap.latitude   //현재 지도중심 위도
             addressSearch.mapCenterLongitude = chargerMap.longitude //현재 지도중심 경도
         }
@@ -37,6 +41,7 @@ struct AddressSearchModal: View {
 //MARK: - 주소 검색어 입력 영역
 struct AddressSearchWordEntryField: View {
     @Environment(\.presentationMode) var presentationMode
+    
     @ObservedObject var addressSearch: AddressSearchViewModel
     
     var body: some View {
@@ -45,7 +50,7 @@ struct AddressSearchWordEntryField: View {
                 .padding(.leading)
             
             TextField(
-                "장소・주소・전화번호 검색",
+                " 장소・주소・전화번호 검색",
                 text: $addressSearch.searchWord,
                 onEditingChanged: { _ in
                 },
@@ -130,6 +135,7 @@ struct CenterLocationSelectButton: View {
                     .frame(width: 90)
                 }
             )
+            .disabled(addressSearch.viewPath != "chargerMap" ? true : false)
             
             Spacer()
         }
@@ -143,6 +149,7 @@ struct AddressSearchList: View {
     
     @ObservedObject var addressSearch: AddressSearchViewModel
     @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var regist: ChargerRegistViewModel
     
     var body: some View {
         ScrollView {
@@ -184,23 +191,38 @@ struct AddressSearchList: View {
                             action: {
                                 self.presentationMode.wrappedValue.dismiss()    //화면 닫기
 
-                                let latitude = Double(place["latitude"]!)!  //선택한 장소의 위도
-                                let longitude = Double(place["longitude"]!)!    //선택한 장소의 경도
+                                if addressSearch.viewPath == "chargerMap" {
+                                    
+                                    let latitude = Double(place["latitude"]!)!  //선택한 장소의 위도
+                                    let longitude = Double(place["longitude"]!)!    //선택한 장소의 경도
 
-                                //선택한 위치의 지도 중심으로 이동
-                                chargerMap.mapView.setMapCenter(
-                                    MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
-                                    animated: true
-                                )
+                                    //선택한 위치의 지도 중심으로 이동
+                                    chargerMap.mapView.setMapCenter(
+                                        MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
+                                        animated: true
+                                    )
 
-                                chargerMap.mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
+                                    chargerMap.mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
 
-                                //선택한 위치의 충전기 목록 조회
-                                chargerMap.getChargerList(
-                                    zoomLevel: 0,
-                                    latitude: latitude, longitude: longitude,
-                                    searchStartDate: chargerMap.searchStartDate!, searchEndDate: chargerMap.searchEndDate!
-                                ) { _ in }
+                                    //선택한 위치의 충전기 목록 조회
+                                    chargerMap.getChargerList(
+                                        zoomLevel: 0,
+                                        latitude: latitude, longitude: longitude,
+                                        searchStartDate: chargerMap.searchStartDate!, searchEndDate: chargerMap.searchEndDate!
+                                    ) { _ in }
+                                }
+                                else if addressSearch.viewPath == "chargerRegist" {
+                                    var address = ""
+                                    
+                                    if place["roadAddress"]! != "" {
+                                        address = place["roadAddress"]!
+                                    }
+                                    else {
+                                        address = place["address"]!
+                                    }
+                                    
+                                    regist.address = address
+                                }
                             },
                             label: {
                                 VStack(alignment: .leading, spacing: 4) {
@@ -226,6 +248,8 @@ struct AddressSearchList: View {
                                         Text(place["category"]!)
                                             .font(.caption)
                                             .foregroundColor(Color.gray)
+                                        
+                                        Spacer()
                                     }
 
                                     HStack(spacing: 5) {
@@ -247,21 +271,20 @@ struct AddressSearchList: View {
                                         }
                                         //도로명 주소가 없는 경우 지번 주소 노출
                                         else {
-                                            HStack(spacing: 5) {
-                                                //지번 표시 라벨
-                                                Text("지번")
-                                                    .font(.caption2)
-                                                    .foregroundColor(Color.gray)
-                                                    .padding(.horizontal, 5)
-                                                    .padding(.vertical, 1)
-                                                    .border(Color.gray, width: 0.5)
+                                            Text("지번")
+                                                .font(.caption2)
+                                                .foregroundColor(Color.gray)
+                                                .padding(.horizontal, 5)
+                                                .padding(.vertical, 1)
+                                                .border(Color.gray, width: 0.5)
 
-                                                //지번 주소
-                                                Text(place["address"]!)
-                                                    .font(.footnote)
-                                                    .foregroundColor(Color.gray)
-                                            }
+                                            //지번 주소
+                                            Text(place["address"]!)
+                                                .font(.footnote)
+                                                .foregroundColor(Color.gray)
                                         }
+                                        
+                                        Spacer()
                                     }
 
                                     //지번 주소가 있는 경우 노출
@@ -281,6 +304,8 @@ struct AddressSearchList: View {
                                                 Text(place["address"]!)
                                                     .font(.footnote)
                                                     .foregroundColor(Color.gray)
+                                                
+                                                Spacer()
                                             }
                                         }
                                     }
@@ -293,6 +318,7 @@ struct AddressSearchList: View {
                                     }
                                 }
                                 .padding(.horizontal)
+                                .frame(maxWidth: .infinity)
                             }
                         )
                         .onAppear {
@@ -316,7 +342,9 @@ struct AddressSearchList: View {
 }
 
 struct AddressSearchModal_Previews: PreviewProvider {
+    @State static var viewPath: String = ""
+    
     static var previews: some View {
-        AddressSearchModal(chargerMap: ChargerMapViewModel())
+        AddressSearchModal(chargerMap: ChargerMapViewModel(), regist: ChargerRegistViewModel(), viewPath: $viewPath)
     }
 }

@@ -14,12 +14,10 @@
 		2B3FD82A26DDFD39000203F1 /* PointModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3FD82926DDFD39000203F1 /* PointModel.swift */; };
 		2B85151C26CF660A00B6AD0E /* SideMenuViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B85151B26CF660A00B6AD0E /* SideMenuViewModel.swift */; };
 		2B85151E26CF6DEF00B6AD0E /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B85151D26CF6DEF00B6AD0E /* Location.swift */; };
-		2B85152026CF92F700B6AD0E /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B85151F26CF92F700B6AD0E /* Permission.swift */; };
 		2B8BFBD426CDFC1A00C9CB65 /* PointHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8BFBD326CDFC1A00C9CB65 /* PointHistoryView.swift */; };
 		2B8BFBD626CDFC4600C9CB65 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8BFBD526CDFC4600C9CB65 /* FavoritesView.swift */; };
 		2B8BFBD826CDFCA000C9CB65 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8BFBD726CDFCA000C9CB65 /* SideMenuView.swift */; };
 		2B8BFBDA26CE509F00C9CB65 /* ChargerMapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8BFBD926CE509F00C9CB65 /* ChargerMapViewModel.swift */; };
-		2B8BFBDD26CE83CA00C9CB65 /* CommonViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8BFBDC26CE83CA00C9CB65 /* CommonViewModel.swift */; };
 		2B8BFBDF26CE845700C9CB65 /* PointViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8BFBDE26CE845700C9CB65 /* PointViewModel.swift */; };
 		2B8BFBE126CE861100C9CB65 /* FavoritesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8BFBE026CE861100C9CB65 /* FavoritesViewModel.swift */; };
 		2B8BFBE326CE87E000C9CB65 /* ChargerAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8BFBE226CE87E000C9CB65 /* ChargerAPIService.swift */; };
@@ -58,7 +56,6 @@
 		2B8DCD3B26B9312200C2466B /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B8DCD3A26B9311400C2466B /* libsqlite3.tbd */; };
 		2B8EBDA226BD236E0046D726 /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8EBDA126BD236E0046D726 /* Keyboard.swift */; };
 		2B8EE30D26C3501F00C1E835 /* ViewUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B8EE30C26C3501F00C1E835 /* ViewUtil.swift */; };
-		2B91F06527151967009321C5 /* EmailHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B91F06427151967009321C5 /* EmailHelper.swift */; };
 		2B923F83270447BD0090EDC9 /* EvzBLEKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B923F81270447AC0090EDC9 /* EvzBLEKit.xcframework */; };
 		2B923F84270447BE0090EDC9 /* EvzBLEKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2B923F81270447AC0090EDC9 /* EvzBLEKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2B92BC51270082130082E5EE /* DigitalWalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B92BC50270082130082E5EE /* DigitalWalletView.swift */; };
@@ -150,12 +147,10 @@
 		2B3FD82926DDFD39000203F1 /* PointModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointModel.swift; sourceTree = "<group>"; };
 		2B85151B26CF660A00B6AD0E /* SideMenuViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuViewModel.swift; sourceTree = "<group>"; };
 		2B85151D26CF6DEF00B6AD0E /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
-		2B85151F26CF92F700B6AD0E /* Permission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
 		2B8BFBD326CDFC1A00C9CB65 /* PointHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointHistoryView.swift; sourceTree = "<group>"; };
 		2B8BFBD526CDFC4600C9CB65 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		2B8BFBD726CDFCA000C9CB65 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		2B8BFBD926CE509F00C9CB65 /* ChargerMapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerMapViewModel.swift; sourceTree = "<group>"; };
-		2B8BFBDC26CE83CA00C9CB65 /* CommonViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonViewModel.swift; sourceTree = "<group>"; };
 		2B8BFBDE26CE845700C9CB65 /* PointViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointViewModel.swift; sourceTree = "<group>"; };
 		2B8BFBE026CE861100C9CB65 /* FavoritesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewModel.swift; sourceTree = "<group>"; };
 		2B8BFBE226CE87E000C9CB65 /* ChargerAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerAPIService.swift; sourceTree = "<group>"; };
@@ -203,7 +198,6 @@
 		2B8DCD3C26B9322500C2466B /* KakaoMapBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KakaoMapBridgingHeader.h; sourceTree = "<group>"; };
 		2B8EBDA126BD236E0046D726 /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
 		2B8EE30C26C3501F00C1E835 /* ViewUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewUtil.swift; sourceTree = "<group>"; };
-		2B91F06427151967009321C5 /* EmailHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmailHelper.swift; sourceTree = "<group>"; };
 		2B923F81270447AC0090EDC9 /* EvzBLEKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = EvzBLEKit.xcframework; sourceTree = "<group>"; };
 		2B92BC50270082130082E5EE /* DigitalWalletView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DigitalWalletView.swift; sourceTree = "<group>"; };
 		2B92BC542700828C0082E5EE /* IdentificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentificationView.swift; sourceTree = "<group>"; };
@@ -293,10 +287,7 @@
 		2B85151826CF657400B6AD0E /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				2B8BFBDC26CE83CA00C9CB65 /* CommonViewModel.swift */,
 				2B85151D26CF6DEF00B6AD0E /* Location.swift */,
-				2B85151F26CF92F700B6AD0E /* Permission.swift */,
-				2B91F06427151967009321C5 /* EmailHelper.swift */,
 				DAC03A62271446E500031D27 /* EmailHelper.swift */,
 			);
 			path = Common;
@@ -905,13 +896,11 @@
 				2B8BFBD426CDFC1A00C9CB65 /* PointHistoryView.swift in Sources */,
 				2BA9BB4F26BA819400F60016 /* SignUpView.swift in Sources */,
 				2BAAC07F26FC91800013B254 /* UserSettingView.swift in Sources */,
-				2B91F06527151967009321C5 /* EmailHelper.swift in Sources */,
 				2B9679ED26F41FC100CFDC3A /* ReservationModel.swift in Sources */,
 				2B9679F326F454B000CFDC3A /* PurchaseViewModel.swift in Sources */,
 				2B9679F126F4304700CFDC3A /* PointSearchModal.swift in Sources */,
 				2B3FD82A26DDFD39000203F1 /* PointModel.swift in Sources */,
 				2B9DFEA827115ACC00F0A4D4 /* AddressModel.swift in Sources */,
-				2B8BFBDD26CE83CA00C9CB65 /* CommonViewModel.swift in Sources */,
 				2B96765626C1202E00400FF9 /* UserModel.swift in Sources */,
 				2B9603AA26F3344F002A4152 /* ChargingAlertView.swift in Sources */,
 				2BBF2AE927102F57005140FB /* AddressSearchModal.swift in Sources */,
@@ -951,7 +940,6 @@
 				2B8BFBDA26CE509F00C9CB65 /* ChargerMapViewModel.swift in Sources */,
 				2BA1C71726E5AB13005EF19D /* ReservationViewModel.swift in Sources */,
 				2B9679F526F4553B00CFDC3A /* PurchaseAPIService.swift in Sources */,
-				2B85152026CF92F700B6AD0E /* Permission.swift in Sources */,
 				2B938F9E270160C6000C8F61 /* OwnerChargerView.swift in Sources */,
 				2B9721A22702F31400852894 /* PaymentAlert.swift in Sources */,
 				2B8BFBE326CE87E000C9CB65 /* ChargerAPIService.swift in Sources */,
@@ -1116,7 +1104,7 @@
 				CODE_SIGN_ENTITLEMENTS = SharingCharger_V2/SharingCharger_V2.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SharingCharger_V2/Preview Content\"";
-				DEVELOPMENT_TEAM = C846JVNTZN;
+				DEVELOPMENT_TEAM = P439X3ST2G;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1128,7 +1116,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = krco.metisinfo.SharedCharger;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.co.metisinfo.SharedCharger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/SharingCharger_V2/Library/KakaoMapBridgingHeader.h";
 				SWIFT_VERSION = 5.0;
@@ -1146,7 +1134,7 @@
 				CODE_SIGN_ENTITLEMENTS = SharingCharger_V2/SharingCharger_V2.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SharingCharger_V2/Preview Content\"";
-				DEVELOPMENT_TEAM = C846JVNTZN;
+				DEVELOPMENT_TEAM = P439X3ST2G;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1158,7 +1146,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = krco.metisinfo.SharedCharger;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.co.metisinfo.SharedCharger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/SharingCharger_V2/Library/KakaoMapBridgingHeader.h";
 				SWIFT_VERSION = 5.0;

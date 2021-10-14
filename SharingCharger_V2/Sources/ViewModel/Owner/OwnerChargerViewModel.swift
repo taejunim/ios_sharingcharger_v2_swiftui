@@ -76,10 +76,10 @@ class OwnerChargerViewModel: ObservableObject {
                     //포인트 유형
                     if currentStatusType == "READY"{
                         type = "대기중"
-                        typeColor = "#3498DB"
+                        typeColor = "#8E44AD"
                     }
                     else {
-                        typeColor = "#8E44AD"
+                        typeColor = "#C0392B"
                         
                         if(currentStatusType == "RESERVATION")   { type = "예약중" }
                         else if(currentStatusType == "CHARGING") { type = "충전중" }

@@ -17,48 +17,73 @@ struct ChargerRegistView: View {
     var body: some View {
         ZStack {
             VStack {
-                RegistStepGuide(regist: regist)
+                RegistStepGuide(regist: regist) //상단 등록 단계 안내
                 
                 Spacer()
                 
+                //1번째 단계
                 if regist.currentStep == 1 {
-                    FindChargerBLE(regist: regist, bluetooth: bluetooth)
+                    FindChargerBLE(regist: regist, bluetooth: bluetooth)    //충전기 BLE 찾기
                 }
+                //2번째 단계
                 else if regist.currentStep == 2 {
-                    ChargerBasicInfo(regist: regist)
+                    ChargerBasicInfo(regist: regist)    //충전기 기초 정보
                 }
+                //3번째 단계
                 else if regist.currentStep == 3 {
-                    ChargerAdditionalInfo(regist: regist)
+                    ChargerAdditionalInfo(regist: regist)   //충전기 추가 정보
                 }
                 
                 Spacer()
                 
+                //버튼 영역
                 HStack(spacing: 2) {
-                    RegistPreviousButton(regist: regist)
+                    RegistPreviousButton(regist: regist)    //이전 버튼
                     
                     if regist.currentStep < 3 {
-                        RegistNextButton(regist: regist)
+                        RegistNextButton(viewUtil: viewUtil, regist: regist)    //다음 버튼
                     }
                     else {
-                        ChargerRegistButton(regist: regist)
+                        ChargerRegistButton(viewUtil: viewUtil, regist: regist) //충전기 등록 버튼
                     }
                 }
             }
-            .navigationBarTitle(Text("충전기 등록"), displayMode: .inline) //Navigation Bar 타이틀
-            .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
-            .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
             
+            //블루투스 검색 완료된 상태 or BLE 목록 모달 창 호출 시
             if bluetooth.isSearch || regist.isShowBLEModal {
-                FindChargerBLEModal(regist: regist, bluetooth: bluetooth)
+                FindChargerBLEModal(regist: regist, bluetooth: bluetooth)   //검색한 충전기 BEL 번호 모달 창
             }
             
-            if bluetooth.isLoading {
-                viewUtil.loadingView()
+            //블루투스 검색 중 or 로딩 호출 시
+            if bluetooth.isLoading || regist.isLoading {
+                viewUtil.loadingView()  //로딩 화면
             }
         }
+        .navigationBarTitle(Text("충전기 등록"), displayMode: .inline) //Navigation Bar 타이틀
+        .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
+        .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
+        .onAppear {
+            UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(named: "#8E44AD")    //Picker 배경 색상
+        }
+        .onDisappear {
+            UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(named: "#3498DB")    //Picker 배경 색상
+        }
+        .popup(
+            isPresented: $regist.isShowToast,   //팝업 노출 여부
+            type: .floater(verticalPadding: 80),
+            position: .bottom,
+            animation: .easeInOut(duration: 0.0),   //애니메이션 효과
+            autohideIn: 2,  //팝업 노출 시간
+            closeOnTap: false,
+            closeOnTapOutside: false,
+            view: {
+                viewUtil.toastPopup(message: regist.showMessage)
+            }
+        )
     }
 }
 
+//MARK: - 등록 단계 안내
 struct RegistStepGuide: View {
     @ObservedObject var regist: ChargerRegistViewModel
     
@@ -152,78 +177,7 @@ struct RegistStepGuide: View {
     }
 }
 
-struct RegistPreviousButton: View {
-    @ObservedObject var regist: ChargerRegistViewModel
-    
-    var body: some View {
-        Button(
-            action: {
-                print(regist.currentStep)
-                
-                regist.currentStep -= 1
-                
-                print(regist.currentStep)
-            },
-            label: {
-                Text("이전")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.white)
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
-                    .background(regist.currentStep > 1 ? Color("#674EA7") : Color("#BDBDBD"))
-            }
-        )
-        .disabled(regist.currentStep > 1 ? false : true)
-    }
-}
-
-struct RegistNextButton: View {
-    @ObservedObject var regist: ChargerRegistViewModel
-    
-    var body: some View {
-        Button(
-            action: {
-                print(regist.currentStep)
-                
-                regist.currentStep += 1
-                
-                print(regist.currentStep)
-            },
-            label: {
-                Text("다음")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.white)
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
-                    .background(Color("#674EA7"))
-            }
-        )
-    }
-}
-
-struct ChargerRegistButton: View {
-    @ObservedObject var regist: ChargerRegistViewModel
-    
-    var body: some View {
-        Button(
-            action: {
-                
-            },
-            label: {
-                Text("등록")
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundColor(Color.white)
-                    .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
-                    .background(Color("#674EA7"))
-            }
-        )
-    }
-}
-
+//MARK: - 충전기 BLE 찾기
 struct FindChargerBLE: View {
     @ObservedObject var regist: ChargerRegistViewModel
     @ObservedObject var bluetooth: ChargingViewModel
@@ -242,30 +196,53 @@ struct FindChargerBLE: View {
                 
                 Spacer()
                 
+                //선택된 충전기 BLE 번호 버튼
                 Button(
                     action: {
-                        regist.isShowBLEModal = true
+                        regist.isShowBLEModal = true    //충전기 BLE 목록 모달 창 호출
                     },
                     label: {
+                        //선택된 충전기 BLE 번호
                         Text(regist.selectBLENumber)
                             .fontWeight(.bold)
                             .foregroundColor(Color.white)
                             .padding(.horizontal)
                             .padding(.vertical, 10)
                             .frame(width: 200)
-                            .background(Color("#8E44AD"))
+                            .background(regist.chargerBLEList == [] ? Color("#F2F2F2") : Color("#8E44AD"))
                             .cornerRadius(5.0)
                             .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
                     }
                 )
+                .disabled(regist.chargerBLEList == [] ? true : false)
             }
             .padding(.horizontal)
             
             Spacer()
             
+            //충전기 검색 버튼
             Button(
                 action: {
-                    bluetooth.searchChargerBLE()
+                    bluetooth.isLoading = true
+                    
+                    //블루투스 사용 권한 확인 - 권한 있음
+                    if bluetooth.checkPermission() {
+                        
+                        //블루투스 전원 확인 - Power ON
+                        if bluetooth.checkBluetoothPower() {
+                            bluetooth.startBluetoothScan()    //블루투스 스캔 시작
+                        }
+                        //블루투스 전원 확인 - Power OFF
+                        else {
+                            bluetooth.isLoading = false
+                            regist.toastMessage(message: "블루투스 전원이 꺼져 있습니다.\n블루투스 전원을 확인해주세요.")    //블루투스 전원 확인 메시지
+                        }
+                    }
+                    //블루투스 사용 권한 확인 - 권한 없음
+                    else {
+                        bluetooth.isLoading = false
+                        regist.toastMessage(message: "블루투스 사용 권한이 없습니다.\n블루투스 권한 설정을 확인해주세요.") //블루투스 사용 권한 확인 메시지
+                    }
                 },
                 label: {
                     Text("충전기 검색")
@@ -285,6 +262,7 @@ struct FindChargerBLE: View {
     }
 }
 
+//MARK: - 검색된 충전기 BLE 모달 창
 struct FindChargerBLEModal: View {
     @ObservedObject var regist: ChargerRegistViewModel
     @ObservedObject var bluetooth: ChargingViewModel
@@ -308,22 +286,28 @@ struct FindChargerBLEModal: View {
                     
                     ScrollView {
                         LazyVStack {
+                            //충전기 BLE 목록
                             ForEach(regist.chargerBLEList, id:\.self) { (chargerBLE) in
+                                //충전기 BLE 별 선택 버튼
                                 Button(
                                     action: {
+                                        regist.registChargerId = chargerBLE["chargerId"]!
                                         regist.selectBLENumber = chargerBLE["bleNumber"]!
+                                        regist.providerId = chargerBLE["providerId"]!
                                     },
                                     label: {
                                         HStack {
+                                            //라디오 버튼
                                             ZStack {
                                                 Circle()
                                                     .fill(Color.white)
                                                     .frame(width: 18, height: 18)
                                                     .overlay(
                                                         Circle()
-                                                            .stroke(Color("#8E44AD"))
+                                                            .stroke(chargerBLE["isAssigned"]! == "true" ? Color("#8E44AD") : Color("#BDBDBD"))
                                                     )
                                                 
+                                                //선택 시 라디오 버튼 표시
                                                 if chargerBLE["bleNumber"]! == regist.selectBLENumber {
                                                     Circle()
                                                         .fill(Color("#8E44AD"))
@@ -331,13 +315,28 @@ struct FindChargerBLEModal: View {
                                                 }
                                             }
                                             
+                                            //충전기 BLE 번호 텍스트
                                             Text(chargerBLE["bleNumber"]!)
-                                                .foregroundColor(Color.black)
+                                                .foregroundColor(chargerBLE["isAssigned"]! == "true" ? Color.black : Color("#BDBDBD"))
                                             
                                             Spacer()
+                                            
+                                            //충전기 등록 가능 여부 라벨
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 20)
+                                                    .frame(width: 70, height: 25)
+                                                    .foregroundColor(chargerBLE["isAssigned"]! == "true" ? Color("#8E44AD") : Color("#C0392B"))
+                                                    .shadow(color: .gray, radius: 1, x: 1.2, y: 1.2)
+                                                
+                                                Text(chargerBLE["isAssigned"]! == "true" ? "등록 가능" : "등록 불가")
+                                                    .font(.footnote)
+                                                    .fontWeight(.bold)
+                                                    .foregroundColor(Color.white)
+                                            }
                                         }
                                     }
                                 )
+                                .disabled(chargerBLE["isAssigned"]! == "true" ? false: true)
                             }
                         }
                         .padding()
@@ -365,6 +364,7 @@ struct FindChargerBLEModal: View {
                             }
                         )
                         
+                        //확인 버튼 - 모달 창에서 선택한 충전기 BLE로 변경
                         Button(
                             action: {
                                 bluetooth.isSearch = false
@@ -404,22 +404,398 @@ struct FindChargerBLEModal: View {
     }
 }
 
+//MARK: - 충전기 기초 정보
 struct ChargerBasicInfo: View {
     @ObservedObject var regist: ChargerRegistViewModel
     
     var body: some View {
-        VStack {
-            Text("충전기 기초 정보")
+        VStack(spacing: 20) {
+            VStack(spacing: 3) {
+                HStack(spacing: 10) {
+                    Image("Label-Charger")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 30, height: 30)
+                    
+                    Text("충전기 명")
+                        .fontWeight(.semibold)
+                    
+                    Spacer()
+                }
+                
+                HStack(spacing: 10) {
+                    Spacer().frame(width: 30)
+                    
+                    TextField("", text: $regist.chargerName)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .frame(maxWidth: .infinity)
+                        .background(Color("#F2F2F2"))
+                        .cornerRadius(5.0)
+                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                            
+                    Spacer()
+                }
+            }
+            
+            VStack(spacing: 3) {
+                HStack(spacing: 10) {
+                    Image("Label-Document")
+                        .resizable()
+                        .scaledToFit()
+                        .padding(2)
+                        .frame(width: 30, height: 30)
+                    
+                    Text("상세 설명")
+                        .fontWeight(.semibold)
+                    
+                    Spacer()
+                }
+                
+                HStack(spacing: 10) {
+                    Spacer().frame(width: 30)
+                    
+                    TextEditor(text: $regist.chargerDescription)
+                        .frame(maxWidth: .infinity, maxHeight: 120)
+                        .cornerRadius(5.0)
+                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                        .colorMultiply(Color("#F2F2F2"))
+                    
+                    Spacer()
+                }
+            }
+            
+            Spacer()
+        }
+        .padding()
+    }
+}
+
+//MARK: - 충전기 추가 정보
+struct ChargerAdditionalInfo: View {
+    @ObservedObject var regist: ChargerRegistViewModel
+    
+    @State var viewPath: String = "chargerRegist"
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                VStack(spacing: 3) {
+                    HStack(spacing: 10) {
+                        Image("Label-Location")
+                            .resizable()
+                            .scaledToFit()
+                            .padding(2)
+                            .frame(width: 30, height: 30)
+                        
+                        Text("주소")
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                    }
+                    
+                    HStack(spacing: 10) {
+                        Spacer().frame(width: 30)
+                        
+                        VStack {
+                            Button(
+                                action: {
+                                    regist.isShowAddressModal = true
+                                },
+                                label: {
+                                    TextField("\(Image(systemName: "magnifyingglass")) 장소・주소 검색", text: $regist.address)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 5)
+                                        .frame(maxWidth: .infinity)
+                                        .background(Color("#F2F2F2"))
+                                        .cornerRadius(5.0)
+                                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                                        .disabled(true)
+                                }
+                            )
+                            .sheet(
+                                isPresented: $regist.isShowAddressModal,
+                                content: {
+                                    AddressSearchModal(chargerMap: ChargerMapViewModel(), regist: regist, viewPath: $viewPath)
+                                }
+                            )
+                            
+                            TextField("상세주소", text: $regist.detailAddress)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .frame(maxWidth: .infinity)
+                                .background(Color("#F2F2F2"))
+                                .cornerRadius(5.0)
+                                .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                        }
+                    
+                        Spacer()
+                    }
+                }
+                
+                VStack(spacing: 3) {
+                    HStack(spacing: 10) {
+                        Image("Label-Clock")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+                        
+                        Text("운영 유형")
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                    }
+                    
+                    HStack(spacing: 10) {
+                        Spacer().frame(width: 30)
+                        
+                        Picker(
+                            selection: $regist.selectSharedType,
+                            label: Text("운영 유형 선택"),
+                            content: {
+                                Text("부분 운영").tag("PARTIAL_SHARING")
+                                Text("항시 운영").tag("SHARING")
+                            }
+                        )
+                        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                                
+                        Spacer()
+                    }
+                }
+                
+                VStack(spacing: 3) {
+                    HStack(spacing: 10) {
+                        ZStack {
+                            Image("Label-Cable")
+                                .resizable()
+                                .renderingMode(.template)
+                                .foregroundColor(Color.black)
+                                .frame(width: 50, height: 50)
+                        }
+                        .frame(width: 30, height: 30)
+                        
+                        Text("케이블 보유")
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                    }
+                    
+                    HStack(spacing: 10) {
+                        Spacer().frame(width: 30)
+                        
+                        Picker(
+                            selection: $regist.selectCableFlag,
+                            label: Text("케이블 보유 선택"),
+                            content: {
+                                Text("없음").tag(false)
+                                Text("있음").tag(true)
+                            }
+                        )
+                        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                                
+                        Spacer()
+                    }
+                }
+                
+                VStack(spacing: 3) {
+                    HStack(spacing: 10) {
+                        ZStack {
+                            Image("Label-Battery")
+                                .resizable()
+                                .renderingMode(.template)
+                                .foregroundColor(Color.black)
+                                .frame(width: 40, height: 40)
+                        }
+                        .frame(width: 30, height: 30)
+                        
+                        Text("충전 타입")
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                    }
+                    
+                    HStack(spacing: 10) {
+                        Spacer().frame(width: 30)
+                        
+                        Picker(
+                            selection: $regist.selectSupplyCapacity,
+                            label: Text("충전 타입 선택"),
+                            content: {
+                                Text("완속").tag("STANDARD")
+                                Text("저속").tag("SLOW")
+                            }
+                        )
+                        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                                
+                        Spacer()
+                    }
+                }
+                
+                VStack(spacing: 3) {
+                    HStack(spacing: 10) {
+                        Image("Label-Car")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+                        
+                        Text("주차 요금")
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                    }
+                    
+                    HStack(spacing: 10) {
+                        Spacer().frame(width: 30)
+                        
+                        Picker(
+                            selection: $regist.selectParkingFeeFlg,
+                            label: Text("주차 요금 선택"),
+                            content: {
+                                Text("없음").tag(false)
+                                Text("있음").tag(true)
+                            }
+                        )
+                        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                                
+                        Spacer()
+                    }
+                }
+                
+                VStack(spacing: 3) {
+                    HStack(spacing: 10) {
+                        Image("Label-Document")
+                            .resizable()
+                            .scaledToFit()
+                            .padding(2)
+                            .frame(width: 30, height: 30)
+                        
+                        Text("주차 요금 설명")
+                            .fontWeight(.semibold)
+                        
+                        Spacer()
+                    }
+                    
+                    HStack(spacing: 10) {
+                        Spacer().frame(width: 30)
+                        
+                        TextField("", text: $regist.parkingFeeDescription)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .frame(maxWidth: .infinity)
+                            .background(!regist.selectParkingFeeFlg ? Color("#BDBDBD") : Color("#F2F2F2"))
+                            .cornerRadius(5.0)
+                            .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                            .disabled(!regist.selectParkingFeeFlg ? true : false)
+                        
+                        Spacer()
+                    }
+                }
+            }
+            .padding()
         }
     }
 }
 
-struct ChargerAdditionalInfo: View {
+//MARK: - 이전 버튼
+struct RegistPreviousButton: View {
     @ObservedObject var regist: ChargerRegistViewModel
     
     var body: some View {
+        Button(
+            action: {
+                regist.currentStep -= 1
+            },
+            label: {
+                Text("이전")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.white)
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .background(regist.currentStep > 1 ? Color("#674EA7") : Color("#BDBDBD"))
+            }
+        )
+        .disabled(regist.currentStep > 1 ? false : true)
+    }
+}
+
+//MARK: - 다음 버튼
+struct RegistNextButton: View {
+    @ObservedObject var viewUtil: ViewUtil
+    @ObservedObject var regist: ChargerRegistViewModel
+    
+    var body: some View {
+        Button(
+            action: {
+                //regist.currentStep += 1 //임시
+                viewUtil.dismissKeyboard()  //키보드 닫기
+                regist.checkNextStep()  //다음 단계 이동 전 입력값 확인
+            },
+            label: {
+                Text("다음")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.white)
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .background(Color("#674EA7"))
+            }
+        )
+    }
+}
+
+//MARK: - 충전기 등록 버튼
+struct ChargerRegistButton: View {
+    @Environment(\.presentationMode) var presentationMode
+    
+    @ObservedObject var viewUtil: ViewUtil
+    @ObservedObject var regist: ChargerRegistViewModel
+    
+    var body: some View {
+        Button(
+            action: {
+                viewUtil.dismissKeyboard()  //키보드 닫기
+                
+                if regist.checkRegistStep() {
+                    regist.isLoading = true
+                    
+//                    regist.registCharger() { result in
+//                        if result == "success" {
+//                            regist.toastMessage(message: "정상적으로 충전기 등록이 완료되었습니다.")
+//
+//                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+//                                regist.isLoading = false
+//                                self.presentationMode.wrappedValue.dismiss()
+//                            }
+//                        }
+//                        else if result == "error" {
+//                            regist.isLoading = false
+//                            regist.toastMessage(message: "server.error".message())
+//                        }
+//                    }
+                }
+            },
+            label: {
+                Text("등록")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.white)
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .background(Color("#674EA7"))
+            }
+        )
+    }
+}
+
+struct ChargerRegistConfirmAlert: View {
+    var body: some View {
         VStack {
-            Text("충전기 추가 정보")
+            
         }
     }
 }
@@ -427,5 +803,7 @@ struct ChargerAdditionalInfo: View {
 struct ChargerRegistView_Previews: PreviewProvider {
     static var previews: some View {
         ChargerRegistView()
+        ChargerBasicInfo(regist: ChargerRegistViewModel())
+        ChargerAdditionalInfo(regist: ChargerRegistViewModel())
     }
 }

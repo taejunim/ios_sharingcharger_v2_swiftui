@@ -10,6 +10,8 @@ import Foundation
 class AddressSearchViewModel: ObservableObject {
     private let commonAPI = CommonAPIService()
     
+    @Published var viewPath: String = ""    //호출 화면 경로
+    
     @Published var location = Location()   //위치 정보 서비스
     @Published var authStatus = Location().getAuthStatus()  //위치 정보 권한 상태
     
