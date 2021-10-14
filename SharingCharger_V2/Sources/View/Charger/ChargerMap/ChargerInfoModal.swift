@@ -201,36 +201,27 @@ struct ChargerAvailableTime: View {
                 Spacer()
             }
             
-            //Text("항시 충전 가능")
-            
             //이용 가능 시간 라벨
-            LazyHStack {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20)
-                        .frame(width: 150, height: 25)
-                        .foregroundColor(Color("#1ABC9C"))
-                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
-                    
-                    Text("16:30 ~ 23:59")
-                        .foregroundColor(Color.white)
-                        .font(.footnote)
-                        .fontWeight(.bold)
-                }
-                ZStack {
-                    RoundedRectangle(cornerRadius: 20)
-                        .frame(width: 150, height: 25)
-                        .foregroundColor(Color("#1ABC9C"))
-                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
-                    
-                    Text("00:00 ~ 23:59")
-                        .foregroundColor(Color.white)
-                        .font(.footnote)
-                        .fontWeight(.bold)
+            ScrollView(.horizontal) {
+                LazyHStack {
+                    ForEach(chargerMap.availableTimeArray.indices, id: \.self) { index in
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 20)
+                                .frame(width: 110, height: 25)
+                                .foregroundColor(Color("#1ABC9C"))
+                                .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                            
+                            Text(chargerMap.availableTimeArray[index])
+                                .foregroundColor(Color.white)
+                                .font(.footnote)
+                                .fontWeight(.bold)
+                        }
+                    }
                 }
             }
-            .frame(maxWidth: .infinity)
+            .frame(minHeight: 30, maxHeight: 40)
             
-            Text("위 시간대 이용 가능")
+            Text(chargerMap.availableTimeArray.count > 0 ? "위 시간대 이용 가능" : "항시 충전 가능합니다.")
                 .font(.footnote)
         }
     }
@@ -404,5 +395,6 @@ struct ReservationChargeButton: View {
 struct ChargerInfoModal_Previews: PreviewProvider {
     static var previews: some View {
         ChargerInfoModal(chargerMap: ChargerMapViewModel(), chargerSearch: ChargerSearchViewModel(), reservation: ReservationViewModel(), purchase: PurchaseViewModel(), point: PointViewModel())
+        ChargerAvailableTime(chargerMap: ChargerMapViewModel(), reservation: ReservationViewModel())
     }
 }

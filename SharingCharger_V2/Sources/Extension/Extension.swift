@@ -198,3 +198,10 @@ extension UIDevice {
     }()
 
 }
+
+//MARK: - 시간 millisecond 가져오기
+extension Date {
+    func currentTimeMillis() -> Int64 {
+        return Int64(self.timeIntervalSince1970 * 1000)
+    }
+}

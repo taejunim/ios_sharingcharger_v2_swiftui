@@ -60,6 +60,14 @@ class ChargerMapViewModel: ObservableObject {
     @Published var isShowChargingView: Bool = false   //충전 화면 호출 여부
     @Published var isShowAddressSearchModal: Bool = false    //주소 검색 Modal 창 호출 여부
     
+    @Published var availableTimeArray: [String] = []
+    
+    var currentReservationList = Array<ReservationDateModel>()
+    var openCloseTimeList = Array<ReservationDateModel>()
+    
+    let HHMMFormatter = "HH:mm"
+    let ymdFormatter = "yyyy-MM-dd'T'"
+    
     //MARK: - 현재 일시(서버 시간 기준) 조회
     /// - Parameter completion: Current Date 서버 기준 현재 일시
     func getCurrentDate(completion: @escaping (Date) -> Void) {
@@ -376,7 +384,7 @@ class ChargerMapViewModel: ObservableObject {
         request.execute(
             //API 호출 성공
             onSuccess: { (charger) in
-                self.getAvailableTime(availableTime: charger.chargerAllowTime)
+                self.getAvailableTime(availableTime: charger.chargerAllowTime, reservations: charger.reservations.content)
             },
             //API 호출 실패
             onFailure: { (error) in
@@ -389,21 +397,318 @@ class ChargerMapViewModel: ObservableObject {
     //MARK: - 이용 가능 시간
     /// 조회한 충전기 예약 현황 정보에 따른 충전기 이용 가능 시간 생성
     /// - Parameter availableTime: 이용 가능 시간
-    func getAvailableTime(availableTime: ChargerAllowTime) {
-        //print(availableTime)
+    func getAvailableTime(availableTime: ChargerAllowTime, reservations: [ReservationContent?]) {
         
-        let getOpenTime = availableTime.todayOpenTime
-        let openTime = "HH:mm:ss".toDateFormatter(formatString: getOpenTime)
-        //print(openTime)
+        var availableTimeList = Array<AvailableTimeModel>()
         
-        //print("HHmmss".dateFormatter(formatDate: openTime!))
-        
-        if "2021-08-27T16:53:00" < ("2021-08-27T" + getOpenTime) {
-            //print("tq")
+        for i in 0..<2 {
+            var openTime = ""
+            var closeTime = ""
+            
+            if i == 0 {
+                openTime = availableTime.todayOpenTime
+                closeTime = availableTime.todayCloseTime
+            } else {
+                openTime = availableTime.tomorrowOpenTime
+                closeTime = availableTime.tomorrowCloseTime
+            }
+            
+            let availableTimeModel = AvailableTimeModel()
+            availableTimeModel.openTime = openTime
+            availableTimeModel.closeTime = closeTime
+            availableTimeList.append(availableTimeModel)
+            
         }
+        
+        var tempReservationList = Array<CurrentReservationModel>()
+        
+        for item in reservations {
+            let tempReservation = CurrentReservationModel()
+            tempReservation.startDate = item!.startDate
+            tempReservation.endDate = item!.endDate
+            tempReservationList.append(tempReservation)
+        }
+        
+        //예약 시작 시간으로 오름차순 정렬
+        if tempReservationList.count > 0 {
+            tempReservationList = tempReservationList.sorted(by: {"yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: $0.startDate!)! < "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: $1.startDate!)!})
+        }
+        
+        calculateAvailableTime(availableTimeList: availableTimeList, tempReservationList: tempReservationList)
+    }
+    
+    //openTime, closeTime, 예약 시간 으로 이용 가능 시간 계산
+    func calculateAvailableTime(availableTimeList: Array<AvailableTimeModel>, tempReservationList: Array<CurrentReservationModel>) {
+        
+        self.availableTimeArray.removeAll()
+        
+        var availableTimeArray: [String] = []
+        
+        currentReservationList.removeAll()
+        openCloseTimeList.removeAll()
+        
+        let currentDate = Date()
+        
+        let today = "yyyy-MM-dd'T'".dateFormatter(formatDate: currentDate)
+        let tomorrow = "yyyy-MM-dd'T'".dateFormatter(formatDate: Calendar.current.date(byAdding: .day, value: 1, to: currentDate)!)
+        let selectedStartDate = searchStartDate!
+        
+        for item in tempReservationList {
+            addItem(startDateString: item.startDate!, endDateString: item.endDate!, arrayType: "reservation")
+        }
+        
+        for index in 0..<availableTimeList.count {
+            
+            var startTime = ""
+            var endTime = ""
+            
+            if index == 0 {
+                startTime = today + availableTimeList[index].openTime!
+                endTime = today + availableTimeList[index].closeTime!
+            } else if index == 1 {
+                startTime = tomorrow + availableTimeList[index].openTime!
+                endTime = tomorrow + availableTimeList[index].closeTime!
+            }
+            
+            addItem(startDateString: startTime, endDateString: endTime, arrayType: "openClose")
+        }
+        
+        //예약 없을 때
+        if currentReservationList.count == 0 {
+            if HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[0].startDate!) == "00:00"
+                && HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[0].endDate!) == "23:59"
+                && HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].startDate!) == "00:00"
+                && HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].endDate!) == "23:59" {
+                
+                //항시 충전 가능
+            }
+            else {
+                //현재 시간보다 openTime이 클 경우 ex) 현재 - 18:00, openTime - 19:00
+                if selectedStartDate < openCloseTimeList[0].startDate! {
+                    let time = HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[0].startDate!)
+                    + " ~ " + HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[0].endDate!)
+                    availableTimeArray.append(time)
+                } else {
+                    if check30Minute(startTime: selectedStartDate, endTime: openCloseTimeList[0].endDate!) {
+                        let time = HHMMFormatter.dateFormatter(formatDate: selectedStartDate)
+                        + " ~ " + HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[0].endDate!)
+                        availableTimeArray.append(time)
+                    }
+                }
+                
+                let time = HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].startDate!)
+                + " ~ " + HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].endDate!)
+                availableTimeArray.append(time)
+            }
+        }
+        
+        //예약 있을 때
         else {
-            //print("ttttttttq")
+            
+            for i in 0..<currentReservationList.count {
+                //시작 일시가 오늘, 종료 일시가 내일
+                if ymdFormatter.dateFormatter(formatDate: currentReservationList[i].startDate!) == today
+                    && ymdFormatter.dateFormatter(formatDate: currentReservationList[i].endDate!) == tomorrow {
+                    
+                    if currentReservationList[i].startDate!.currentTimeMillis() < openCloseTimeList[0].endDate!.currentTimeMillis() {
+                        openCloseTimeList[0].endDate = currentReservationList[i].startDate!
+                    }
+                    if currentReservationList[i].endDate!.currentTimeMillis() > openCloseTimeList[1].startDate!.currentTimeMillis() {
+                        openCloseTimeList[1].startDate = currentReservationList[i].endDate!
+                    }
+                    currentReservationList.remove(at: i)
+                }
+            }
+            
+            //예약이 오늘에서 내일로 넘어가는 즉시충전건 뿐일때
+            if currentReservationList.count == 0 {
+                let time = HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].startDate!)
+                + " ~ " + HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].endDate!)
+                availableTimeArray.append(time)
+            } else {
+                
+                var tomorrowReservationExist = 0
+                
+                //예약 있읕때
+                for i in 0..<currentReservationList.count {
+                    if ymdFormatter.dateFormatter(formatDate: currentReservationList[i].startDate!) == tomorrow
+                        || ymdFormatter.dateFormatter(formatDate: currentReservationList[i].endDate!) == tomorrow {
+                        
+                        tomorrowReservationExist += 1
+                    }
+                    
+                    if i == 0 {
+                        //첫번째 예약이 오늘일때
+                        if ymdFormatter.dateFormatter(formatDate: currentReservationList[i].startDate!) == today
+                            && ymdFormatter.dateFormatter(formatDate: currentReservationList[i].endDate!) == today {
+                            
+                            //현재 시간보다 openTime이 클 경우 ex) 현재 - 18:00, openTime - 19:00
+                            if selectedStartDate.currentTimeMillis() < openCloseTimeList[0].startDate!.currentTimeMillis() {
+                                if check30Minute(startTime: openCloseTimeList[0].startDate!, endTime: recalculateBefore30Minute(originDate: currentReservationList[i].startDate!)) {
+                                    
+                                    let time = HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[0].startDate!)
+                                    + " ~ " + HHMMFormatter.dateFormatter(formatDate: recalculateBefore30Minute(originDate: currentReservationList[i].startDate!))
+                                    availableTimeArray.append(time)
+                                }
+                            } else {
+                                if selectedStartDate.currentTimeMillis() < currentReservationList[i].startDate!.currentTimeMillis() {
+                                    if check30Minute(startTime: selectedStartDate, endTime: recalculateBefore30Minute(originDate: currentReservationList[i].startDate!)) {
+                                    
+                                        let time = HHMMFormatter.dateFormatter(formatDate: selectedStartDate)
+                                        + " ~ " + HHMMFormatter.dateFormatter(formatDate: recalculateBefore30Minute(originDate: currentReservationList[i].startDate!))
+                                        availableTimeArray.append(time)
+                                    }
+                                }
+                            }
+                        }
+                        
+                        //현재 시간보다 openTime이 클 경우 ex) 현재 - 18:00, openTime - 19:00
+                        else {
+                            if selectedStartDate.currentTimeMillis() < openCloseTimeList[0].endDate!.currentTimeMillis() {
+                                if check30Minute(startTime: selectedStartDate, endTime: openCloseTimeList[0].endDate!) {
+                                    let time = HHMMFormatter.dateFormatter(formatDate: selectedStartDate)
+                                    + " ~ " + HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[0].endDate!)
+                                    availableTimeArray.append(time)
+                                }
+                            }
+                        }
+                    }
+                    
+                    if i != currentReservationList.count - 1 {
+                        
+                        if ymdFormatter.dateFormatter(formatDate: currentReservationList[i].endDate!) == today {
+                            if ymdFormatter.dateFormatter(formatDate: currentReservationList[i+1].endDate!) == today {
+                                if check30Minute(startTime: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!), endTime: recalculateBefore30Minute(originDate: currentReservationList[i+1].startDate!)) {
+                                    
+                                    let time = HHMMFormatter.dateFormatter(formatDate: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!))
+                                    + " ~ " + HHMMFormatter.dateFormatter(formatDate: recalculateBefore30Minute(originDate: currentReservationList[i+1].startDate!))
+                                    availableTimeArray.append(time)
+                                }
+                            } else {
+                                if check30Minute(startTime: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!), endTime: openCloseTimeList[0].endDate!) {
+                                    
+                                    let time = HHMMFormatter.dateFormatter(formatDate: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!))
+                                    + " ~ " + HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[0].endDate!)
+                                    availableTimeArray.append(time)
+                                }
+                            }
+                        }
+                        //내일 예약일 때
+                        else if ymdFormatter.dateFormatter(formatDate: currentReservationList[i].startDate!) == tomorrow
+                                    && ymdFormatter.dateFormatter(formatDate: currentReservationList[i].endDate!) == tomorrow {
+                            
+                            if tomorrowReservationExist > 1 {
+                                if check30Minute(startTime: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!), endTime: recalculateBefore30Minute(originDate: currentReservationList[i+1].startDate!)) {
+                                    
+                                    let time = HHMMFormatter.dateFormatter(formatDate: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!))
+                                    + " ~ " + HHMMFormatter.dateFormatter(formatDate: recalculateBefore30Minute(originDate: currentReservationList[i+1].startDate!))
+                                    availableTimeArray.append(time)
+                                }
+                                
+                            } else {
+                              
+                                if check30Minute(startTime: openCloseTimeList[1].startDate!, endTime: recalculateBefore30Minute(originDate: currentReservationList[i].startDate!)) {
+                                    
+                                    let time = HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].startDate!)
+                                    + " ~ " + HHMMFormatter.dateFormatter(formatDate: recalculateBefore30Minute(originDate: currentReservationList[i].startDate!))
+                                    availableTimeArray.append(time)
+                                }
+                                
+                                if check30Minute(startTime: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!), endTime: recalculateBefore30Minute(originDate: currentReservationList[i+1].startDate!)) {
+                                    
+                                    let time = HHMMFormatter.dateFormatter(formatDate: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!))
+                                    + " ~ " + HHMMFormatter.dateFormatter(formatDate: recalculateBefore30Minute(originDate: currentReservationList[i+1].startDate!))
+                                    availableTimeArray.append(time)
+                                }
+                            }
+                        }
+                    }
+                    
+                    //마지막 예약
+                    if i == currentReservationList.count - 1 {
+                        
+                        if tomorrowReservationExist > 1 {
+                            
+                            if check30Minute(startTime: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!), endTime: openCloseTimeList[1].endDate!) {
+                                
+                                let time = HHMMFormatter.dateFormatter(formatDate: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!))
+                                + " ~ " + HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].endDate!)
+                                availableTimeArray.append(time)
+                            }
+                            
+                        } else if tomorrowReservationExist == 1 {
+                            
+                            if check30Minute(startTime: openCloseTimeList[1].startDate!, endTime: recalculateBefore30Minute(originDate: currentReservationList[i].startDate!)) {
+                             
+                                let time = HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].startDate!)
+                                + " ~ " + HHMMFormatter.dateFormatter(formatDate: recalculateBefore30Minute(originDate: currentReservationList[i].startDate!))
+                                availableTimeArray.append(time)
+                            }
+                            
+                            if check30Minute(startTime: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!), endTime: openCloseTimeList[1].endDate!) {
+                                
+                                let time = HHMMFormatter.dateFormatter(formatDate: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!))
+                                + " ~ " + HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].endDate!)
+                                availableTimeArray.append(time)
+                            }
+                            
+                        } else {
+                            
+                            if check30Minute(startTime: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!), endTime: openCloseTimeList[1].endDate!) {
+                                
+                                let time = HHMMFormatter.dateFormatter(formatDate: recalculateAfter30Minute(originDate: currentReservationList[i].endDate!))
+                                + " ~ " + HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].endDate!)
+                                availableTimeArray.append(time)
+                            }
+                            
+                            let time = HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].startDate!)
+                            + " ~ " + HHMMFormatter.dateFormatter(formatDate: openCloseTimeList[1].endDate!)
+                            availableTimeArray.append(time)
+                        }
+                    }
+                }
+            }
         }
+        
+        self.availableTimeArray = availableTimeArray
+    }
+    
+    //openTime, closeTime, reservation List 만들기
+    func addItem(startDateString: String, endDateString: String, arrayType: String) {
+        let startDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: startDateString)
+        let endDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: endDateString)
+        
+        let reservationDateModel = ReservationDateModel()
+        reservationDateModel.startDate = startDate
+        reservationDateModel.endDate = endDate
+        
+        if arrayType == "reservation" {
+            currentReservationList.append(reservationDateModel)
+        } else if arrayType == "openClose" {
+            openCloseTimeList.append(reservationDateModel)
+        }
+    }
+    
+    //예약은 전후 30분 불가능하므로 시간 재계산
+    func check30Minute(startTime: Date, endTime: Date) -> Bool {
+        
+        if endTime.currentTimeMillis() - startTime.currentTimeMillis() < 1800000 {
+            return false
+        }
+        
+        return true
+    }
+    
+    //예약 시작 시간 30분 전 date 구하기
+    func recalculateBefore30Minute(originDate: Date) -> Date {
+        
+        return Calendar.current.date(byAdding: .minute, value: -30, to: originDate)!
+    }
+    
+    //예약 종료 시간 30분 후 date 구하기
+    func recalculateAfter30Minute(originDate: Date) -> Date {
+        
+        return Calendar.current.date(byAdding: .minute, value: 30, to: originDate)!
     }
     
     func launchNavigation() {

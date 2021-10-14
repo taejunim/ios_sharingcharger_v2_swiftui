@@ -121,6 +121,9 @@
 		2BBF2AEF27105397005140FB /* ChargerDetailContentVIew.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BBF2AEE27105397005140FB /* ChargerDetailContentVIew.swift */; };
 		2BC430AE26EF0DDF00D9924A /* ChargerSearchInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC430AD26EF0DDF00D9924A /* ChargerSearchInfo.swift */; };
 		2BEF6F6126D7C29200DAD506 /* SlideOverModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BEF6F6026D7C29200DAD506 /* SlideOverModal.swift */; };
+		DA9918882715763500B7A51D /* AvailableTimeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9918872715763500B7A51D /* AvailableTimeModel.swift */; };
+		DA99188A27157AC100B7A51D /* CurrentReservationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA99188927157AC100B7A51D /* CurrentReservationModel.swift */; };
+		DA99188C2715900100B7A51D /* ReservationDateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA99188B2715900100B7A51D /* ReservationDateModel.swift */; };
 		DAC03A63271446E500031D27 /* EmailHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC03A62271446E500031D27 /* EmailHelper.swift */; };
 /* End PBXBuildFile section */
 
@@ -265,6 +268,9 @@
 		2BC430AD26EF0DDF00D9924A /* ChargerSearchInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerSearchInfo.swift; sourceTree = "<group>"; };
 		2BEF6F6026D7C29200DAD506 /* SlideOverModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlideOverModal.swift; sourceTree = "<group>"; };
 		CDEF0B35A43A34C13EA7E802 /* Pods_SharingCharger_V2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SharingCharger_V2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA9918872715763500B7A51D /* AvailableTimeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableTimeModel.swift; sourceTree = "<group>"; };
+		DA99188927157AC100B7A51D /* CurrentReservationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentReservationModel.swift; sourceTree = "<group>"; };
+		DA99188B2715900100B7A51D /* ReservationDateModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReservationDateModel.swift; sourceTree = "<group>"; };
 		DAC03A62271446E500031D27 /* EmailHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -675,6 +681,9 @@
 				2B3FD82926DDFD39000203F1 /* PointModel.swift */,
 				2B9679F626F456A400CFDC3A /* PurchaseModel.swift */,
 				2B96765526C1202E00400FF9 /* UserModel.swift */,
+				DA9918872715763500B7A51D /* AvailableTimeModel.swift */,
+				DA99188927157AC100B7A51D /* CurrentReservationModel.swift */,
+				DA99188B2715900100B7A51D /* ReservationDateModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -902,6 +911,7 @@
 				2B3FD82A26DDFD39000203F1 /* PointModel.swift in Sources */,
 				2B9DFEA827115ACC00F0A4D4 /* AddressModel.swift in Sources */,
 				2B96765626C1202E00400FF9 /* UserModel.swift in Sources */,
+				DA99188A27157AC100B7A51D /* CurrentReservationModel.swift in Sources */,
 				2B9603AA26F3344F002A4152 /* ChargingAlertView.swift in Sources */,
 				2BBF2AE927102F57005140FB /* AddressSearchModal.swift in Sources */,
 				2B2645E9270EB86400FE7CC7 /* ChargerDetailViewModel.swift in Sources */,
@@ -911,6 +921,7 @@
 				2B9679EB26F41E8600CFDC3A /* ChargeAPIService.swift in Sources */,
 				2BBF2AEF27105397005140FB /* ChargerDetailContentVIew.swift in Sources */,
 				2B92BC572700AA260082E5EE /* ReservationView.swift in Sources */,
+				DA9918882715763500B7A51D /* AvailableTimeModel.swift in Sources */,
 				2B96762326C0BF5700400FF9 /* UserInfoViewModel.swift in Sources */,
 				2B92BC592700D0380082E5EE /* ChargeModel.swift in Sources */,
 				2B938FA027016339000C8F61 /* ChargerRegistView.swift in Sources */,
@@ -940,6 +951,7 @@
 				2B8BFBDA26CE509F00C9CB65 /* ChargerMapViewModel.swift in Sources */,
 				2BA1C71726E5AB13005EF19D /* ReservationViewModel.swift in Sources */,
 				2B9679F526F4553B00CFDC3A /* PurchaseAPIService.swift in Sources */,
+				DA99188C2715900100B7A51D /* ReservationDateModel.swift in Sources */,
 				2B938F9E270160C6000C8F61 /* OwnerChargerView.swift in Sources */,
 				2B9721A22702F31400852894 /* PaymentAlert.swift in Sources */,
 				2B8BFBE326CE87E000C9CB65 /* ChargerAPIService.swift in Sources */,
@@ -1104,7 +1116,7 @@
 				CODE_SIGN_ENTITLEMENTS = SharingCharger_V2/SharingCharger_V2.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SharingCharger_V2/Preview Content\"";
-				DEVELOPMENT_TEAM = P439X3ST2G;
+				DEVELOPMENT_TEAM = C846JVNTZN;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1116,7 +1128,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.metisinfo.SharedCharger;
+				PRODUCT_BUNDLE_IDENTIFIER = krco.metisinfo.SharedCharger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/SharingCharger_V2/Library/KakaoMapBridgingHeader.h";
 				SWIFT_VERSION = 5.0;
@@ -1134,7 +1146,7 @@
 				CODE_SIGN_ENTITLEMENTS = SharingCharger_V2/SharingCharger_V2.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"SharingCharger_V2/Preview Content\"";
-				DEVELOPMENT_TEAM = P439X3ST2G;
+				DEVELOPMENT_TEAM = C846JVNTZN;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1146,7 +1158,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = kr.co.metisinfo.SharedCharger;
+				PRODUCT_BUNDLE_IDENTIFIER = krco.metisinfo.SharedCharger;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PROJECT_DIR)/SharingCharger_V2/Library/KakaoMapBridgingHeader.h";
 				SWIFT_VERSION = 5.0;
