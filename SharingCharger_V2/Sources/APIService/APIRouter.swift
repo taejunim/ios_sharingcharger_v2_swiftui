@@ -18,7 +18,7 @@ enum APIRouter: URLRequestConvertible {
 
     
     static let baseApiUrl: String = "http://211.253.37.97:52340/api/v1"   //전기차 공유 충전기 API URL
-    //static let baseUrl: String = "https://monttak.co.kr/api/v1"   //전기차 공유 충전기 API URL
+    //static let baseApiUrl: String = "https://monttak.co.kr/api/v1"   //전기차 공유 충전기 API URL
     static let addressApiUrl: String = "https://dapi.kakao.com/v2/local"
     static let kakaoAPIKey: String = "KakaoAK 4332dce3f2f8d3ee87e31884c5c5523d"
     

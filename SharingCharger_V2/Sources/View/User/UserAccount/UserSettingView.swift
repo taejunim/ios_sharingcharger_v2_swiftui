@@ -79,7 +79,7 @@ struct ChangePasswordViewButton: View {
                     Image(systemName: "chevron.right")
                 }
                 .foregroundColor(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: 40)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.horizontal)
                 .padding(.vertical, 10)
             }
@@ -105,7 +105,7 @@ struct SwitchOwnerButton: View {
                     Image(systemName: "chevron.right")
                 }
                 .foregroundColor(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: 40)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.horizontal)
                 .padding(.vertical, 10)
             }
@@ -161,7 +161,7 @@ struct SwitchOwnerConfirmAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#C0392B"))
                                     .cornerRadius(5.0)
                                     .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
@@ -179,7 +179,7 @@ struct SwitchOwnerConfirmAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#5E5E5E"))
                                     .cornerRadius(5.0)
                                     .shadow(color: Color.gray, radius: 1, x: 1.5, y: 1.5)
@@ -217,7 +217,7 @@ struct SignOutButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .background(Color("#5E5E5E"))
                     .padding(.horizontal)
             }
@@ -264,7 +264,7 @@ struct SignOutConfirmAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#C0392B"))
                                     .cornerRadius(5.0)
                                     .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
@@ -283,7 +283,7 @@ struct SignOutConfirmAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#5E5E5E"))
                                     .cornerRadius(5.0)
                                     .shadow(color: Color.gray, radius: 1, x: 1.5, y: 1.5)

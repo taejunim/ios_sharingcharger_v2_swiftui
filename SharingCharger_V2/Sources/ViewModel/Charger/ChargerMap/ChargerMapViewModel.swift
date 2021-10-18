@@ -19,8 +19,8 @@ class ChargerMapViewModel: ObservableObject {
     //MARK: - 위치 정보 변수
     @Published var location = Location()   //위치 정보 서비스
     @Published var authStatus = Location().getAuthStatus()  //위치 정보 권한 상태
-    @Published var latitude: Double = 37.566407799201336    //위도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
-    @Published var longitude: Double = 126.97787363088995   //경도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
+    @Published var latitude: Double = 33.447357177734375//37.566407799201336    //위도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
+    @Published var longitude: Double = 126.56743190587527//126.97787363088995   //경도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
     @Published var zoomLevel: Int = 0   //Zoom Level
     @Published var currentAddress: String = ""  //현재 위치 주소 - 지도 중심 위치
     @Published var isCurrentLocation: Bool = false  //현재 위치 이동 여부
@@ -335,7 +335,7 @@ class ChargerMapViewModel: ObservableObject {
         DispatchQueue.global(qos: .background).async {
             DispatchQueue.main.async {
                 self.isShowInfoView = true  //충전기 정보 창 호출
-                self.isFavorites = false    //충전기 즐겨찾기 표시 여부
+                //self.isFavorites = false    //충전기 즐겨찾기 표시 여부
                 
                 self.getCharger(chargerId: self.selectChargerId)  //충전기 정보 호출
                 self.getChargerReservation(chargerId: self.selectChargerId)   //충전기 예약 현황 호출
@@ -748,20 +748,5 @@ class ChargerMapViewModel: ObservableObject {
             
             UIApplication.shared.windows.filter {$0.isKeyWindow}.first!.rootViewController?.present(dialog, animated: true, completion: nil)
         }
-    }
-    
-    //MARK: - 즐겨찾기 호출
-    func getFavorites() {
-        
-    }
-    
-    //MARK: - 즐겨찾기 추가
-    func addFavorites() {
-        
-    }
-    
-    //MARK: - 즐겨찾기 삭제
-    func deleteFavorites() {
-        
     }
 }

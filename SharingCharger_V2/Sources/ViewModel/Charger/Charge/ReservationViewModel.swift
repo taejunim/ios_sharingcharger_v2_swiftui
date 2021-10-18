@@ -25,7 +25,8 @@ class ReservationViewModel: ObservableObject {
     @Published var isReservationResult: Bool = false
     
     @Published var reservationId: String = ""   //예약 ID 번호
-    @Published var reservationType: String = ""  //충전 예약 유형
+    @Published var reservationType: String = ""  //예약 유형
+    @Published var chargeReservationType: String = ""   //충전 예약 유형 - Instant: 즉시 충전, Scheduled:예약 충전
     @Published var reservedChargerId: String = ""  //예약 충전기 번호
     @Published var reservedChargerName: String = ""     //예약 충전기 명
     @Published var reservedchargerBLENumber: String = ""    //예약 충전기 BLE 번호
@@ -80,6 +81,15 @@ class ReservationViewModel: ObservableObject {
                         self.isUserReservation = true   //사용자 예약 여부
                         
                         self.reservationId = String(reservation.id) //예약 ID
+                        
+                        //충전 예약 유형
+                        if reservation.instantChargeFlag {
+                            self.chargeReservationType = "Instant"  //충전 예약 유형 - 즉시 충전
+                        }
+                        else {
+                            self.chargeReservationType = "Scheduled"    //충전 예약 유형 - 예약 충전
+                        }
+                        
                         self.reservedChargerId = String(reservation.chargerId)  //예약 충전기 ID
                         self.reservedChargerName = reservation.chargerName!  //예약 충전기 명
                         self.reservedchargerBLENumber = reservation.bleNumber!  //예약 충전기 BLE 번호
@@ -194,19 +204,19 @@ class ReservationViewModel: ObservableObject {
     }
     
     //MARK: - 예상 차감 포인트 조회
-    /// <#Description#>
+    /// 총 충전 시간에 따라 예상 차감 포인트 계산 API 조회
     /// - Parameters:
-    ///   - chargerId: <#chargerId description#>
-    ///   - chargingStartDate: <#chargingStartDate description#>
-    ///   - chargingEndDate: <#chargingEndDate description#>
-    ///   - completion: <#completion description#>
+    ///   - chargerId: 충전기 ID
+    ///   - chargingStartDate: 충전 시작일시
+    ///   - chargingEndDate: 충전 종료일시
+    ///   - completion: 예상 차감 포인트
     func gerExpectedPoint(chargerId: String, _ chargingStartDate: Date, _ chargingEndDate: Date, completion: @escaping (String) -> Void) {
         let startDate = "yyyy-MM-dd'T'HH:mm:ss".dateFormatter(formatDate: chargingStartDate) //충전 시작일시 변환
         let endDate = "yyyy-MM-dd'T'HH:mm:ss".dateFormatter(formatDate: chargingEndDate) //충전 종료일시 변환
         
         let parameters = [
-            "startDate": startDate,
-            "endDate": endDate
+            "startDate": startDate, //충전 시작일시
+            "endDate": endDate  //충전 종료일시
         ]
 
         //예상 차감 포인트 API 호출
@@ -221,34 +231,47 @@ class ReservationViewModel: ObservableObject {
     }
     
     //MARK: - 충전 예약 실행
-    func reservation(chargerId: String, _ chargingStartDate: Date, _ chargingEndDate: Date, completion: @escaping (String, UserReservation?) -> Void) {
+    func reservation(chargerId: String, chargeReservationType: String, _ chargingStartDate: Date, _ chargingEndDate: Date, completion: @escaping (String, UserReservation?) -> Void) {
         
         let startDate = "yyyy-MM-dd'T'HH:mm:ss.sss'Z'".dateFormatter(formatDate: chargingStartDate) //충전 시작일시 변환
         let endDate = "yyyy-MM-dd'T'HH:mm:ss.sss'Z'".dateFormatter(formatDate: chargingEndDate) //충전 종료일시 변환
         
+        //예상 차감 포인트 조회 API
         gerExpectedPoint(chargerId: chargerId, chargingStartDate, chargingEndDate) { (point) in
             let expectedPoint = Int(point)!
+            
+            var instantChargeFlag: Bool = false
+            
+            if chargeReservationType == "Instant" {
+                instantChargeFlag = true
+            }
+            else if chargeReservationType == "Scheduled" {
+                instantChargeFlag = false
+            }
             
             let parameters: [String : Any] = [
                 "userId": Int(self.userIdNo)!, //사용자 ID 번호
                 "chargerId": Int(chargerId)!, //충전기 ID
+                "instantChargeFlag": instantChargeFlag,
                 "reservationType": "RESERVE",   //예약 유형 - RESERVE(예약)
                 "expectPoint": expectedPoint,  //예상 차감 포인트
                 "startDate": startDate, //충전 시작일시
                 "endDate": endDate  //충전 종료일시
             ]
             
+            print(parameters)
+            
             let request = self.reservationAPI.requestReservation(parameters: parameters)
             request.execute(
                 //API 호출 성공
                 onSuccess: { (reservation) in
-                    UserDefaults.standard.set(self.reservationType, forKey: "reservationType") //충전 예약 유형 - 사용자 정보 저장
                     completion("success", reservation)
                     
-                    //self.getUserReservation()   //사용자 예약 정보 호출
+                    print(reservation)
                 },
                 //API 호출 실패
                 onFailure: { (error) in
+                    print(error)
                     switch error {
                     case .responseSerializationFailed:
                         completion("fail", nil)

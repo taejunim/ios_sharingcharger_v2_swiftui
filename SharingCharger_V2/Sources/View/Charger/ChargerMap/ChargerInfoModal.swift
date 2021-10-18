@@ -14,12 +14,15 @@ struct ChargerInfoModal: View {
     @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     @ObservedObject var purchase: PurchaseViewModel //포인트 구매 View Model
     @ObservedObject var point: PointViewModel   //포인트 View Model
+    @ObservedObject var favorites: FavoritesViewModel   //즐겨찾기 View Model
+    
+    @State var modalHeight: CGFloat = 0
     
     var body: some View {
         GeometryReader { (geometry) in
             SlideOverModal(
                 isShown: $chargerMap.isShowInfoView,    //충전기 정보 Modal 활성화
-                modalHeight: geometry.size.height/2.5,
+                modalHeight: 325,
                 content: {
                     VStack {
                         VStack(spacing: 5) {
@@ -30,7 +33,7 @@ struct ChargerInfoModal: View {
                                     .padding(.vertical, 5)
                             }
                             
-                            ChargerSummaryInfo(chargerMap: chargerMap)  //충전기 요약 정보 화면
+                            ChargerSummaryInfo(chargerMap: chargerMap, favorites: favorites)  //충전기 요약 정보 화면
                             ChargeUnitPrice(chargerMap: chargerMap) //충전 단가 정보
                             
                             //예약 정보가 없거나 해당 충전기가 예약된 충전기가 아닌 경우 노출
@@ -88,6 +91,7 @@ struct ReservationSummaryInfo: View {
 //MARK: - 충전기 요약 정보 화면
 struct ChargerSummaryInfo: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var favorites: FavoritesViewModel
     
     var body: some View {
         HStack {
@@ -100,7 +104,7 @@ struct ChargerSummaryInfo: View {
                     
                     Text("(" + chargerMap.bleNumber.suffix(5) + ")")
                     
-                    ChargerFavoritesButton(chargerMap: chargerMap)  //충전기 즐겨찾기 버튼
+                    ChargerFavoritesButton(chargerMap: chargerMap, favorites: favorites)  //충전기 즐겨찾기 버튼
                 }
                 
                 Text(chargerMap.chargerAddress) //충전기 주소
@@ -118,21 +122,30 @@ struct ChargerSummaryInfo: View {
 //MARK: - 충전기 즐겨찾기 버튼
 struct ChargerFavoritesButton: View {
     @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var favorites: FavoritesViewModel
     
     var body: some View {
         Button(
             action: {
-                if !chargerMap.isFavorites {
-                    chargerMap.addFavorites()
-                    chargerMap.isFavorites = true
+                let favoriteItme: [String:Any] = [
+                    "chargerId": chargerMap.selectChargerId,
+                    "chargerName": chargerMap.chargerName,
+                    "address": chargerMap.chargerAddress,
+                    "detailAddress": chargerMap.chargerDetailAddress,
+                    "latitude": chargerMap.chargerLatitude!,
+                    "longitude": chargerMap.chargerLongitude!
+                ]
+                
+                
+                if !favorites.isFavorite {
+                    favorites.addFavorites(item: favoriteItme)
                 }
                 else {
-                    chargerMap.deleteFavorites()
-                    chargerMap.isFavorites = false
+                    favorites.deleteFavorites(chargerId: chargerMap.selectChargerId)
                 }
             },
             label: {
-                Image(chargerMap.isFavorites ? "Charger-Favorite-Fill" : "Charger-Favorite")
+                Image(!favorites.isFavorite ? "Charger-Favorite" : "Charger-Favorite-Fill")
                     .resizable()
                     .scaledToFit()
                     .padding(.bottom, 8)
@@ -198,31 +211,37 @@ struct ChargerAvailableTime: View {
                 Text("이용 가능 시간")
                     .font(.headline)
                     .fontWeight(.bold)
+                
                 Spacer()
             }
             
-            //이용 가능 시간 라벨
-            ScrollView(.horizontal) {
-                LazyHStack {
-                    ForEach(chargerMap.availableTimeArray.indices, id: \.self) { index in
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 20)
-                                .frame(width: 110, height: 25)
-                                .foregroundColor(Color("#1ABC9C"))
-                                .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
-                            
-                            Text(chargerMap.availableTimeArray[index])
-                                .foregroundColor(Color.white)
-                                .font(.footnote)
-                                .fontWeight(.bold)
+            if chargerMap.availableTimeArray.count == 0 {
+                Text("항시 충전 가능").padding(.top)
+            }
+            else if chargerMap.availableTimeArray.count > 0 {
+                //이용 가능 시간 라벨
+                ScrollView(.horizontal) {
+                    LazyHStack {
+                        ForEach(chargerMap.availableTimeArray.indices, id: \.self) { index in
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 20)
+                                    .frame(width: 120, height: 25)
+                                    .foregroundColor(Color("#1ABC9C"))
+                                    .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                                
+                                Text(chargerMap.availableTimeArray[index])
+                                    .foregroundColor(Color.white)
+                                    .font(.footnote)
+                                    .fontWeight(.bold)
+                            }
                         }
                     }
                 }
+                .frame(maxWidth: .infinity)
+                
+                Text("위 시간대 이용 가능")
+                    .font(.footnote)
             }
-            .frame(minHeight: 30, maxHeight: 40)
-            
-            Text(chargerMap.availableTimeArray.count > 0 ? "위 시간대 이용 가능" : "항시 충전 가능합니다.")
-                .font(.footnote)
         }
     }
 }
@@ -264,7 +283,7 @@ struct ChargingProgressButton: View {
                                 .fontWeight(.bold)
                                 .foregroundColor(Color.white)
                                 .padding(.horizontal)
-                                .frame(maxWidth: .infinity, maxHeight: 40)
+                                .frame(maxWidth: .infinity, minHeight: 40)
                                 .background(Color("#C0392B"))
                         }
                     )
@@ -292,7 +311,7 @@ struct ChargingProgressButton: View {
                                 .fontWeight(.bold)
                                 .foregroundColor(Color.white)
                                 .padding(.horizontal)
-                                .frame(maxWidth: .infinity, maxHeight: 40)
+                                .frame(maxWidth: .infinity, minHeight: 40)
                                 .background(Color("#3498DB"))
                         }
                     )
@@ -312,7 +331,7 @@ struct ChargingProgressButton: View {
                             .fontWeight(.bold)
                             .foregroundColor(Color.white)
                             .padding(.horizontal)
-                            .frame(maxWidth: .infinity, maxHeight: 40)
+                            .frame(maxWidth: .infinity, minHeight: 40)
                             .background(Color("#C0392B"))
                     }
                 )
@@ -359,7 +378,7 @@ struct InstantChargeButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .background(reservation.isUserReservation ? Color("#EFEFEF") : Color("#3498DB"))
             }
         )
@@ -384,7 +403,7 @@ struct ReservationChargeButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .background(reservation.isUserReservation ? Color("#EFEFEF") : Color("#3498DB"))
             }
         )
@@ -394,7 +413,7 @@ struct ReservationChargeButton: View {
 
 struct ChargerInfoModal_Previews: PreviewProvider {
     static var previews: some View {
-        ChargerInfoModal(chargerMap: ChargerMapViewModel(), chargerSearch: ChargerSearchViewModel(), reservation: ReservationViewModel(), purchase: PurchaseViewModel(), point: PointViewModel())
+        ChargerInfoModal(chargerMap: ChargerMapViewModel(), chargerSearch: ChargerSearchViewModel(), reservation: ReservationViewModel(), purchase: PurchaseViewModel(), point: PointViewModel(), favorites: FavoritesViewModel())
         ChargerAvailableTime(chargerMap: ChargerMapViewModel(), reservation: ReservationViewModel())
     }
 }

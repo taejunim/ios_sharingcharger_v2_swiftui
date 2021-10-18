@@ -40,6 +40,8 @@ class SignInViewModel: ObservableObject {
             onSuccess: { (signIn) in
                 signinStatus = "success"
                 completion(signinStatus)
+                
+                print(signIn)
             },
             //로그인 실패
             onFailure: { (error) in

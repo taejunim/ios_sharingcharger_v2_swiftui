@@ -71,7 +71,7 @@ struct ChangeNextStepButton: View {
                             .fontWeight(.bold)
                             .foregroundColor(Color.white)
                             .padding(.horizontal)
-                            .frame(maxWidth: .infinity, maxHeight: 40)
+                            .frame(maxWidth: .infinity, minHeight: 40)
                             .background(Color("#3498DB"))
                     }
                 )
@@ -185,7 +185,6 @@ struct ChangeCompleteButton: View {
                     }
                     
                 }
-                
             },
             label: {
                 Text("button.password.complete".localized())
@@ -193,7 +192,7 @@ struct ChangeCompleteButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .background(Color("#3498DB"))   //회원가입 정보 입력에 따른 배경색상 변경
             }
         )

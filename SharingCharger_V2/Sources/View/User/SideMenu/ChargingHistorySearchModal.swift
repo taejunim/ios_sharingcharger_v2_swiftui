@@ -167,7 +167,7 @@ struct HistorySearchButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .background(Color("#3498DB"))
             }
         )

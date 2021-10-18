@@ -114,7 +114,12 @@ extension PaymentWebView.Coordinator: WKUIDelegate {
     }
     
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        webView.scrollView.bounces = false
+        webView.scrollView.showsHorizontalScrollIndicator = false
+        webView.scrollView.scrollsToTop = true
         
+        webView.scrollView.setContentOffset(.zero, animated: true)
     }
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

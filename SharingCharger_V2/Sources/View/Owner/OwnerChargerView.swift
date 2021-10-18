@@ -173,7 +173,7 @@ struct OwnerChargerList: View {
                                             .font(.headline)
                                             .fontWeight(.bold)
                                         
-                                        Text(bleNumber.suffix(5))
+                                        Text("(" + bleNumber.suffix(5) + ")")
                                             .font(.subheadline)
                                     }
                                     

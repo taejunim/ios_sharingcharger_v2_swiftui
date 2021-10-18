@@ -31,7 +31,6 @@ class UserInfoViewModel: ObservableObject {
     @Published var phone: String = ""            //전화번호
     @Published var authNumber: String = ""       //인증번호
     
-    
     @Published var isAuthRequest: Bool = false  //인증 요청 여부
     @Published var isReRequest: Bool = false    //인증 재요청 여부
     @Published var receivedAuthNumber: String = ""  //API 호출 인증번호
@@ -109,9 +108,7 @@ class UserInfoViewModel: ObservableObject {
                         }
                     }
                 }
-                
             },
-            
             //아이디(이메일) 찾기 API 호출 실패
             onFailure: { (error) in
                 self.isFindAccount = false
@@ -133,10 +130,10 @@ class UserInfoViewModel: ObservableObject {
                 }
                 
                 self.viewUtil.isLoading = false //로딩 종료
-                
             }
         )
     }
+    
     //MARK: - 비밀번호 변경 실행(로그인 한 상태)
     func requestChangePassword(completion: @escaping (String) -> Void){
         viewUtil.isLoading = true   //로딩 시작
@@ -145,6 +142,7 @@ class UserInfoViewModel: ObservableObject {
             "currentPassword": currentPassword,     //현재 비밀번호
             "password": newPassword                 //새 비밀번호
         ]
+        
         let userId = UserDefaults.standard.string(forKey: "userId") ?? "User ID"
         
         //아이디(이메일) 찾기 API 호출
@@ -159,10 +157,8 @@ class UserInfoViewModel: ObservableObject {
                 
                 completion(self.result)
             },
-            
             //아이디(이메일) 찾기 API 호출 실패
             onFailure: { (error) in
-                
                 switch error {
                     //에러
                 case .responseSerializationFailed:
@@ -175,12 +171,14 @@ class UserInfoViewModel: ObservableObject {
                     self.viewUtil.showToast(isShow: true, message: "server.error".message())    //서버 에러 메시지 출력
                     break
                 }
+                
                 self.viewUtil.isLoading = false //로딩 종료
                 
                 completion(self.result)
             }
         )
     }
+    
     //MARK: - 비밀번호 초기화 후 변경 실행(로그인 안한 상태)
     func requestResetPassword(completion: @escaping (String) -> Void){
         viewUtil.isLoading = true   //로딩 시작
@@ -200,7 +198,6 @@ class UserInfoViewModel: ObservableObject {
                 
                 completion(self.result)
             },
-            
             //아이디(이메일) 찾기 API 호출 실패
             onFailure: { (error) in
                 
@@ -271,6 +268,7 @@ class UserInfoViewModel: ObservableObject {
             }
         )
     }
+    
     //MARK: - 인증 시간 카운트다운 실행
     func authTimer() {
         if isStartTimer {
@@ -294,6 +292,7 @@ class UserInfoViewModel: ObservableObject {
             }
         }
     }
+    
     //MARK: - 인증번호 확인 실행
     func checkAuthNumber() {
         isShowToast = true  //Toast 팝업 호출 여부
@@ -320,6 +319,7 @@ class UserInfoViewModel: ObservableObject {
             viewUtil.showToast(isShow: isShowToast, message: "input.empty.auth.number".message())   //인증번호 미입력 메시지
         }
     }
+    
     //MARK: - 이름 유효성 검사
     func isNameValid() -> Bool {
         let regExp = "^[가-힣ㄱ-ㅎㅏ-ㅣ]{2,10}$"  //한글 (2~10자)
@@ -327,6 +327,7 @@ class UserInfoViewModel: ObservableObject {
         
         return predicate.evaluate(with: name)
     }
+    
     //MARK: - 휴대전화번호 유효성 검사
     func isPhoneNumberValid() -> Bool {
         let regExp = "^[0-9]{10,11}$" //숫자 (10~11자)
@@ -334,6 +335,7 @@ class UserInfoViewModel: ObservableObject {
         
         return predicate.evaluate(with: phone)
     }
+    
     //MARK: - 인증번호 유효성 검사
     func isAuthNumberValid() -> Bool {
         let regExp = "^[0-9]{6,6}$" //숫자 (6자)
@@ -341,6 +343,7 @@ class UserInfoViewModel: ObservableObject {
         
         return predicate.evaluate(with: authNumber)
     }
+    
     //MARK: - 아이디(이메일) 유효성 검사
     func isIdValid() -> Bool {
         let regExp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,64}" //아매알 형식
@@ -348,6 +351,7 @@ class UserInfoViewModel: ObservableObject {
         
         return predicate.evaluate(with: email)
     }
+    
     //MARK: - 비밀번호 유효성 검사
     func isCurrentPasswordValid() -> Bool {
         let regExp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*?])(?=.*[0-9])[a-zA-Z\\d!@#$%^&*?]{6,20}"   //영문, 숫자, 특수문자 (6~20자)
@@ -355,6 +359,7 @@ class UserInfoViewModel: ObservableObject {
         
         return predicate.evaluate(with: currentPassword)
     }
+    
     //MARK: - 비밀번호 유효성 검사
     func isPasswordValid() -> Bool {
         let regExp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*?])(?=.*[0-9])[a-zA-Z\\d!@#$%^&*?]{6,20}"   //영문, 숫자, 특수문자 (6~20자)
@@ -374,6 +379,7 @@ class UserInfoViewModel: ObservableObject {
     //MARK: - 유효성 검사
     func validationCheck() -> Bool {
         isValidation = true
+        
         //이름 입력 여부 확인
         if name.isEmpty {
             viewUtil.showToast(isShow: true, message: "input.empty.name".message())
@@ -386,6 +392,7 @@ class UserInfoViewModel: ObservableObject {
                 return false
             }
         }
+        
         //아이디(이메일) 입력 여부 확인
         if viewPath == "changePassword"{ //비밀번호 변경 화면일 때
             
@@ -414,15 +421,16 @@ class UserInfoViewModel: ObservableObject {
                 return false
             }
         }
+        
         //인증 완료 여부 확인
         if !isAuthComplete {
             viewUtil.showToast(isShow: true, message: "auth.not.complete".message())
             return false
         }
         
-        
         return true
     }
+    
     //MARK: - 비밀번호 유효성 검사
     func passwordValidationCheck() -> Bool {
         isValidation = true
@@ -477,6 +485,7 @@ class UserInfoViewModel: ObservableObject {
         
         return true
     }
+    
     //MARK: - 화면 초기화
     func viewReset() {
         
@@ -502,6 +511,7 @@ class UserInfoViewModel: ObservableObject {
         minutesRemaining = 3    //타이머 분 시간 설정(기본값: 3)
         secondsRemaining = 0    //타이머 초 시간 설정(기본값: 0)
     }
+    
     //MARK: - 화면 초기화
     func changePwViewReset() {
         isValidation = false

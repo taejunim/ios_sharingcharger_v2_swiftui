@@ -118,6 +118,7 @@ struct ChargerUsageTime: Codable {
     let updated: String
 }
 
+//MARK: - 할당된 충전기 정보
 struct AssignedCharger: Codable {
     let content: [OwnerCharger]
     let pageable: Pageable
@@ -130,27 +131,4 @@ struct AssignedCharger: Codable {
     let size: Int
     let number: Int
     let empty: Bool
-}
-
-struct ChargerModel: Identifiable, Codable{
-    let id: String
-    let markerId: Int
-    let longitude: Double   //경도
-    let latitude: Double    //위도
-    let markerName: String  //충전기 이름
-    let address: String     //주소
-    
-    
-    init(id: String = UUID().uuidString, markerId: Int, longitude: Double, latitude: Double, markerName: String, address: String){
-        self.id = id
-        self.markerId = markerId
-        self.longitude = longitude
-        self.latitude = latitude
-        self.markerName = markerName
-        self.address = address
-    }
-    
-    func updateCompletion() -> ChargerModel{
-        return ChargerModel(id: id, markerId: markerId, longitude: longitude, latitude: latitude , markerName: markerName, address: address)
-    }
 }

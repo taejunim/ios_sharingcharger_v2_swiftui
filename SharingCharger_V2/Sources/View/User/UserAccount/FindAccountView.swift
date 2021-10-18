@@ -72,7 +72,7 @@ struct FindAccountButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .background(Color("#3498DB"))
             }
         )
@@ -127,7 +127,7 @@ struct FindAccountPopup: View {
                                 .fontWeight(.bold)
                                 .foregroundColor(Color.white)
                                 .padding(.horizontal)
-                                .frame(maxWidth: .infinity, maxHeight: 35)
+                                .frame(maxWidth: .infinity, minHeight: 35)
                                 .background(Color("#3498DB"))
                                 .cornerRadius(5.0)
                                 .shadow(color: Color.gray, radius: 1, x: 1.5, y: 1.5)

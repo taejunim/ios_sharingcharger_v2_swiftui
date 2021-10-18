@@ -58,6 +58,8 @@ class EmailHelper: NSObject, MFMailComposeViewControllerDelegate {
             dialogMessage = "이메일 문의가 전송되었습니다.\n빠른 시일내로 답변드리겠습니다."
         case MFMailComposeResult.failed :
             dialogMessage = "이메일 문의 전송에 실패하였습니다.\n다시 시도해주세요."
+        @unknown default:
+            break
         }
         
         let dialog = UIAlertController(title:"", message : dialogMessage, preferredStyle: .alert)

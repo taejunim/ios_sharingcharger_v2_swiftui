@@ -22,6 +22,13 @@ struct ChargerDetailView: View {
         .navigationBarTitle(Text("충전기 관리"), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)        //기본 Back 버튼 숨김
         .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
+        .onAppear {
+            UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(named: "#8E44AD")    //Picker 배경 색상
+        }
+        .onDisappear {
+            UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(named: "#3498DB")    //Picker 배경 색상
+        }
+        
         Spacer()
     }
     
@@ -40,7 +47,7 @@ struct OwnerChargerDetailMenu: View{
     
     var body: some View {
         
-        HStack(spacing: 0) {
+        HStack {
             Button(
                 action: {
                     isShowChargerDetailMain = true
@@ -53,13 +60,15 @@ struct OwnerChargerDetailMenu: View{
                     Image("Button-Home")
                         .resizable()
                         .renderingMode(.template)
-                        .frame(width: 40, height: 40)
-                        .padding(5)
-                        .foregroundColor(isShowChargerDetailMain ? Color("#8E44AD"): .black)
+                        .padding(2)
+                        .frame(width: 35, height: 35)
+                        .foregroundColor(isShowChargerDetailMain ? Color("#8E44AD") : Color("#5E5E5E"))
                 }
             )
+            
             Spacer()
-            HStack(spacing: 2) {
+            
+            HStack {
                 Button(
                     action: {
                         isShowChargerDetailMain = false
@@ -72,9 +81,8 @@ struct OwnerChargerDetailMenu: View{
                         Image("Button-Coin")
                             .resizable()
                             .renderingMode(.template)
-                            .frame(width: 40, height: 40)
-                            .padding(5)
-                            .foregroundColor(isShowChargerPriceSetting ? Color("#8E44AD"): .black)
+                            .frame(width: 35, height: 35)
+                            .foregroundColor(isShowChargerPriceSetting ? Color("#8E44AD") : Color("#5E5E5E"))
                         }
                 )
                 
@@ -91,12 +99,13 @@ struct OwnerChargerDetailMenu: View{
                             Image("Button-Clock")
                                 .resizable()
                                 .renderingMode(.template)
-                                .frame(width: 40, height: 40)
-                                .padding(5)
-                                .foregroundColor(isShowChargerOperateTimeSetting ? Color("#8E44AD"): .black)
+                                .padding(3)
+                                .frame(width: 35, height: 35)
+                                .foregroundColor(isShowChargerOperateTimeSetting ? Color("#8E44AD") : Color("#5E5E5E"))
                             }
                     )
                 }
+                
                 Button(
                     action: {
                         isShowChargerDetailMain = false
@@ -109,11 +118,11 @@ struct OwnerChargerDetailMenu: View{
                         Image("Button-Edit")
                             .resizable()
                             .renderingMode(.template)
-                            .frame(width: 40, height: 40)
-                            .padding(5)
-                            .foregroundColor(isShowChargerInformationEdit ? Color("#8E44AD"): .black)
+                            .frame(width: 35, height: 35)
+                            .foregroundColor(isShowChargerInformationEdit ? Color("#8E44AD") : Color("#5E5E5E"))
                         }
                 )
+                
                 Button(
                     action: {
                         isShowChargerDetailMain = false
@@ -126,21 +135,18 @@ struct OwnerChargerDetailMenu: View{
                         Image("Button-Credit-Card")
                             .resizable()
                             .renderingMode(.template)
-                            .frame(width: 40, height: 40)
-                            .padding(5)
-                            .foregroundColor(isShowChargerHistory ? Color("#8E44AD"): .black)
+                            .padding(.horizontal, 2)
+                            .padding(.top, 3)
+                            .frame(width: 35, height: 35)
+                            .foregroundColor(isShowChargerHistory ? Color("#8E44AD") : Color("#535353"))
                         }
                 )
             }
         }
-        .padding(.trailing, 10)
-        .padding(.top, 10)
-        .padding(.leading, 10)
-        .padding(.bottom, 10)
-            
+        .padding(.horizontal)
+        .padding(.vertical, 10)
 
         //선택된 메뉴에 따라 내부 Content Show/Hide
-        
         if self.isShowChargerDetailMain {
             OwnerChargerDetailMain(chargerDetailViewModel: chargerDetailViewModel, chargerId: chargerId)
         }

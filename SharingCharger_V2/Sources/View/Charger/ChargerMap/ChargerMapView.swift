@@ -17,6 +17,7 @@ struct ChargerMapView: View {
     @ObservedObject var point = PointViewModel()    //포인트 View Model
     @ObservedObject var purchase = PurchaseViewModel()  //포인트 구매 View Model
     @ObservedObject var charging = ChargingViewModel()  //포인트 구매 View Model
+    @ObservedObject var favorites = FavoritesViewModel()
     
     var body: some View {
         //로그아웃 시, 로그인 화면으로 이동
@@ -74,6 +75,7 @@ struct ChargerMapView: View {
                         //지도의 마커 선택 시 해당 마커의 ID 호출
                         selectedMarker: { (markerId) in
                             chargerMap.selectedCharger(chargerId: markerId) //충전기 마커 선택 시, 함수 실행(충전기 정보, 예약현황 등)
+                            favorites.getChargerFavorite(chargerId: String(markerId))
                         },
                         //지도 탭 이벤트 발생 시 실행(마커 선택 제외)
                         isTapOn: { (isTapOn) in
@@ -90,7 +92,7 @@ struct ChargerMapView: View {
                     FrameView(sideMenu: sideMenu, chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)
                     
                     //충전기 정보 Modal View
-                    ChargerInfoModal(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase, point: point)
+                    ChargerInfoModal(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase, point: point, favorites: favorites)
                     
                     //로딩 표시 여부에 따라 표출
                     if chargerMap.viewUtil.isLoading {
@@ -99,7 +101,7 @@ struct ChargerMapView: View {
                     
                     //사이드 메뉴 표시 여부에 따라 노출
                     if sideMenu.isShowMenu {
-                        SideMenuView(sideMenu: sideMenu, reservation: reservation, point: point, purchase: purchase)    //사이드 메뉴
+                        SideMenuView(sideMenu: sideMenu, chargerMap: chargerMap, reservation: reservation, point: point, purchase: purchase, favorites: favorites)    //사이드 메뉴
                     }
                     
                     //충전하기 버튼 클릭 시, 충전 화면 이동
@@ -132,8 +134,12 @@ struct ChargerMapView: View {
                         }
                         
                         //결제 완료 시, '결제 완료 알림창' 호출
-                        if purchase.showCompletionAlert {
+                        if purchase.isShowCompletionAlert {
                             PaymentCompletionAlert(purchase: purchase, point: point, reservation: reservation)  //결제 완료 알림창
+                        }
+                        
+                        if purchase.isShowFailedAlert {
+                            PaymentFailedAlert(purchase: purchase)
                         }
                     }
                 }

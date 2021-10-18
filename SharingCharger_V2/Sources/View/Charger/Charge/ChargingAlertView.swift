@@ -80,7 +80,7 @@ struct ChargingAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#C0392B"))
                                     .cornerRadius(5.0)
                                     .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
@@ -98,7 +98,9 @@ struct ChargingAlert: View {
                                     chargerSearch.chargingEndDate = calcDate //충전 종료일시
 
                                     //즉시 충전 예약 실행
-                                    reservation.reservation(chargerId: chargerMap.selectChargerId,  //충전기 ID
+                                    reservation.reservation(
+                                        chargerId: chargerMap.selectChargerId,  //충전기 ID
+                                        chargeReservationType: "Instant",   //충전 예약 유형
                                         chargerSearch.chargingStartDate!,   //충전 시작일시
                                         chargerSearch.chargingEndDate!  //충전 종료일시
                                     ) { (result, reservation) in
@@ -141,7 +143,7 @@ struct ChargingAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#3498DB"))
                                     .cornerRadius(5.0)
                                     .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
@@ -239,16 +241,19 @@ struct ReservationConfirmAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#C0392B"))
                                     .cornerRadius(5.0)
                                     .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
                             }
                         )
                         
+                        //예약 버튼
                         Button(
                             action: {
-                                reservation.reservation(chargerId: chargerMap.selectChargerId,  //충전기 ID
+                                reservation.reservation(
+                                    chargerId: chargerMap.selectChargerId,  //충전기 ID
+                                    chargeReservationType: "Scheduled", //충전 예약 유형
                                     chargerSearch.chargingStartDate!,   //충전 시작일시
                                     chargerSearch.chargingEndDate!  //충전 종료일시
                                 ) { (result, reservation) in
@@ -280,7 +285,7 @@ struct ReservationConfirmAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#3498DB"))
                                     .cornerRadius(5.0)
                                     .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
@@ -340,7 +345,7 @@ struct CancelReservationAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#C0392B"))
                                     .cornerRadius(5.0)
                                     .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
@@ -350,10 +355,10 @@ struct CancelReservationAlert: View {
                         //예약 취소 확인 버튼
                         Button(
                             action: {
-                                let reservationType = UserDefaults.standard.string(forKey: "reservationType")   //예약 유형 - 즉시 충전, 예약 충전
+                                let chargeReservationType = reservation.chargeReservationType   //충전 예약 유형 - Instant: 즉시 충전, Scheduled:예약 충전
                                 
                                 //즉시 충전 예약 취소
-                                if reservationType == "Instant" {
+                                if chargeReservationType == "Instant" {
                                     //즉시 충전 예약 취소 실행
                                     reservation.cancelInstantCharge() { (result) in
                                         reservation.isShowCancelAlert = false //예약 취소 알림창 비활성화
@@ -374,7 +379,7 @@ struct CancelReservationAlert: View {
                                     }
                                 }
                                 //충전기 예약 충전 취소
-                                else if reservationType == "Scheduled" {
+                                else if chargeReservationType == "Scheduled" {
                                     //충전기 예약 취소 실행
                                     reservation.cancelReservation() { (result) in
                                         reservation.isShowCancelAlert = false //예약 취소 알림창 비활성화
@@ -400,7 +405,7 @@ struct CancelReservationAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#3498DB"))
                                     .cornerRadius(5.0)
                                     .shadow(color: Color.gray, radius: 1, x: 1.5, y: 1.5)
@@ -456,6 +461,7 @@ struct ChargingResultAlert: View {
                     
                     Spacer()
                     
+                    //충전 결과 알림 확인 버튼
                     Button(
                         action: {
                             withAnimation {
@@ -463,7 +469,7 @@ struct ChargingResultAlert: View {
                                 chargerMap.isShowChargingView = false
                             }
                             
-                            reservation.getUserReservation()
+                            reservation.getUserReservation()    //사용자의 예약 정보 재호출
                             
                             //충전기 목록 재조회
                             charging.getCurrentDate() { (currentDate) in

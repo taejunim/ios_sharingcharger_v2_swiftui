@@ -17,85 +17,140 @@ struct OwnerChargerDetailMain: View {
     
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 15) {
         
             let charger = chargerDetailViewModel.charger
             let name: String = charger["name"] ?? ""
             let bleNumber: String = charger["bleNumber"] ?? ""
             let providerCompanyName: String = charger["providerCompanyName"] ?? ""
             let address: String = charger["address"] ?? ""
+            let detailAddress: String = charger["detailAddress"] ?? ""
             let parkingFeeFlag: String = charger["parkingFeeFlag"] ?? ""
             let parkingFeeDescription: String = charger["parkingFeeDescription"] ?? ""
             let description: String = charger["description"] ?? ""
             
             Text(name)
-                .font(.title)
+                .font(.title2)
                 .fontWeight(.bold)
             
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Image("Label-Bluetooth")
-                    .resizable()
-                    .renderingMode(.template)
-                    .frame(width: 30, height: 30)
-                    .foregroundColor(Color("#8E44AD"))
-                Text(bleNumber)
-                Spacer()
-            }
-            
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Image("Label-Building")
-                    .resizable()
-                    .renderingMode(.template)
-                    .frame(width: 30, height: 30)
-                    .foregroundColor(Color("#8E44AD"))
-                Text(providerCompanyName)
-                Spacer()
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Image("Label-Map")
-                    .resizable()
-                    .renderingMode(.template)
-                    .frame(width: 30, height: 30)
-                    .foregroundColor(Color("#8E44AD"))
-                VStack(alignment: .leading){
-                    Text("주소")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                    Text(address)
+            VStack(spacing: 15) {
+                HStack(spacing: 10){
+                    Image("Label-Bluetooth")
+                        .resizable()
+                        .renderingMode(.template)
+                        .padding(3)
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(Color("#8E44AD"))
+                    
+                    Text(bleNumber)
+                    
+                    Spacer()
                 }
-                Spacer()
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Image("Label-Car")
-                    .resizable()
-                    .renderingMode(.template)
-                    .frame(width: 30, height: 30)
-                    .foregroundColor(Color("#8E44AD"))
-                VStack(alignment: .leading){
-                    Text("주차")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                    Text(parkingFeeFlag)
-                    Text(parkingFeeDescription)
+                
+                HStack(spacing: 10){
+                    Image("Label-Building")
+                        .resizable()
+                        .renderingMode(.template)
+                        .padding(3)
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(Color("#8E44AD"))
+                    
+                    Text(providerCompanyName)
+                    
+                    Spacer()
                 }
-                Spacer()
-            }.padding(.top)
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Image("Label-Car")
-                    .resizable()
-                    .renderingMode(.template)
-                    .frame(width: 30, height: 30)
-                    .foregroundColor(Color("#8E44AD"))
-                VStack(alignment: .leading){
-                    Text("설명")
-                        .font(.headline)
-                        .fontWeight(.bold)
-                    Text(description)
+                
+                VStack(spacing: 3) {
+                    HStack(spacing: 10) {
+                        Image("Label-Map")
+                            .resizable()
+                            .renderingMode(.template)
+                            .padding(2)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(Color("#8E44AD"))
+                        
+                        Text("주소")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                        
+                        Spacer()
+                    }
+                    
+                    HStack(spacing: 10) {
+                        Spacer().frame(width: 30)
+                        
+                        VStack(alignment: .leading) {
+                            Text(address)
+                            
+                            Text(detailAddress != "" ? detailAddress : "-")
+                                .foregroundColor(Color.gray)
+                        }
+                        
+                                
+                        Spacer()
+                    }
                 }
-                Spacer()
+                
+                VStack(spacing: 3) {
+                    HStack(spacing: 10){
+                        Image("Label-Car")
+                            .resizable()
+                            .renderingMode(.template)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(Color("#8E44AD"))
+                        
+                        VStack(alignment: .leading) {
+                            Text("주차")
+                                .font(.headline)
+                                .fontWeight(.bold)
+                        }
+                        
+                        Spacer()
+                    }
+                    
+                    HStack(spacing: 10) {
+                        Spacer().frame(width: 30)
+                        
+                        VStack(alignment: .leading) {
+                            Text(parkingFeeFlag)
+                            
+                            if parkingFeeDescription != "" {
+                                Text(parkingFeeDescription)
+                            }
+                        }
+                                
+                        Spacer()
+                    }
+                }
+                
+                VStack(spacing: 3) {
+                    HStack(spacing: 10){
+                        Image("Label-Document")
+                            .resizable()
+                            .renderingMode(.template)
+                            .padding(3)
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(Color("#8E44AD"))
+                        
+                        Text("설명")
+                            .font(.headline)
+                            .fontWeight(.bold)
+                        
+                        Spacer()
+                    }
+                    
+                    HStack(spacing: 10) {
+                        Spacer().frame(width: 30)
+                        
+                        Text(description != "" ? description : "-")
+                        
+                        Spacer()
+                    }
+                }
             }
+            .padding(.horizontal, 10)
         }
-        .padding(10)
+        .padding()
         .onAppear{
             startTimer()
         }.onReceive(timer) { _ in
@@ -103,14 +158,15 @@ struct OwnerChargerDetailMain: View {
             stopTimer()
         }
     }
+    
     func startTimer() {
         timer = Timer.publish(every: 0.1, on: .main, in: .common)
         _ = timer.connect()
     }
+    
     func stopTimer() {
         timer.connect().cancel()
     }
-
 }
 
 //소유주 충전기 단가 설정
@@ -182,7 +238,7 @@ struct OwnerChargerPriceSetting: View {
             ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "price", chargerId: chargerId, viewUtil: viewUtil)
                 
         }
-        .padding(10)
+        .padding(15)
         .popup(
             isPresented: $viewUtil.isShowToast,   //팝업 노출 여부
             type: .floater(verticalPadding: 80),
@@ -206,76 +262,83 @@ struct OwnerChargerOperateTimeSetting: View {
     
     var body: some View {
         
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 15) {
             
             Text("충전기 운영 시간 설정")
-                .font(.title)
+                .font(.title2)
                 .fontWeight(.bold)
                 .lineSpacing(30)
             
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
+            HStack {
                 Text("현재 운영 시간")
-                    .frame(width : 130)
                 
-                //변경 예정 시간
+                Spacer()
+                
                 DatePicker(
-                 "",
-                 selection: $chargerDetailViewModel.previousOpenTime,
+                    "",
+                    selection: $chargerDetailViewModel.previousOpenTime,
                     displayedComponents: [.hourAndMinute]
-                 )
-                 .labelsHidden()
-                 .accentColor(.black)
-                 .disabled(true)
-                 .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
-                Text(" ~ ")
-                //변경 예정 시간
+                )
+                .labelsHidden()
+                .accentColor(.black)
+                .disabled(true)
+                .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                
+                Text("~")
+                
                 DatePicker(
-                 "",
-                 selection: $chargerDetailViewModel.previousCloseTime
-                    
-                    ,
+                    "",
+                    selection: $chargerDetailViewModel.previousCloseTime,
                     displayedComponents: [.hourAndMinute]
-                 )
-                 .labelsHidden()
-                 .accentColor(.black)
-                 .disabled(true)
-                 .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                )
+                .labelsHidden()
+                .accentColor(.black)
+                .disabled(true)
+                .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
             }
-            .frame(height: 50)
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
+            .padding(.horizontal, 10)
+            
+            HStack {
                 Text("변경 예정 시간")
-                    .frame(width : 130)
-
-                //변경 예정 시간
+                
+                Spacer()
+                
                 DatePicker(
-                 "",
-                 selection: $chargerDetailViewModel.openTime,
+                    "",
+                    selection: $chargerDetailViewModel.openTime,
                     displayedComponents: [.hourAndMinute]
-                 )
-                 .labelsHidden()
-                 .accentColor(.black)
-                 .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
-                Text(" ~ ")
-                //변경 예정 시간
+                )
+                .labelsHidden()
+                .accentColor(.black)
+                .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                
+                Text("~")
+                
                 DatePicker(
-                 "",
-                 selection: $chargerDetailViewModel.closeTime,
+                    "",
+                    selection: $chargerDetailViewModel.closeTime,
                     displayedComponents: [.hourAndMinute]
-                 )
-                 .labelsHidden()
-                 .accentColor(.black)
-                 .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                )
+                .labelsHidden()
+                .accentColor(.black)
+                .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
             }
-            .frame(height: 50)
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
+            .padding(.horizontal, 10)
+            
+            
+            HStack {
                 Text("* 시간 변경시 2일 후 적용됩니다.")
+                    .foregroundColor(Color("#C0392B"))
+                
+                Spacer()
             }
             
             Spacer()
             
             ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "time", chargerId: chargerId, viewUtil: viewUtil)
                 
-        }.padding(10)
+        }
+        .padding()
         .popup(
             isPresented: $viewUtil.isShowToast,   //팝업 노출 여부
             type: .floater(verticalPadding: 80),
@@ -638,7 +701,7 @@ struct OwnerChargerHistorySearchButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .background(Color("#3498DB"))   //회원가입 정보 입력에 따른 배경색상 변경
             }
         )
@@ -752,5 +815,14 @@ struct OwnerChargerHistorySearchModal: View {
         Spacer()
         
         OwnerChargerHistorySearchButton(chargerDetailViewModel: chargerDetailViewModel, chargerId: chargerId)
+    }
+}
+
+
+struct OwnerChargerDetailMain_Previews: PreviewProvider {
+    
+    static var previews: some View {
+        OwnerChargerDetailMain(chargerDetailViewModel: ChargerDetailViewModel(), chargerId: "")
+        OwnerChargerOperateTimeSetting(chargerDetailViewModel: ChargerDetailViewModel(), chargerId: "107")
     }
 }

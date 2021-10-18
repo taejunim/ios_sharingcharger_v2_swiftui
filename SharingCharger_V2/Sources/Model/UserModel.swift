@@ -23,3 +23,13 @@ struct User: Codable {
     let created: String?    //생성 일자
     let updated: String?    //갱신 일자
 }
+
+//MARK: - 즐겨찾기 정보
+struct Favorites: Hashable ,Codable {
+    let chargerId: String
+    let chargerName: String
+    let address: String
+    let detailAddress: String
+    let latitude: Double
+    let longitude: Double
+}

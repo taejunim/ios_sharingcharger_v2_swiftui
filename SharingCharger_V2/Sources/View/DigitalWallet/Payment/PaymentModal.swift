@@ -25,12 +25,11 @@ struct PaymentModal: View {
     
                         //결제 창에서 취소 클릭 시, 현재 창 닫기
                         if code == "W002" || code == "W324" || code == "W344" {
+                            purchase.isPayment = false   //결제 성공 여부
+                            
                             withAnimation {
-                                self.presentationMode.wrappedValue.dismiss()    //현재 화면 닫기
-                                //purchase.showPaymentInputAlert = false //포인트 충전 알림창 닫기
-                                purchase.isPayment = false   //결제 성공 여부
-                                
-                                //purchase.showCompletionAlert = true
+                               // self.presentationMode.wrappedValue.dismiss()    //현재 화면 닫기
+                                purchase.isShowPaymentInputAlert = false //포인트 충전 알림창 닫기
                             }
                         }
                         //코드가 없는 메시지
@@ -44,21 +43,30 @@ struct PaymentModal: View {
                         if code == "success" {
                             print("Payment Result: \(code) - \(content)")
                             
+                            purchase.isPayment = true   //결제 성공 여부
+                            purchase.isShowPaymentInputAlert = false //포인트 충전 알림창 닫기
+                            
                             withAnimation {
-                                self.presentationMode.wrappedValue.dismiss()    //현재 화면 닫기
-                                
-                                purchase.isShowPaymentInputAlert = false //포인트 충전 알림창 닫기
-                                purchase.isPayment = true   //결제 성공 여부
+                                //self.presentationMode.wrappedValue.dismiss()    //현재 화면 닫기
+                                purchase.isShowCompletionAlert = true
                             }
                         }
                         //결제 실패
                         else if code == "fail" {
                             print("Payment Result: \(code) - \(content)")
+                            
+                            purchase.isPayment = false   //결제 성공 여부
+                            
+                            withAnimation {
+                                self.presentationMode.wrappedValue.dismiss()    //현재 화면 닫기
+                                purchase.isShowFailedAlert = true
+                            }
                         }
                     }
                 }
             )
         }
+        .edgesIgnoringSafeArea(.all)
     }
 }
 

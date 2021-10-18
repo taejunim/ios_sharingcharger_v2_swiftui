@@ -78,9 +78,13 @@ struct DigitalWalletView: View {
             }
             
             //결제 완료 시, '결제 완료 알림창' 호출
-//            if purchase.showCompletionAlert {
-//                PaymentCompletionAlert(purchase: purchase, point: point, reservation: ReservationViewModel())
-//            }
+            if purchase.isShowCompletionAlert {
+                PaymentCompletionAlert(purchase: purchase, point: point, reservation: ReservationViewModel())
+            }
+            
+            if purchase.isShowFailedAlert {
+                PaymentFailedAlert(purchase: purchase)
+            }
         }
         .navigationBarTitle(Text("전자지갑"), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김

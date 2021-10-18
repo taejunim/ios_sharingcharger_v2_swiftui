@@ -130,20 +130,7 @@ class ChargerRegistViewModel: ObservableObject {
             
             if !detailAddress.trimmingCharacters(in: .whitespaces).isEmpty {
                 
-                if selectParkingFeeFlg {
-                    
-                    if !parkingFeeDescription.trimmingCharacters(in: .whitespaces).isEmpty {
-                        
-                        return true
-                    }
-                    else {
-                        toastMessage(message: "주차 요금 설명 항목을 입력하지 않았습니다.")
-                        return false
-                    }
-                }
-                else {
-                    return true
-                }
+                return true
             }
             else {
                 toastMessage(message: "상세주소 항목을 입력하지 않았습니다.")

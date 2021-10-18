@@ -62,6 +62,7 @@ struct ReservationContent: Codable {
 //MARK: - 사용자 예약 정보
 struct UserReservation: Codable {
     let id: Int
+    let instantChargeFlag: Bool
     let userId: Int
     let userName: String?
     let chargerId: Int

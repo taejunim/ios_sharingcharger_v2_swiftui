@@ -84,7 +84,7 @@ struct PointLackAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#C0392B"))
                                     .cornerRadius(5.0)
                                     .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
@@ -102,7 +102,7 @@ struct PointLackAlert: View {
                                     .fontWeight(.bold)
                                     .foregroundColor(Color.white)
                                     .padding(.horizontal)
-                                    .frame(maxWidth: .infinity, maxHeight: 35)
+                                    .frame(maxWidth: .infinity, minHeight: 35)
                                     .background(Color("#3498DB"))
                                     .cornerRadius(5.0)
                                     .shadow(color: Color.gray, radius: 1, x: 1.5, y: 1.5)
@@ -192,7 +192,7 @@ struct PaymentInputAlert:View {
                             Button(
                                 action: {
                                     purchase.isDirectlyInput = true //직접입력 활성화
-                                    purchase.paymentAmount = 0
+                                    //purchase.paymentAmount = 0
                                 },
                                 label: {
                                     ZStack {
@@ -257,7 +257,7 @@ struct PaymentInputAlert:View {
                                         .fontWeight(.bold)
                                         .foregroundColor(Color.white)
                                         .padding(.horizontal)
-                                        .frame(maxWidth: .infinity, maxHeight: 35)
+                                        .frame(maxWidth: .infinity, minHeight: 35)
                                         .background(Color("#C0392B"))
                                         .cornerRadius(5.0)
                                         .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
@@ -268,30 +268,17 @@ struct PaymentInputAlert:View {
                             Button(
                                 action: {
                                     purchase.viewUtil.dismissKeyboard()  //키보드 닫기
-                                    //purchase.checkPaymentAmount()   //결제금액 확인 후 결제 진행 실행
-                                    
-                                    //purchase.showPaymentModal = true
-                                    isShowAlert = true
+                                    purchase.checkPaymentAmount()   //결제금액 확인 후 결제 진행 실행
                                 },
                                 label: {
                                     Text("결제 진행")
                                         .fontWeight(.bold)
                                         .foregroundColor(Color.white)
                                         .padding(.horizontal)
-                                        .frame(maxWidth: .infinity, maxHeight: 35)
+                                        .frame(maxWidth: .infinity, minHeight: 35)
                                         .background(Color("#3498DB"))
                                         .cornerRadius(5.0)
                                         .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
-                                }
-                            )
-                            .alert(
-                                isPresented: $isShowAlert,
-                                content: {
-                                    Alert(
-                                        title: Text("서비스 이용 불가"),
-                                        message: Text("해당 기능은 추후 서비스 지원될 예정입니다.\n자세한 사항은 고객 센터에 문의 바랍니다."),
-                                        dismissButton: .destructive(Text("확인"))
-                                    )
                                 }
                             )
                         }
@@ -311,6 +298,12 @@ struct PaymentInputAlert:View {
                     purchase.paymentAmount = 0  //결제금액 초기화
                     purchase.stringPaymentAmount = "0"  //직접입력 결제금액 초기화
                 }
+//                .fullScreenCover(
+//                    isPresented: $purchase.isShowPaymentModal,
+//                    content: {
+//                        PaymentModal(purchase: purchase, point: point, reservation: reservation)    //결제 Web View 팝업
+//                    }
+//                )
                 .sheet(
                     isPresented: $purchase.isShowPaymentModal,
                     content: {
@@ -329,7 +322,7 @@ struct PaymentInputAlert:View {
                         purchase.viewUtil.toast()
                     }
                 )
-                
+
                 //로딩 표시 여부에 따라 표출
                 if purchase.viewUtil.isLoading {
                     purchase.viewUtil.loadingView() //로딩 화면
@@ -393,14 +386,71 @@ struct PaymentCompletionAlert: View {
                                 point.getCurrentPoint()
                             }
                             
-                            purchase.showCompletionAlert = false //결제 완료 알림창 열기
+                            purchase.isShowCompletionAlert = false //결제 완료 알림창 닫기
                         },
                         label: {
                             Text("확인")
                                 .fontWeight(.bold)
                                 .foregroundColor(Color.white)
                                 .padding(.horizontal)
-                                .frame(maxWidth: .infinity, maxHeight: 35)
+                                .frame(maxWidth: .infinity, minHeight: 35)
+                                .background(Color("#3498DB"))
+                                .cornerRadius(5.0)
+                                .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
+                        }
+                    )
+                    .padding(.horizontal, 10)
+                }
+                .padding(.vertical, 10)
+                .background(Color.white)
+                .cornerRadius(5.0)
+                .frame(width: geometryReader.size.width/1.2, height: 200)
+                .shadow(color: Color.black.opacity(0.3), radius: 1, x: 3, y: 3)
+            }
+            .padding()
+            .frame(width: geometryReader.size.width, height: geometryReader.size.height)
+            .background(Color.black.opacity(0.5))
+        }
+        .edgesIgnoringSafeArea(.all)
+    }
+}
+
+struct PaymentFailedAlert: View {
+    @ObservedObject var purchase: PurchaseViewModel
+    
+    var body: some View {
+        GeometryReader { geometryReader in
+            VStack {
+                VStack(spacing: 0) {
+                    HStack{
+                        Text("결제 실패")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                        
+                        Spacer()
+                    }
+                    .padding(.horizontal)
+                    
+                    HorizontalDividerline()
+                    
+                    Spacer()
+                    
+                    Text("결제가 실패하였습니다.다시 시도 바랍니다.\n문제가 지속될 시, 고객 센터에 문의 바랍니다.")
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 10)
+                    
+                    Spacer()
+                    
+                    Button(
+                        action: {
+                            purchase.isShowFailedAlert = false
+                        },
+                        label: {
+                            Text("확인")
+                                .fontWeight(.bold)
+                                .foregroundColor(Color.white)
+                                .padding(.horizontal)
+                                .frame(maxWidth: .infinity, minHeight: 35)
                                 .background(Color("#3498DB"))
                                 .cornerRadius(5.0)
                                 .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)

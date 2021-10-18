@@ -425,7 +425,7 @@ struct TermsAgreeButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .background(signUpViewModel.isGetContent ? Color("#3498DB") : Color("#EFEFEF"))
             }
         )
@@ -473,7 +473,7 @@ struct PrivacyAgreeButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .background(signUpViewModel.isGetContent ? Color("#3498DB") : Color("#EFEFEF"))
             }
         )
@@ -512,7 +512,7 @@ struct AccountRegistButton: View {
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
-                    .frame(maxWidth: .infinity, maxHeight: 40)
+                    .frame(maxWidth: .infinity, minHeight: 40)
                     .background(Color("#3498DB"))
             }
         )

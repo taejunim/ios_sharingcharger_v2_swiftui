@@ -12,9 +12,11 @@ struct SideMenuView: View {
     @Environment(\.presentationMode) var presentationMode
     
     @ObservedObject var sideMenu: SideMenuViewModel //사이드 메뉴 View Model
+    @ObservedObject var chargerMap: ChargerMapViewModel
     @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     @ObservedObject var point: PointViewModel   //포인트 View Model
     @ObservedObject var purchase: PurchaseViewModel //포인트 구매 View Model
+    @ObservedObject var favorites: FavoritesViewModel
     
     @State var dragOffset = CGSize.zero //Drag Offset
     
@@ -74,7 +76,7 @@ struct SideMenuView: View {
                     
                     Dividerline()
                     
-                    MenuList(sideMenu: sideMenu, point: point, purchase: purchase)  //메뉴 목록
+                    MenuList(sideMenu: sideMenu, chargerMap: chargerMap, point: point, purchase: purchase, favorites: favorites)  //메뉴 목록
                         .padding(.horizontal)
                     
                     Spacer()
@@ -218,8 +220,10 @@ struct UserReservationInfo: View {
 struct MenuList: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var sideMenu: SideMenuViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel
     @ObservedObject var point: PointViewModel
     @ObservedObject var purchase: PurchaseViewModel
+    @ObservedObject var favorites: FavoritesViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -228,7 +232,7 @@ struct MenuList: View {
             
             DigitalWalletMenuButton()   //전자지갑 메뉴 버튼
             
-            FavoritesMenuButton()   //즐겨찾기 메뉴 버튼
+            FavoritesMenuButton(favorites: favorites, chargerMap: chargerMap, sideMenu: sideMenu)   //즐겨찾기 메뉴 버튼
             
             IdentificationMenuButton() //회원 증명서 메뉴 버튼
             
@@ -256,7 +260,7 @@ struct ChargingHistoryMenuButton: View {
                     Spacer()
                 }
                 .foregroundColor(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: 40)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.vertical, 5)
             }
         )
@@ -275,7 +279,7 @@ struct DigitalWalletMenuButton: View {
                     Spacer()
                 }
                 .foregroundColor(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: 40)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.vertical, 5)
             }
         )
@@ -284,9 +288,13 @@ struct DigitalWalletMenuButton: View {
 
 //MARK: - 즐겨찾기 메뉴 버튼
 struct FavoritesMenuButton: View {
+    @ObservedObject var favorites: FavoritesViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var sideMenu: SideMenuViewModel
+    
     var body: some View {
         NavigationLink(
-            destination: FavoritesView(),   //즐겨찾기 화면
+            destination: FavoritesView(favorites: favorites, chargerMap: chargerMap, sideMenu: sideMenu),   //즐겨찾기 화면
             label: {
                 HStack {
                     Text("즐겨찾기")
@@ -294,7 +302,7 @@ struct FavoritesMenuButton: View {
                     Spacer()
                 }
                 .foregroundColor(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: 40)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.vertical, 5)
             }
         )
@@ -315,7 +323,7 @@ struct IdentificationMenuButton: View {
 //                    Spacer()
 //                }
 //                .foregroundColor(Color.black)
-//                .frame(maxWidth: .infinity, maxHeight: 40)
+//                .frame(maxWidth: .infinity, minHeight: 40)
 //                .padding(.vertical, 5)
 //            }
 //        )
@@ -330,7 +338,7 @@ struct IdentificationMenuButton: View {
                     Spacer()
                 }
                 .foregroundColor(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: 40)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.vertical, 5)
             }
         )
@@ -360,7 +368,7 @@ struct CustomerServiceMenuButton: View {
                     Spacer()
                 }
                 .foregroundColor(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: 40)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.vertical, 5)
             }
         )
@@ -406,7 +414,7 @@ struct NoticeMenuButton: View {
                     Spacer()
                 }
                 .foregroundColor(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: 40)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.vertical, 5)
             }
         )
@@ -425,7 +433,7 @@ struct OwnerChargerMenuButton: View {
                     Spacer()
                 }
                 .foregroundColor(Color.black)
-                .frame(maxWidth: .infinity, maxHeight: 40)
+                .frame(maxWidth: .infinity, minHeight: 40)
                 .padding(.vertical, 5)
             }
         )
@@ -436,9 +444,11 @@ struct SideMenuView_Previews: PreviewProvider {
     static var previews: some View {
         SideMenuView(
             sideMenu: SideMenuViewModel(),
+            chargerMap: ChargerMapViewModel(),
             reservation: ReservationViewModel(),
             point: PointViewModel(),
-            purchase: PurchaseViewModel()
+            purchase: PurchaseViewModel(),
+            favorites: FavoritesViewModel()
         )
     }
 }

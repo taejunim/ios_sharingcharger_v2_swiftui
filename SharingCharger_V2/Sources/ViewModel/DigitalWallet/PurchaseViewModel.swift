@@ -23,7 +23,8 @@ class PurchaseViewModel: ObservableObject {
     @Published var isShowPointLackAlert: Bool = false //포인트 부족 알림창 활성 여부
     @Published var isShowPaymentInputAlert: Bool = false  //결제 입력 알림창 활성 여부
     @Published var isShowPaymentModal: Bool = false   //결제 팝업창 호출 여부
-    @Published var showCompletionAlert: Bool = false    //결제 완료 알림창 호출 여부
+    @Published var isShowCompletionAlert: Bool = false    //결제 완료 알림창 호출 여부
+    @Published var isShowFailedAlert: Bool = false  //결제 실패 알림창 호출 여부
     
     @Published var isCheckAmount: Bool = false  //결제 금액 확인 여부
     @Published var isPayment: Bool = false  //결제 성공 여부

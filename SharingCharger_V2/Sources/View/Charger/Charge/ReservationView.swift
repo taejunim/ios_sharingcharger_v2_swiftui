@@ -83,8 +83,12 @@ struct ReservationView: View {
             }
             
             //결제 완료 시, '결제 완료 알림창' 호출
-            if purchase.showCompletionAlert {
+            if purchase.isShowCompletionAlert {
                 PaymentCompletionAlert(purchase: purchase, point: point, reservation: reservation)  //결제 완료 알림창
+            }
+            
+            if purchase.isShowFailedAlert {
+                PaymentFailedAlert(purchase: purchase)
             }
             
             //예약 완료 버튼 클릭 시, '예약 확인 알림창' 호출

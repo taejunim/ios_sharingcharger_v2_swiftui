@@ -97,6 +97,7 @@ class ChargerDetailViewModel: ObservableObject {
                     "bleNumber": bleNumber!,
                     "providerCompanyName": providerCompanyName!,
                     "address": address!,
+                    "detailAddress": detailAddress!,
                     "parkingFeeFlag": parkingFeeFlag,
                     "parkingFeeDescription": parkingFeeDescription!,
                     "description" : description!
