@@ -173,8 +173,10 @@ struct OwnerChargerDetailMain: View {
 struct OwnerChargerPriceSetting: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
     @ObservedObject var viewUtil = ViewUtil()
+    
     @State var chargerId:String
     @State var selectedFee = 0
+    
     let numberFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -183,17 +185,15 @@ struct OwnerChargerPriceSetting: View {
     }()
     
     var body: some View {
-    
-        VStack(alignment: .leading) {
-            
-            Text("충전기 단가 설정")
-                .font(.title)
-                .fontWeight(.bold)
-            
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
+        VStack {
+            VStack(alignment: .leading, spacing: 15) {
+                Text("충전기 단가 설정")
+                    .font(.title2)
+                    .fontWeight(.bold)
+                
                 Text("요금 설정")
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
+                    .fontWeight(.semibold)
+                
                 Picker(
                     selection: $chargerDetailViewModel.stringUnitPrice,
                     label: Text("요금 설정"),
@@ -205,40 +205,46 @@ struct OwnerChargerPriceSetting: View {
                     }
                 )
                 .pickerStyle(SegmentedPickerStyle())
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("현재 단가")
-                    .frame(width: 100)
-                    .multilineTextAlignment(.leading)
-                Spacer()
-                TextField("현재 단가", value: $chargerDetailViewModel.rangeOfFee, formatter: numberFormatter)
-                    .keyboardType(.decimalPad)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .disabled(true)
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("변경 단가")
-                    .frame(width: 100)
-                Spacer()
-                if chargerDetailViewModel.isDirectlyInput {
-                    TextField("변경 단가", value: $chargerDetailViewModel.unitPrice, formatter : numberFormatter)
-                        .keyboardType(.decimalPad)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                
+                VStack {
+                    HStack {
+                        Text("현재 단가")
+                            .frame(width: 100)
+                        
+                        Spacer()
+                        
+                        TextField("현재 단가", value: $chargerDetailViewModel.rangeOfFee, formatter: numberFormatter)
+                            .keyboardType(.decimalPad)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .disabled(true)
+                    }
+                    
+                    HStack {
+                        Text("변경 단가")
+                            .frame(width: 100)
+                        
+                        Spacer()
+                        
+                        if chargerDetailViewModel.isDirectlyInput {
+                            TextField("변경 단가", value: $chargerDetailViewModel.unitPrice, formatter : numberFormatter)
+                                .keyboardType(.decimalPad)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                        }
+                        else {
+                            TextField("변경 단가", text: $chargerDetailViewModel.stringUnitPrice)
+                                .keyboardType(.decimalPad)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .disabled(true)
+                        }
+                    }
                 }
-                else {
-                    TextField("변경 단가", text: $chargerDetailViewModel.stringUnitPrice)
-                        .keyboardType(.decimalPad)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .disabled(true)
-                }
             }
+            .padding()
             
             Spacer()
             
             ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "price", chargerId: chargerId, viewUtil: viewUtil)
-                
         }
-        .padding(15)
         .popup(
             isPresented: $viewUtil.isShowToast,   //팝업 노출 여부
             type: .floater(verticalPadding: 80),
@@ -261,84 +267,86 @@ struct OwnerChargerOperateTimeSetting: View {
     @State var chargerId:String
     
     var body: some View {
-        
-        VStack(alignment: .leading, spacing: 15) {
-            
-            Text("충전기 운영 시간 설정")
-                .font(.title2)
-                .fontWeight(.bold)
-                .lineSpacing(30)
-            
-            HStack {
-                Text("현재 운영 시간")
+        VStack {
+            VStack(alignment: .leading, spacing: 15) {
                 
-                Spacer()
+                Text("충전기 운영 시간 설정")
+                    .font(.title2)
+                    .fontWeight(.bold)
                 
-                DatePicker(
-                    "",
-                    selection: $chargerDetailViewModel.previousOpenTime,
-                    displayedComponents: [.hourAndMinute]
-                )
-                .labelsHidden()
-                .accentColor(.black)
-                .disabled(true)
-                .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                HStack {
+                    Text("현재 운영 시간")
+                    
+                    Spacer()
+                    
+                    DatePicker(
+                        "",
+                        selection: $chargerDetailViewModel.previousOpenTime,
+                        displayedComponents: [.hourAndMinute]
+                    )
+                    .labelsHidden()
+                    .accentColor(.black)
+                    .disabled(true)
+                    .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                    
+                    Text("~")
+                    
+                    DatePicker(
+                        "",
+                        selection: $chargerDetailViewModel.previousCloseTime,
+                        displayedComponents: [.hourAndMinute]
+                    )
+                    .labelsHidden()
+                    .accentColor(.black)
+                    .disabled(true)
+                    .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                }
+                .padding(.horizontal, 10)
                 
-                Text("~")
+                HStack {
+                    Text("변경 예정 시간")
+                    
+                    Spacer()
+                    
+                    DatePicker(
+                        "",
+                        selection: $chargerDetailViewModel.openTime,
+                        displayedComponents: [.hourAndMinute]
+                    )
+                    .labelsHidden()
+                    .accentColor(.black)
+                    .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                    
+                    Text("~")
+                    
+                    DatePicker(
+                        "",
+                        selection: $chargerDetailViewModel.closeTime,
+                        displayedComponents: [.hourAndMinute]
+                    )
+                    .labelsHidden()
+                    .accentColor(.black)
+                    .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                }
+                .padding(.horizontal, 10)
                 
-                DatePicker(
-                    "",
-                    selection: $chargerDetailViewModel.previousCloseTime,
-                    displayedComponents: [.hourAndMinute]
-                )
-                .labelsHidden()
-                .accentColor(.black)
-                .disabled(true)
-                .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                
+                HStack {
+                    Text("* 시간 변경시 2일 후 적용됩니다.")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("#C0392B"))
+                    
+                    Spacer()
+                }
+                .padding(.top, 10)
             }
-            .padding(.horizontal, 10)
-            
-            HStack {
-                Text("변경 예정 시간")
-                
-                Spacer()
-                
-                DatePicker(
-                    "",
-                    selection: $chargerDetailViewModel.openTime,
-                    displayedComponents: [.hourAndMinute]
-                )
-                .labelsHidden()
-                .accentColor(.black)
-                .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
-                
-                Text("~")
-                
-                DatePicker(
-                    "",
-                    selection: $chargerDetailViewModel.closeTime,
-                    displayedComponents: [.hourAndMinute]
-                )
-                .labelsHidden()
-                .accentColor(.black)
-                .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
-            }
-            .padding(.horizontal, 10)
-            
-            
-            HStack {
-                Text("* 시간 변경시 2일 후 적용됩니다.")
-                    .foregroundColor(Color("#C0392B"))
-                
-                Spacer()
-            }
+            .padding()
             
             Spacer()
             
             ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "time", chargerId: chargerId, viewUtil: viewUtil)
-                
         }
-        .padding()
         .popup(
             isPresented: $viewUtil.isShowToast,   //팝업 노출 여부
             type: .floater(verticalPadding: 80),
@@ -362,91 +370,85 @@ struct OwnerChargerInformationEdit: View {
     
     var body: some View {
     
-        VStack(alignment: .leading) {
-            
-            Text("충전기 정보 수정")
-                .font(.title)
-                .fontWeight(.bold)
-            
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("충전기명")
-                    .frame(width: 100)
-                    .font(.subheadline)
-                Spacer()
-                TextField("충전기명", text: $chargerDetailViewModel.chargerName)
-                    .autocapitalization(.none)    //첫 문자 항상 소문자
-                    .keyboardType(.namePhonePad)
-                    .font(.subheadline)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("주소")
-                    .frame(width: 100)
-                    .font(.subheadline)
-                Spacer()
-                TextField("주소", text: $chargerDetailViewModel.address)
-                    .autocapitalization(.none)    //첫 문자 항상 소문자
-                    .keyboardType(.namePhonePad)
-                    .font(.subheadline)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("상세 주소")
-                    .frame(width: 100)
-                    .font(.subheadline)
-                Spacer()
-                TextField("상세 주소", text: $chargerDetailViewModel.detailAddress)
-                    .autocapitalization(.none)    //첫 문자 항상 소문자
-                    .keyboardType(.namePhonePad)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("주차 요금 여부")
-                    .frame(width: 100)
-                    .font(.subheadline)
-                Spacer()
-                Picker(
-                    selection: $chargerDetailViewModel.parkingFeeFlag, //주차 요금 여부
-                    label: Text("주차 요금 여부"),
-                    content: {
-                        Text("없음").tag(false)
-                        Text("있음").tag(true)
+        VStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 15) {
+                    Text("충전기 정보 수정")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("충전기 명")
+                            .fontWeight(.semibold)
+                        
+                        TextField("충전기 명", text: $chargerDetailViewModel.chargerName)
+                            .autocapitalization(.none)    //첫 문자 항상 소문자
+                            .keyboardType(.namePhonePad)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
-                )
-                    .pickerStyle(SegmentedPickerStyle())
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("케이블 존재 여부")
-                    .frame(width: 100)
-                    .font(.subheadline)
-                Spacer()
-                Picker(
-                    selection: $chargerDetailViewModel.cableFlag, //케이블 존재 여부
-                    label: Text("케이블 존재 여부"),
-                    content: {
-                        Text("없음").tag(false)
-                        Text("있음").tag(true)
+                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("주소")
+                            .fontWeight(.semibold)
+                        
+                        TextField("주소", text: $chargerDetailViewModel.address)
+                            .autocapitalization(.none)    //첫 문자 항상 소문자
+                            .keyboardType(.namePhonePad)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                        
+                        TextField("상세 주소", text: $chargerDetailViewModel.detailAddress)
+                            .autocapitalization(.none)    //첫 문자 항상 소문자
+                            .keyboardType(.namePhonePad)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
                     }
-                )
-                    .pickerStyle(SegmentedPickerStyle())
-            }
-            HStack(alignment: VerticalAlignment.top , spacing: 10){
-                Text("주차요금 설명")
-                    .frame(width: 100)
-                    .font(.subheadline)
-                Spacer()
-                TextField("주차요금 설명", text: $chargerDetailViewModel.parkingFeeDescription)
-                    .autocapitalization(.none)    //첫 문자 항상 소문자
-                    .keyboardType(.namePhonePad)
-                    .font(.subheadline)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("케이블 보유")
+                            .fontWeight(.semibold)
+                        
+                        Picker(
+                            selection: $chargerDetailViewModel.cableFlag, //케이블 존재 여부
+                            label: Text("케이블 여부"),
+                            content: {
+                                Text("없음").tag(false)
+                                Text("있음").tag(true)
+                            }
+                        )
+                        .pickerStyle(SegmentedPickerStyle())
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("주차 요금")
+                            .fontWeight(.semibold)
+                        
+                        Picker(
+                            selection: $chargerDetailViewModel.parkingFeeFlag, //주차 요금 여부
+                            label: Text("주차 요금 여부"),
+                            content: {
+                                Text("없음").tag(false)
+                                Text("있음").tag(true)
+                            }
+                        )
+                        .pickerStyle(SegmentedPickerStyle())
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("주차 요금 설명")
+                            .fontWeight(.semibold)
+                        
+                        TextField("주차 요금 설명", text: $chargerDetailViewModel.parkingFeeDescription)
+                            .autocapitalization(.none)    //첫 문자 항상 소문자
+                            .keyboardType(.namePhonePad)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                    }
+                }
+                .padding()
             }
             
             Spacer()
             
             ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "information", chargerId: chargerId, viewUtil: viewUtil)
-                
-        }.padding(10)
+        }
         .popup(
             isPresented: $viewUtil.isShowToast,   //팝업 노출 여부
             type: .floater(verticalPadding: 80),
@@ -468,106 +470,118 @@ struct OwnerChargerHistory: View {
     @State var chargerId:String
     
     var body: some View {
-    
-        VStack(alignment: .leading) {
-        
+        VStack {
             HStack {
                 Text("충전 이력")
-                    .font(.title)
+                    .font(.title2)
                     .fontWeight(.bold)
+                
                 Spacer()
+                
                 OwnerChargerHistorySearchModalButton(chargerDetailViewModel: chargerDetailViewModel)
             }
             
-            //포인트 이력
-            ScrollView {
-                
-                LazyVStack {
-                    let histories = chargerDetailViewModel.histories
+            if chargerDetailViewModel.histories.count == 0 {
+                VStack(spacing: 5) {
+                    Image(systemName: "exclamationmark.circle")
+                        .font(.largeTitle)
+                        .foregroundColor(Color("#BDBDBD"))
                     
-                    ForEach(histories, id: \.self) { history in
-                    VStack(alignment: .leading){
-                        HStack {
-                        
-                            Image("Charge-Position")
-                                .resizable()
-                                .frame(width: 20, height: 20)
-                        
-                            Text("충전기명 : ")
-                                .font(.caption)
-                            Text(history["chargerName"]!)
-                                .font(.caption)
-                            Spacer()
-                        }
-                    
-                        HStack {
-                        
-                            //배터리 이미지
-                            ZStack {
-                                Circle()
-                                    .foregroundColor(Color("#0081C5"))
-                                    .shadow(color: Color("#006AC5"), radius: 1, x: 1.5, y: 1.5)
-
-                                Image("Charge-Battery")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding(3)
-                            }
-                            .frame(width: 20 ,height: 20)
-                        
-                            Text("충전 번호 : ")
-                                .font(.caption)
-                            Text(history["id"]!)
-                                .font(.caption)
-                            Spacer()
-                        }
-                    
-                        HStack {
-                        
-                            Image("Charge-Clock")
-                                .resizable()
-                                .renderingMode(.template)
-                                .frame(width: 20, height: 20)
-                        
-                            VStack{
-                                
-                                HStack{
-                                    Text("예약 일자 : ")
-                                        .font(.caption)
-                                    Text(history["reservationPeriod"]!)
-                                        .font(.caption)
-                                    Spacer()
-                                }
-                                HStack{
-                                    Text("충전 일자 : ")
-                                        .font(.caption)
-                                    Text(history["rechargePeriod"]!)
-                                        .font(.caption)
-                                    Spacer()
-                                }
-                            }
-                            Spacer()
-                        }
-                    
-                        HStack {
-                        
-                            Image("Charge-Coin")
-                                .resizable()
-                                .renderingMode(.template)
-                                .frame(width: 20, height: 20)
-                        
-                            Text("수익 포인트 : ")
-                                .font(.caption)
-                            Text(history["ownerPoint"]!)
-                                .font(.caption)
-                            Spacer()
-                        }
-                        Dividerline()
-                    }}
-                }.padding(.vertical, 8.0)
+                    Text("검색 조건에 맞는 검색 결과가 없습니다.")
+                        .font(.subheadline)
+                        .foregroundColor(Color.gray)
+                }
+                .padding()
             }
-            
-        }.padding(10)
+            else {
+                //포인트 이력
+                ScrollView {
+                    LazyVStack {
+                        let histories = chargerDetailViewModel.histories
+                        
+                        ForEach(histories, id: \.self) { history in
+                        VStack(alignment: .leading){
+                            HStack {
+                                Image("Charge-Position")
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                            
+                                Text("충전기명 : ")
+                                    .font(.caption)
+                                Text(history["chargerName"]!)
+                                    .font(.caption)
+                                Spacer()
+                            }
+                        
+                            HStack {
+                                //배터리 이미지
+                                ZStack {
+                                    Circle()
+                                        .foregroundColor(Color("#0081C5"))
+                                        .shadow(color: Color("#006AC5"), radius: 1, x: 1.5, y: 1.5)
+
+                                    Image("Charge-Battery")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .padding(3)
+                                }
+                                .frame(width: 20 ,height: 20)
+                            
+                                Text("충전 번호 : ")
+                                    .font(.caption)
+                                Text(history["id"]!)
+                                    .font(.caption)
+                                Spacer()
+                            }
+                        
+                            HStack {
+                            
+                                Image("Charge-Clock")
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .frame(width: 20, height: 20)
+                            
+                                VStack{
+                                    
+                                    HStack{
+                                        Text("예약 일자 : ")
+                                            .font(.caption)
+                                        Text(history["reservationPeriod"]!)
+                                            .font(.caption)
+                                        Spacer()
+                                    }
+                                    HStack{
+                                        Text("충전 일자 : ")
+                                            .font(.caption)
+                                        Text(history["rechargePeriod"]!)
+                                            .font(.caption)
+                                        Spacer()
+                                    }
+                                }
+                                Spacer()
+                            }
+                        
+                            HStack {
+                            
+                                Image("Charge-Coin")
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .frame(width: 20, height: 20)
+                            
+                                Text("수익 포인트 : ")
+                                    .font(.caption)
+                                Text(history["ownerPoint"]!)
+                                    .font(.caption)
+                                Spacer()
+                            }
+                            Dividerline()
+                        }}
+                    }
+                    .padding(.vertical, 8.0)
+                }
+            }
+        }
+        .padding()
         .sheet(
             isPresented: $chargerDetailViewModel.showSearchModal,
             content: {
@@ -589,75 +603,71 @@ struct ChangeButton: View {
     @ObservedObject var viewUtil: ViewUtil
     var body: some View {
         
-        HStack{
-            Spacer()
-            Button(
-                action: {
-                    chargerDetailViewModel.viewUtil.dismissKeyboard()  //키보드 닫기
-                    
-                    switch chargerDetailPage {
-                    case "price" :
-                        chargerDetailViewModel.requestUpdateUnitPrice(chargerId: chargerId) { (completion) in
+        Button(
+            action: {
+                chargerDetailViewModel.viewUtil.dismissKeyboard()  //키보드 닫기
+                
+                switch chargerDetailPage {
+                case "price" :
+                    chargerDetailViewModel.requestUpdateUnitPrice(chargerId: chargerId) { (completion) in
+                        switch(completion){
+                            case "success" :
+                                viewUtil.showToast(isShow: true, message: "충전기 단가 정보 변경에 성공하셨습니다.")
+                            break
+                            case "failure" :
+                                viewUtil.showToast(isShow: true, message: "충전기 단가 정보 변경에 실패하셨습니다. 다시 시도하여 주십시오.")
+                            break
+                            default : break
+                        }
+                    }
+                    break
+                case "time" :
+                    if(chargerDetailViewModel.closeTime < chargerDetailViewModel.openTime){viewUtil.showToast(isShow: true, message: "운영시간을 확인하여 주십시오.")}
+                    else{
+                        chargerDetailViewModel.requestUpdateUsageTime(chargerId: chargerId){ (completion) in
                             switch(completion){
                                 case "success" :
-                                    viewUtil.showToast(isShow: true, message: "충전기 단가 정보 변경에 성공하셨습니다.")
+                                    viewUtil.showToast(isShow: true, message: "충전기 운영 시간 변경에 성공하셨습니다.")
                                 break
                                 case "failure" :
-                                    viewUtil.showToast(isShow: true, message: "충전기 단가 정보 변경에 실패하셨습니다. 다시 시도하여 주십시오.")
+                                    viewUtil.showToast(isShow: true, message: "충전기 운영 시간 변경에 실패하셨습니다. 다시 시도하여 주십시오.")
                                 break
                                 default : break
                             }
                         }
-                        break
-                    case "time" :
-                        if(chargerDetailViewModel.closeTime < chargerDetailViewModel.openTime){viewUtil.showToast(isShow: true, message: "운영시간을 확인하여 주십시오.")}
-                        else{
-                            chargerDetailViewModel.requestUpdateUsageTime(chargerId: chargerId){ (completion) in
-                                switch(completion){
-                                    case "success" :
-                                        viewUtil.showToast(isShow: true, message: "충전기 운영 시간 변경에 성공하셨습니다.")
-                                    break
-                                    case "failure" :
-                                        viewUtil.showToast(isShow: true, message: "충전기 운영 시간 변경에 실패하셨습니다. 다시 시도하여 주십시오.")
-                                    break
-                                    default : break
-                                }
-                            }
-                        }
-                        break
-                    case "information" :
-                        
-                        if(chargerDetailViewModel.chargerName == "" ) { viewUtil.showToast(isShow: true, message: "충전기명을 입력하여 주십시오.") }
-                        else if(chargerDetailViewModel.address == "") { viewUtil.showToast(isShow: true, message: "충전기 주소를 입력하여 주십시오.") }
-                        else {
-                            chargerDetailViewModel.requestUpdateCharger(chargerId: chargerId) { (completion) in
-                                switch(completion){
-                                    case "success" :
-                                        viewUtil.showToast(isShow: true, message: "충전기 정보 변경에 성공하셨습니다.")
-                                        break
-                                    case "failure" :
-                                        viewUtil.showToast(isShow: true, message: "충전기 단가 정보 변경에 실패하셨습니다. 다시 시도하여 주십시오.")
-                                        break
-                                default : break
-                                }
-                            }
-                        }
-                        break
-                        default : break
                     }
-                },
-                label: {
-                    Text("button.change".localized())
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.white)
-                        .padding(.horizontal)
-                        .frame(width: 200, height: 50, alignment: .center)
-                        .background(Color("#8E44AD"))
+                    break
+                case "information" :
+                    
+                    if(chargerDetailViewModel.chargerName == "" ) { viewUtil.showToast(isShow: true, message: "충전기명을 입력하여 주십시오.") }
+                    else if(chargerDetailViewModel.address == "") { viewUtil.showToast(isShow: true, message: "충전기 주소를 입력하여 주십시오.") }
+                    else {
+                        chargerDetailViewModel.requestUpdateCharger(chargerId: chargerId) { (completion) in
+                            switch(completion){
+                                case "success" :
+                                    viewUtil.showToast(isShow: true, message: "충전기 정보 변경에 성공하셨습니다.")
+                                    break
+                                case "failure" :
+                                    viewUtil.showToast(isShow: true, message: "충전기 단가 정보 변경에 실패하셨습니다. 다시 시도하여 주십시오.")
+                                    break
+                            default : break
+                            }
+                        }
+                    }
+                    break
+                    default : break
                 }
-            )
-            Spacer()
-        }
+            },
+            label: {
+                Text("button.change".localized())
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundColor(Color.white)
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity, minHeight: 40)
+                    .background(Color("#8E44AD"))
+            }
+        )
     }
 }
 
@@ -702,7 +712,7 @@ struct OwnerChargerHistorySearchButton: View {
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, minHeight: 40)
-                    .background(Color("#3498DB"))   //회원가입 정보 입력에 따른 배경색상 변경
+                    .background(Color("#8E44AD"))   //회원가입 정보 입력에 따른 배경색상 변경
             }
         )
     }

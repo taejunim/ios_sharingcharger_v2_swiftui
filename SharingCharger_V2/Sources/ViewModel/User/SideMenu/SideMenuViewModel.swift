@@ -58,10 +58,11 @@ class SideMenuViewModel: ObservableObject {
     func signOunt() {
         isSignOut = true
         
-        for key in UserDefaults.standard.dictionaryRepresentation().keys {
-            UserDefaults.standard.removeObject(forKey: key.description)
-        }
+//        for key in UserDefaults.standard.dictionaryRepresentation().keys {
+//            UserDefaults.standard.removeObject(forKey: key.description)
+//        }
 
+        UserDefaults.standard.removeObject(forKey: "password")
         UserDefaults.standard.set(false, forKey: "autoSignIn")
     }
 }

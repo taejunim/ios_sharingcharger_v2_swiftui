@@ -15,6 +15,7 @@ class FavoritesViewModel: ObservableObject {
     @Published var favoritesList: [Favorites] = []
     @Published var favoriteItem: Favorites?
     
+    //MARK: - 즐겨찾기 조회
     func getFavorites() {
         if let userFavorites = UserDefaults.standard.value(forKey:"favorites-\(userIdNo)") as? Data {
             let getFavorites = try? PropertyListDecoder().decode([Favorites].self, from: userFavorites)
