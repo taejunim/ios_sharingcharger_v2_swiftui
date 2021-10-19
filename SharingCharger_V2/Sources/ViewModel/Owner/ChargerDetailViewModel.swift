@@ -66,7 +66,8 @@ class ChargerDetailViewModel: ObservableObject {
     @Published var currentDate: Date = Date()           //date picker 종료 날짜(현재 날짜)
     @Published var page: Int = 1                        //페이지 번호
     @Published var selectSort: String = "DESC"          //정렬
-    let pageSize: String = "10"
+    @Published var pageSize: String = "10"
+    @Published var totalPage: Int = 0
     
     func requestOwnerCharger(chargerId: String) {
         
@@ -287,6 +288,10 @@ class ChargerDetailViewModel: ObservableObject {
     
     func requestOwnerChargeHistory(chargerId : String) {
         
+        if page == 1 {
+            histories.removeAll()
+        }
+        
         let userIdNo:String = UserDefaults.standard.string(forKey: "userIdNo")!   //저장된 사용자 ID 번호
         let userId:String = UserDefaults.standard.string(forKey: "userId")!   //저장된 사용자 ID 번호
         
@@ -300,85 +305,91 @@ class ChargerDetailViewModel: ObservableObject {
         ]
 
         let request = chargeAPI.requestOwnerChargeHistory(userIdNo: userIdNo, parameters: parameters)
-        request.execute(onSuccess:{(chargingHistory) in
+        request.execute(
+            onSuccess: { (chargingHistory) in
         
-            let histories = chargingHistory.content //충전 이력 목록 추출
-            self.totalCount = chargingHistory.totalElements //총 개수
-            
-            for index in 0..<histories.count {
+                print(chargingHistory)
+                let histories = chargingHistory.content //충전 이력 목록 추출
+                self.totalCount = chargingHistory.totalElements //총 개수
+                
+                self.totalPage = chargingHistory.totalPages
+                
+                for index in 0..<histories.count {
+                        
+                    let searchHistory = histories[index]
+                    var history: [String:String] = [:]
                     
-                let searchHistory = histories[index]
-                var history: [String:String] = [:]
-                
-                ///충전 일시 예외처리 및 포맷팅
-                let stringStartRechargeDate = searchHistory!.startRechargeDate ?? ""
-                let stringEndRechargeDate = searchHistory!.endRechargeDate ?? ""
-                
-                ///예약 일시 예외처리 및 포맷팅
-                let stringReservationStartDate = searchHistory!.reservationStartDate
-                let stringReservationEndDate = searchHistory!.reservationEndDate
+                    ///충전 일시 예외처리 및 포맷팅
+                    let stringStartRechargeDate = searchHistory!.startRechargeDate ?? ""
+                    let stringEndRechargeDate = searchHistory!.endRechargeDate ?? ""
                     
-                var startDate: Date?
-                var endDate: Date?
-                
-                var formatRechargeStartDate = ""
-                var formatRechargeEndDate = ""
-                
-                var formatReservationStartDate = ""
-                var formatReservationEndDate = ""
+                    ///예약 일시 예외처리 및 포맷팅
+                    let stringReservationStartDate = searchHistory!.reservationStartDate
+                    let stringReservationEndDate = searchHistory!.reservationEndDate
+                        
+                    var startDate: Date?
+                    var endDate: Date?
                     
-                let username = searchHistory!.username
-                
-                if stringStartRechargeDate != "" {
-                    startDate = "yyyy-MM-dd HH:mm:ss".toDateFormatter(formatString: stringStartRechargeDate)  //충전 시작일시 Date 형식 변환
-                    formatRechargeStartDate = "yyyy-MM-dd HH:mm".dateFormatter(formatDate: startDate!)  //충전 시작일시 String 형식 변환
+                    var formatRechargeStartDate = ""
+                    var formatRechargeEndDate = ""
+                    
+                    var formatReservationStartDate = ""
+                    var formatReservationEndDate = ""
+                        
+                    let username = searchHistory!.username
+                    
+                    if stringStartRechargeDate != "" {
+                        startDate = "yyyy-MM-dd HH:mm:ss".toDateFormatter(formatString: stringStartRechargeDate)  //충전 시작일시 Date 형식 변환
+                        formatRechargeStartDate = "yyyy-MM-dd HH:mm".dateFormatter(formatDate: startDate!)  //충전 시작일시 String 형식 변환
+                    }
+                        
+                    if stringEndRechargeDate != "" {
+                        endDate = "yyyy-MM-dd HH:mm:ss".toDateFormatter(formatString: stringEndRechargeDate)  //충전 종료일시 Date 형식 변환
+                        formatRechargeEndDate = "yyyy-MM-dd HH:mm".dateFormatter(formatDate: endDate!)  //충전 시작일시 String 형식 변환
+                    }
+                    
+                    if stringReservationStartDate != "" {
+                        startDate = "yyyy-MM-dd HH:mm:ss".toDateFormatter(formatString: stringReservationStartDate)  //충전 시작일시 Date 형식 변환
+                        formatReservationStartDate = "yyyy-MM-dd HH:mm".dateFormatter(formatDate: startDate!)  //충전 시작일시 String 형식 변환
+                    }
+                        
+                    if stringReservationEndDate != "" {
+                        endDate = "yyyy-MM-dd HH:mm:ss".toDateFormatter(formatString: stringReservationEndDate)  //충전 종료일시 Date 형식 변환
+                        formatReservationEndDate = "yyyy-MM-dd HH:mm".dateFormatter(formatDate: endDate!)  //충전 시작일시 String 형식 변환
+                    }
+                    
+                    ///포인트 예외처리 및 포맷팅
+                    var ownerPoint = ""   //실제 차감 포인트
+                    let searchPoint = searchHistory!.ownerPoint ?? 0
+                    
+                    if (searchPoint > 0 && userId != username) {
+                        ownerPoint = String(searchHistory!.ownerPoint!).pointFormatter()
+                    } else if (searchPoint <= 0 && userId == username){
+                        ownerPoint = "소유주 본인 충전"
+                    } else {
+                        ownerPoint = "알 수 없음"
+                    }
+                        
+                    history = [
+                        "chargerName": searchHistory!.chargerName,    //충전기 명
+                        "id": String(searchHistory!.id),    //충전 ID
+                        "rechargePeriod": formatRechargeStartDate + " ~ " + formatRechargeEndDate,   //충전 시작일시
+                        "reservationPeriod": formatReservationStartDate + " ~ " + formatReservationEndDate,   //충전 종료일시
+                        "ownerPoint": ownerPoint
+                    ]
+                        
+                    self.histories.append(history)
                 }
-                    
-                if stringEndRechargeDate != "" {
-                    endDate = "yyyy-MM-dd HH:mm:ss".toDateFormatter(formatString: stringEndRechargeDate)  //충전 종료일시 Date 형식 변환
-                    formatRechargeEndDate = "yyyy-MM-dd HH:mm".dateFormatter(formatDate: endDate!)  //충전 시작일시 String 형식 변환
-                }
-                
-                if stringReservationStartDate != "" {
-                    startDate = "yyyy-MM-dd HH:mm:ss".toDateFormatter(formatString: stringReservationStartDate)  //충전 시작일시 Date 형식 변환
-                    formatReservationStartDate = "yyyy-MM-dd HH:mm".dateFormatter(formatDate: startDate!)  //충전 시작일시 String 형식 변환
-                }
-                    
-                if stringReservationEndDate != "" {
-                    endDate = "yyyy-MM-dd HH:mm:ss".toDateFormatter(formatString: stringReservationEndDate)  //충전 종료일시 Date 형식 변환
-                    formatReservationEndDate = "yyyy-MM-dd HH:mm".dateFormatter(formatDate: endDate!)  //충전 시작일시 String 형식 변환
-                }
-                
-                ///포인트 예외처리 및 포맷팅
-                var ownerPoint = ""   //실제 차감 포인트
-                let searchPoint = searchHistory!.ownerPoint ?? 0
-                
-                if (searchPoint > 0 && userId != username) {
-                    ownerPoint = String(searchHistory!.ownerPoint!).pointFormatter()
-                } else if (searchPoint <= 0 && userId == username){
-                    ownerPoint = "소유주 본인 충전"
-                } else {
-                    ownerPoint = "알 수 없음"
-                }
-                    
-                history = [
-                    "chargerName": searchHistory!.chargerName,    //충전기 명
-                    "id": String(searchHistory!.id),    //충전 ID
-                    "rechargePeriod": formatRechargeStartDate + " ~ " + formatRechargeEndDate,   //충전 시작일시
-                    "reservationPeriod": formatReservationStartDate + " ~ " + formatReservationEndDate,   //충전 종료일시
-                    "ownerPoint": ownerPoint
-                ]
-                    
-                self.histories.append(history)
+            },
+            onFailure: { (error) in
+                print(error)
             }
-            
-
-        }, onFailure: { (error) in
-            print(error)
-        })
+        )
     }
     
     func resetSearchCondition() {
+        page = 1
+        totalPage = 0
         chooseDate = "oneMonth"
         selectSort = "DESC"
         selectMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date())!

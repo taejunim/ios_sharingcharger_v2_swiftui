@@ -10,6 +10,7 @@ import SwiftUI
 struct OwnerChargerView: View {
     @Environment(\.presentationMode) var presentationMode   //Back 버튼 기능 추가에 필요
     @ObservedObject var ownerChargerViewModel = OwnerChargerViewModel()    //충전기 관리 View Model
+    @ObservedObject var chargerDetail = ChargerDetailViewModel()
     
     var body: some View {
         VStack {
@@ -17,7 +18,7 @@ struct OwnerChargerView: View {
             
             Dividerline()
             
-            OwnerChargerList(ownerChargerViewModel: ownerChargerViewModel)  //소유주 충전기 목록
+            OwnerChargerList(ownerChargerViewModel: ownerChargerViewModel, chargerDetail: chargerDetail)  //소유주 충전기 목록
         }
         .navigationBarTitle(Text("충전기 관리"), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
@@ -52,7 +53,6 @@ struct OwnerChargerSummaryInfo: View {
                 
                 HStack(spacing: 2) {
                     Text(String(ownChargerCount))
-                        //.font(.title3)
                         .fontWeight(.bold)
                         .foregroundColor(Color("#8E44AD"))
                         
@@ -139,6 +139,7 @@ struct ProfitPointsViewButton: View {
 //MARK: - 소유주 충전기 목록
 struct OwnerChargerList: View {
     @ObservedObject var ownerChargerViewModel: OwnerChargerViewModel
+    @ObservedObject var chargerDetail: ChargerDetailViewModel
     
     var body: some View {
         ScrollView {
@@ -158,7 +159,7 @@ struct OwnerChargerList: View {
                     let sharedType: String = charger["sharedType"]!
                     
                     NavigationLink(
-                        destination: ChargerDetailView(chargerId : id, sharedType : sharedType),
+                        destination: ChargerDetailView( chargerDetailViewModel: chargerDetail, chargerId: id, sharedType: sharedType),
                         label: {
                             HStack {
                                 Text(index)
@@ -207,11 +208,14 @@ struct OwnerChargerList: View {
                         }
                     )
                     .onAppear {
+                        
                         if ownerChargerViewModel.page <= ownerChargerViewModel.totalPages {
                             if searchChargers.last == charger {
-                                ownerChargerViewModel.page += 1
+                                //ownerChargerViewModel.page += 1
                                 
-                                ownerChargerViewModel.requestOwnerChargerList()
+                                //ownerChargerViewModel.requestOwnerChargerList()
+                                
+                                print(ownerChargerViewModel.page)
                             }
                         }
                     }

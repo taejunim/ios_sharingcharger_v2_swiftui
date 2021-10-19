@@ -103,6 +103,7 @@ class OwnerChargerViewModel: ObservableObject {
                     searchChargers.append(searchCharger)
                 }
                 
+                print(searchChargers)
                 self.chargers.append(contentsOf: searchChargers)
             },
             //API 호출 실패

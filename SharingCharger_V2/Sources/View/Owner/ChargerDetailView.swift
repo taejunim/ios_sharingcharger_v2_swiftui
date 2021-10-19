@@ -10,7 +10,7 @@ import SwiftUI
 struct ChargerDetailView: View {
     
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var chargerDetailViewModel = ChargerDetailViewModel()
+    @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
         
     @State var chargerId:String
     @State var sharedType:String
@@ -170,6 +170,6 @@ struct OwnerChargerDetailMenu: View{
 struct ChargerDetailView_Previews: PreviewProvider {
     
     static var previews: some View {
-        ChargerDetailView(chargerId: "", sharedType: "")
+        ChargerDetailView(chargerDetailViewModel: ChargerDetailViewModel(), chargerId: "", sharedType: "")
     }
 }

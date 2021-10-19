@@ -480,6 +480,9 @@ struct OwnerChargerHistory: View {
                 
                 OwnerChargerHistorySearchModalButton(chargerDetailViewModel: chargerDetailViewModel)
             }
+            .padding([.horizontal, .top])
+            
+            Dividerline()
             
             if chargerDetailViewModel.histories.count == 0 {
                 VStack(spacing: 5) {
@@ -491,7 +494,7 @@ struct OwnerChargerHistory: View {
                         .font(.subheadline)
                         .foregroundColor(Color.gray)
                 }
-                .padding()
+                .padding(.horizontal)
             }
             else {
                 //포인트 이력
@@ -499,96 +502,143 @@ struct OwnerChargerHistory: View {
                     LazyVStack {
                         let histories = chargerDetailViewModel.histories
                         
-                        ForEach(histories, id: \.self) { history in
-                        VStack(alignment: .leading){
-                            HStack {
-                                Image("Charge-Position")
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
+                        ForEach(histories, id: \.self) { (history) in
                             
-                                Text("충전기명 : ")
-                                    .font(.caption)
-                                Text(history["chargerName"]!)
-                                    .font(.caption)
-                                Spacer()
-                            }
-                        
-                            HStack {
-                                //배터리 이미지
-                                ZStack {
-                                    Circle()
-                                        .foregroundColor(Color("#0081C5"))
-                                        .shadow(color: Color("#006AC5"), radius: 1, x: 1.5, y: 1.5)
-
-                                    Image("Charge-Battery")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .padding(3)
-                                }
-                                .frame(width: 20 ,height: 20)
-                            
-                                Text("충전 번호 : ")
-                                    .font(.caption)
-                                Text(history["id"]!)
-                                    .font(.caption)
-                                Spacer()
-                            }
-                        
-                            HStack {
-                            
-                                Image("Charge-Clock")
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .frame(width: 20, height: 20)
-                            
-                                VStack{
+                            VStack {
+                                VStack(alignment: .leading, spacing: 8) {
+                                    //충전기 명
+                                    HStack(spacing: 5) {
+                                        Image("Charge-Position")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 25, height: 25)
+                                        
+                                        Text(history["chargerName"]!)
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                    }
+                                
+                                    //충전 번호
+                                    HStack {
+                                        HStack(spacing: 5) {
+                                            ZStack {
+                                                Circle()
+                                                    .foregroundColor(Color("#3498DB"))
+                                                    .frame(width: 23 ,height: 23)
+                                                    
+                                                Image("Charge-Battery")
+                                                    .resizable()
+                                                    .scaledToFit()
+                                                    .frame(width: 23 ,height: 23)
+                                            }
+                                            .frame(width: 25 ,height: 25)
+                                        
+                                            Text("충전 번호")
+                                                .font(.subheadline)
+                                        }
+                                        
+                                        Text(":")
+                                            .font(.subheadline)
+                                        
+                                        Text(history["id"]!)
+                                            .font(.subheadline)
+                                        
+                                        Spacer()
+                                    }
+                                
+                                    //예약 일자, 충전 일자
+                                    HStack(alignment: .top, spacing: 5) {
+                                        VStack {
+                                            Image("Charge-Clock")
+                                                .resizable()
+                                                .renderingMode(.template)
+                                        }
+                                        .frame(width: 25, height: 25)
                                     
-                                    HStack{
-                                        Text("예약 일자 : ")
-                                            .font(.caption)
-                                        Text(history["reservationPeriod"]!)
-                                            .font(.caption)
+                                        VStack(spacing: 5) {
+                                            HStack {
+                                                Text("예약 일자")
+                                                    .font(.subheadline)
+                                                
+                                                Text(":")
+                                                    .font(.subheadline)
+                                                
+                                                Text(history["reservationPeriod"]!)
+                                                    .font(.footnote)
+                                                
+                                                Spacer()
+                                            }
+                                            
+                                            HStack {
+                                                Text("충전 일자")
+                                                    .font(.subheadline)
+                                                
+                                                Text(":")
+                                                    .font(.subheadline)
+                                                
+                                                Text(history["rechargePeriod"]!)
+                                                    .font(.footnote)
+                                                
+                                                Spacer()
+                                            }
+                                        }
+                                        
                                         Spacer()
                                     }
-                                    HStack{
-                                        Text("충전 일자 : ")
-                                            .font(.caption)
-                                        Text(history["rechargePeriod"]!)
-                                            .font(.caption)
+                                
+                                    //수익 포인트
+                                    HStack {
+                                        HStack(spacing: 5) {
+                                            Image("Charge-Coin")
+                                                .resizable()
+                                                .renderingMode(.template)
+                                                .frame(width: 25, height: 25)
+                                        
+                                            Text("수익 포인트")
+                                                .font(.subheadline)
+                                        }
+                                        
+                                        Text(":")
+                                            .font(.subheadline)
+                                        
+                                        Text(history["ownerPoint"]!)
+                                            .font(.subheadline)
+                                        
                                         Spacer()
                                     }
                                 }
-                                Spacer()
+                                .padding(.horizontal)
+                                
+                                
+                                Dividerline()
                             }
-                        
-                            HStack {
-                            
-                                Image("Charge-Coin")
-                                    .resizable()
-                                    .renderingMode(.template)
-                                    .frame(width: 20, height: 20)
-                            
-                                Text("수익 포인트 : ")
-                                    .font(.caption)
-                                Text(history["ownerPoint"]!)
-                                    .font(.caption)
-                                Spacer()
+                            .onAppear {
+                                if chargerDetailViewModel.page <= chargerDetailViewModel.totalPage {
+                                    if histories.last == history {
+                                        chargerDetailViewModel.page += 1
+                                        chargerDetailViewModel.requestOwnerChargeHistory(chargerId: chargerId)
+                                    }
+                                }
                             }
-                            Dividerline()
-                        }}
+                        }
                     }
-                    .padding(.vertical, 8.0)
                 }
             }
         }
-        .padding()
         .sheet(
             isPresented: $chargerDetailViewModel.showSearchModal,
             content: {
                 OwnerChargerHistorySearchModal(chargerDetailViewModel: chargerDetailViewModel, chargerId: chargerId) //포인트 검색조건 Modal 창
             }
-        ).onAppear(){
+        )
+        .onAppear {
+            chargerDetailViewModel.page = 1
+            chargerDetailViewModel.totalPage = 0
             chargerDetailViewModel.requestOwnerChargeHistory(chargerId: chargerId)
+        }
+        .onDisappear {
+            chargerDetailViewModel.page = 1
+            chargerDetailViewModel.totalPage = 0
         }
         
         Spacer()
