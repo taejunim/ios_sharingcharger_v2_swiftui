@@ -121,8 +121,8 @@ class SignInViewModel: ObservableObject {
     
     //MARK: - 비밀번호 유효성 검사
     func isPasswordValid() -> Bool {
-        //let regExp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*?])(?=.*[0-9])[a-zA-Z\\d!@#$%^&*?]{6,20}"   //영문, 숫자, 특수문자
-        let regExp = "^[a-zA-Z0-9!@#$%^&*?]{1,20}$" //유효성 임시 허용
+        let regExp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*?])(?=.*[0-9])[a-zA-Z\\d!@#$%^&*?]{6,20}"   //영문, 숫자, 특수문자
+        //let regExp = "^[a-zA-Z0-9!@#$%^&*?]{1,20}$" //유효성 임시 허용
         let predicate = NSPredicate(format: "SELF MATCHES %@", regExp)
 
         return predicate.evaluate(with: password)
