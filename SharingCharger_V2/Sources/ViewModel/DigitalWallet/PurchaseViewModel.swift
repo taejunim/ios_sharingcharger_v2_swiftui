@@ -8,6 +8,7 @@
 import Foundation
 import WebKit
 
+///포인트 구매 관련 View Model
 class PurchaseViewModel: ObservableObject {
     private let purchaseAPI = PurchaseAPIService()  //포인트 구매 API Service
     private let pointAPI = PointAPIService()  //포인트 API Service
@@ -98,7 +99,7 @@ class PurchaseViewModel: ObservableObject {
         }
     }
     
-    //MARK: - 포인트 구매 API 호출
+    //MARK: - 포인트 구매 API 호출 - 결제 웹 뷰 연동으로 사용 X
     /// - Parameter completion: 포인트 구매 결과(String)
     func purchacePoint(completion: @escaping (String) -> Void) {
         

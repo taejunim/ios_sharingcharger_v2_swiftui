@@ -14,8 +14,8 @@ struct NoticeView: View {
     
     var body: some View {
         VStack {
-            NoticeWebView(loadUrl: "http://211.253.37.97:52340/information/app/notice")
-            //NoticeWebView(loadUrl: "https://monttak.co.kr/information/app/notice")
+            //NoticeWebView(loadUrl: "http://211.253.37.97:52340/information/app/notice")   //개발 서버
+            NoticeWebView(loadUrl: "https://monttak.co.kr/information/app/notice")  //운영 서버
         }
         .navigationBarTitle(Text("공지사항"), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김

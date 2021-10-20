@@ -11,6 +11,7 @@ import SwiftUI
 struct ChargingView: View {
     @ObservedObject var viewUtil = ViewUtil()   //화면 유틸리티
     @ObservedObject var viewOptionSet = ViewOptionSet() //화면 옵션 설정
+    
     @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
     @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     @ObservedObject var charging: ChargingViewModel //충전 View Model
@@ -64,9 +65,9 @@ struct ChargingView: View {
 
 //MARK: - 충전기 BLE 검색 화면
 struct ChargerBLESearchView: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var reservation: ReservationViewModel
-    @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
     
     var body: some View {
         VStack {
@@ -74,8 +75,9 @@ struct ChargerBLESearchView: View {
             
             ScrollView {
                 VStack {
+                    //상단 충전기 연결 방법
                     HStack {
-                        Text("근처 충전기와 연결을 시작합니다.\n커넥터와 차량이 연결되어 있는지 확인 후, 충전기 앞에서 연결 버튼을 터치해 주세요.")
+                        Text("근처 충전기와 연결을 시작합니다.\n커넥터와 차량이 연결되어 있는지 확인 후, 충전기 앞에서 연결 버튼을 터치해주세요.")
                             .foregroundColor(Color("#5E5E5E"))
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
@@ -104,6 +106,7 @@ struct ChargerBLESearchView: View {
 struct ConnectionGuide: View {
     var body: some View {
         VStack {
+            //충전기 연결 가이드 - 1단계
             VStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 20)
@@ -130,6 +133,7 @@ struct ConnectionGuide: View {
             
             HorizontalDividerline()
             
+            //충전기 연결 가이드 - 2단계
             VStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 20)
@@ -156,6 +160,7 @@ struct ConnectionGuide: View {
             
             HorizontalDividerline()
             
+            //충전기 연결 가이드 - 3단계
             VStack {
                 ZStack {
                     RoundedRectangle(cornerRadius: 20)
@@ -189,9 +194,9 @@ struct ConnectionGuide: View {
 
 //MARK: - 충전기 BLE 검색 버튼
 struct ChargerBLESearchButton: View {
-    @ObservedObject var charging: ChargingViewModel
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     
     var body: some View {
         NavigationLink(
@@ -200,7 +205,7 @@ struct ChargerBLESearchButton: View {
             label: {
                 Button(
                     action: {
-                        charging.searchChargerBLE()
+                        charging.searchChargerBLE() //충전기 BLE 검색 실행
                     },
                     label: {
                         Text("충전기 검색")
@@ -219,19 +224,19 @@ struct ChargerBLESearchButton: View {
 
 //MARK: - 충전기 지도 화면 이동 버튼
 struct BackMainButton: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var charging: ChargingViewModel
-    @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     
     var body: some View {
         Button(
             action: {
                 withAnimation {
-                    charging.isShowChargingResult = false
-                    chargerMap.isShowChargingView = false
+                    charging.isShowChargingResult = false   //충전 결과 알림창 닫기
+                    chargerMap.isShowChargingView = false   //충전 화면 닫기
                 }
                 
-                reservation.getUserReservation()
+                reservation.getUserReservation()    //사용자 예약 정보 재 조회
                 
                 //충전기 목록 재조회
                 charging.getCurrentDate() { (currentDate) in
@@ -273,9 +278,9 @@ struct BackMainButton: View {
 struct ChargerBLEControlView: View {
     @Environment(\.presentationMode) var presentationMode   //Back 버튼 기능 추가에 필요
     
-    @ObservedObject var charging: ChargingViewModel
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     
     var body: some View {
         ZStack {
@@ -296,6 +301,7 @@ struct ChargerBLEControlView: View {
                 
                 Spacer()
                 
+                //하단 충전 제어 버튼 영역
                 HStack {
                     Spacer()
                     
@@ -318,7 +324,7 @@ struct ChargerBLEControlView: View {
             
             //충전 종료 시, 충전 결과 팝업창 호출
             if charging.isShowChargingResult {
-                ChargingResultAlert(charging: charging, chargerMap: chargerMap, reservation: reservation)
+                ChargingResultAlert(charging: charging, chargerMap: chargerMap, reservation: reservation)   //충전 결과 팝업창
             }
         }
         .onAppear {
@@ -326,7 +332,7 @@ struct ChargerBLEControlView: View {
         }
         .onDisappear {
             if charging.isConnect {
-                charging.disconnetChargerBLE()
+                charging.disconnetChargerBLE()  //화면 비활성화 시, 충전기 BLE 연결 해제
             }
         }
     }
@@ -334,12 +340,12 @@ struct ChargerBLEControlView: View {
 
 //MARK: - 충전기 BLE 연결 버튼
 struct ChargerBLEConnectionButton: View {
-    @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
     
     var body: some View {
         Button(
             action: {
-                charging.connectChargerBLE(bleNumber: charging.bleNumber)
+                charging.connectChargerBLE(bleNumber: charging.bleNumber)   //충전기 BLE 연결
             },
             label: {
                 Text(!charging.isConnect ? "충전기 연결" : "충전기 연결됨")
@@ -361,11 +367,10 @@ struct ChargerBLEConnectionButton: View {
 
 //MARK: - 충전 정보
 struct ChargingInfoView: View {
-    @ObservedObject var charging: ChargingViewModel
-    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
     
     var body: some View {
-        
         VStack(alignment: .leading, spacing: 10) {
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 1) {
@@ -387,10 +392,12 @@ struct ChargingInfoView: View {
                     .foregroundColor(Color.gray)
             }
             
+            //예약 시간 및 충전 시간 정보
             VStack(alignment: .leading, spacing: 3) {
                 Text("'예약 시작일시 :' yyyy-MM-dd HH:mm".dateFormatter(formatDate: charging.reservationStartDate!))
                 Text("'예약 종료일시 :' yyyy-MM-dd HH:mm".dateFormatter(formatDate: charging.reservationEndDate!))
                 
+                //충전 상태인 경우 충전 시작일시 표시
                 if charging.isCharging {
                     Text("'충전 시작일시 :' yyyy-MM-dd HH:mm".dateFormatter(formatDate: charging.chargingStartDate))
                 }
@@ -403,7 +410,7 @@ struct ChargingInfoView: View {
 
 //MARK: - 충전 타이머
 struct ChargingTimer: View {
-    @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
     @State var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()    //타이머
     
     var body: some View {
@@ -424,7 +431,7 @@ struct ChargingTimer: View {
 
 //MARK: - 충전 시작 버튼
 struct ChargeStartButton: View {
-    @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
     
     var body: some View {
         Button(
@@ -458,7 +465,7 @@ struct ChargeStartButton: View {
 
 //MARK: - 충전 종료 버튼
 struct ChargeEndButton: View {
-    @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
     
     var body: some View {
         Button(

@@ -9,6 +9,7 @@
 
 import Foundation
 
+///사용자 정보 관련 View Model
 class UserInfoViewModel: ObservableObject {
     private let userAPI = UserAPIService()  //사용자 API Service
     
@@ -476,6 +477,7 @@ class UserInfoViewModel: ObservableObject {
                 return false
             }
         }
+        
         //입력한 비밀번호 일치 여부 확인
         if newPassword != confirmNewPassword {
             confirmNewPassword = ""

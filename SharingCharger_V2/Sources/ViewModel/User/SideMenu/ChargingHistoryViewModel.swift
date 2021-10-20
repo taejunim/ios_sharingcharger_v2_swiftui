@@ -7,8 +7,9 @@
 
 import Foundation
 
+///충전 이력 View Model
 class ChargingHistoryViewModel: ObservableObject {
-    private let chargeAPI = ChargeAPIService()
+    private let chargeAPI = ChargeAPIService()  //충전 API Service
     private let reservationAPI = ReservationAPIService()    //예약 API Service
     
     @Published var history: [String:String] = [:]
@@ -30,10 +31,11 @@ class ChargingHistoryViewModel: ObservableObject {
     @Published var searchPeriod: Int = -30
     @Published var selectPeriod: String = "oneMonth" {
         didSet {
-            setSearchPeriod()
+            setSearchPeriod()   //검색 기간 설정
         }
     }
     
+    //MARK: - 현재 일자 호출
     func getCurrentDate(completion: @escaping (Date) -> Void) {
         //현재 일시 API 호출
         let request = reservationAPI.requestCurrentDate()
@@ -51,6 +53,7 @@ class ChargingHistoryViewModel: ObservableObject {
         )
     }
     
+    //MARK: - 검색 일자 설정
     func setSearchDate(endDate: Date) {
         let calcDate: Date = Calendar.current.date(byAdding: .day, value: searchPeriod, to: endDate)!
         
@@ -58,22 +61,28 @@ class ChargingHistoryViewModel: ObservableObject {
         searchEndDate = endDate
     }
     
+    //MARK: - 검색 기간 설정
     func setSearchPeriod() {
         isDirectlySelect = false
         
+        //1개월
         if selectPeriod == "oneMonth" {
             searchPeriod = -30
         }
+        //3개월
         else if selectPeriod == "threeMonths" {
             searchPeriod = -90
         }
+        //6개월
         else if selectPeriod == "sixMonths" {
             searchPeriod = -180
         }
+        //직접 선택
         else if selectPeriod == "directly" {
             isDirectlySelect = true
         }
         
+        //직접 선택이 아닌 경우 현재 일자 호출 후 재설정
         if !isDirectlySelect {
             self.getCurrentDate() { currentDate in
                 self.setSearchDate(endDate: currentDate)
@@ -174,12 +183,13 @@ class ChargingHistoryViewModel: ObservableObject {
         )
     }
     
+    //MARK: - 초기화
     func reset() {
-        isSearch = false
-        page = 1
-        totalCount = 0
-        totalPages = 0
-        selectPeriod = "oneMonth"
-        selectSort = "DESC"
+        isSearch = false    //검색 여부
+        page = 1    //페이지 번호
+        totalCount = 0  //총 개수
+        totalPages = 0  //총 페이지 수
+        selectPeriod = "oneMonth"   //검색 기간 선택 - 1개월
+        selectSort = "DESC" //정렬 선택 - 최신순
     }
 }

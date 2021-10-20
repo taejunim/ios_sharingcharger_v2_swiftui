@@ -51,6 +51,7 @@ struct UserInfoEntryField: View {
             }
         )
         
+        //호출한 상위 화면이 '비밀번호 변경'인 경우 아이디 입력창 표시
         if userInfo.viewPath == "changePassword" {
             //Text Field - 아이디(이메일)
             Section(

@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+///로그인 View Model
 class SignInViewModel: ObservableObject {
     public var didChange = PassthroughSubject<SignInViewModel, Never>()
     

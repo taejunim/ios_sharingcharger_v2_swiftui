@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//MARK: - 월별 수익 포인트 화면
 struct ProfitPointsView: View {
     @ObservedObject var ownerChargerViewModel: OwnerChargerViewModel
     
@@ -15,14 +16,20 @@ struct ProfitPointsView: View {
             VStack(spacing: 20) {
                 HStack() {
                     CloseButton()
+                    
                     Spacer()
+                    
                     Text("월별 수익 포인트")
                         .fontWeight(.bold)
+                    
                     Spacer()
+                    
                     Spacer()
                         .frame(width: 25)
                 }
+                
                 HStack {
+                    //연도 선택 버튼
                     Button(
                         action: {
                             ownerChargerViewModel.isShowYearPopupView = true
@@ -36,6 +43,7 @@ struct ProfitPointsView: View {
                                 .background(Color("#EFEFEF"))
                         }
                     )
+                    
                     Spacer()
                 }
                 .padding(.leading)
@@ -67,7 +75,7 @@ struct ProfitPointsView: View {
             }
         }
         .edgesIgnoringSafeArea(.all)
-        .onAppear() {
+        .onAppear {
             ownerChargerViewModel.searchPoints.removeAll()
             ownerChargerViewModel.searchYear = "yyyy".dateFormatter(formatDate: Date())
             ownerChargerViewModel.requestProfitPoints()
@@ -75,6 +83,7 @@ struct ProfitPointsView: View {
     }
 }
 
+//MARK: - 연도 선택 팝업
 struct YearPopupView: View {
     @ObservedObject var ownerChargerViewModel: OwnerChargerViewModel
     @State var currentYear = "yyyy".dateFormatter(formatDate: Date())
@@ -126,6 +135,7 @@ struct YearPopupView: View {
     }
 }
 
+//MARK: - 월별 수익 포인트 목록
 struct profitPointList: View {
     @ObservedObject var ownerChargerViewModel: OwnerChargerViewModel
     
@@ -143,13 +153,13 @@ struct profitPointList: View {
                     HStack {
                         Text("\(month)")
                             .font(.body)
-                            .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                            .fontWeight(.bold)
                         
                         Spacer()
                         
                         Text("\(point.pointFormatter())")
                             .font(.body)
-                            .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                            .fontWeight(.bold)
                             .foregroundColor(Color("#3498DB"))
                     }
                     .padding(.vertical, 8.0)
@@ -160,7 +170,6 @@ struct profitPointList: View {
         }
     }
 }
-
 
 struct ProfitPointsView_Previews: PreviewProvider {
     static var previews: some View {

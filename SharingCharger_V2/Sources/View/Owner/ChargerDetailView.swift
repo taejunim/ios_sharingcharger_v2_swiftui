@@ -6,9 +6,8 @@
 //
 import SwiftUI
 
-
+//MARK: - 충전기 상세 화면
 struct ChargerDetailView: View {
-    
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
         
@@ -34,6 +33,7 @@ struct ChargerDetailView: View {
     
 }
 
+//MARK: - 소유주 충전기 상세 메뉴
 struct OwnerChargerDetailMenu: View{
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
     @State var chargerId:String
@@ -46,8 +46,8 @@ struct OwnerChargerDetailMenu: View{
     @State var isShowChargerHistory:Bool = false
     
     var body: some View {
-        
         HStack {
+            //충전기 상세 메인 화면 버튼
             Button(
                 action: {
                     isShowChargerDetailMain = true
@@ -69,6 +69,7 @@ struct OwnerChargerDetailMenu: View{
             Spacer()
             
             HStack {
+                //충전기 단가 설정 메뉴 버튼
                 Button(
                     action: {
                         isShowChargerDetailMain = false
@@ -86,7 +87,9 @@ struct OwnerChargerDetailMenu: View{
                         }
                 )
                 
-                if(sharedType == "PARTIAL_SHARING"){
+                //부분 운영인 경우
+                if(sharedType == "PARTIAL_SHARING") {
+                    //운영 시간 설정 메뉴 버튼
                     Button(
                         action: {
                             isShowChargerDetailMain = false
@@ -106,6 +109,7 @@ struct OwnerChargerDetailMenu: View{
                     )
                 }
                 
+                //충전기 정보 수정 메뉴 버튼
                 Button(
                     action: {
                         isShowChargerDetailMain = false
@@ -123,6 +127,7 @@ struct OwnerChargerDetailMenu: View{
                         }
                 )
                 
+                //소유주 충전 이력 메뉴 버튼
                 Button(
                     action: {
                         isShowChargerDetailMain = false
@@ -162,8 +167,6 @@ struct OwnerChargerDetailMenu: View{
         if self.isShowChargerHistory {
             OwnerChargerHistory(chargerDetailViewModel: chargerDetailViewModel, chargerId: chargerId)
         }
-          
-        
     }
 }
 

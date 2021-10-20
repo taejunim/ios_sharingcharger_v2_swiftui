@@ -3,14 +3,16 @@
 //  SharingCharger_V2
 //
 //  Created by KJ on 2021/09/27.
+//  Updated by 조유영
 //
 
 import SwiftUI
 
+//MARK: - 소유주 충전기 관리 화면
 struct OwnerChargerView: View {
     @Environment(\.presentationMode) var presentationMode   //Back 버튼 기능 추가에 필요
     @ObservedObject var ownerChargerViewModel = OwnerChargerViewModel()    //충전기 관리 View Model
-    @ObservedObject var chargerDetail = ChargerDetailViewModel()
+    @ObservedObject var chargerDetail = ChargerDetailViewModel()    //충전기 상세 View Model
     
     var body: some View {
         VStack {
@@ -24,13 +26,13 @@ struct OwnerChargerView: View {
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
         .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
         .onAppear {
-            ownerChargerViewModel.requestOwnerSummaryInfo()
-            ownerChargerViewModel.requestOwnerChargerList()
+            ownerChargerViewModel.requestOwnerSummaryInfo() //소유주 요약 정보
+            ownerChargerViewModel.requestOwnerChargerList() //소유주 충전기 목록
         }
         .sheet(
             isPresented: $ownerChargerViewModel.showProfitPointsView,
             content: {
-                ProfitPointsView(ownerChargerViewModel: ownerChargerViewModel)
+                ProfitPointsView(ownerChargerViewModel: ownerChargerViewModel)  //월별 수익 포인트 화면
             }
         )
     }
@@ -42,9 +44,10 @@ struct OwnerChargerSummaryInfo: View {
     @ObservedObject var ownerChargerViewModel: OwnerChargerViewModel
     
     var body: some View {
+        let ownChargerCount = ownerChargerViewModel.ownChargerCount //소유주 충전기 개수
         
-        let ownChargerCount = ownerChargerViewModel.ownChargerCount
         VStack {
+            //충전기 대수
             HStack {
                 Text("총 충전기 대수")
                     .fontWeight(.bold)
@@ -66,6 +69,7 @@ struct OwnerChargerSummaryInfo: View {
             
             VerticalDividerline()
             
+            //현재 월 수익 포인트
             HStack {
                 Text("이달의 수익 포인트")
                     .fontWeight(.bold)
@@ -109,14 +113,14 @@ struct ProfitPointsViewButton: View {
     @ObservedObject var ownerChargerViewModel: OwnerChargerViewModel
     
     var body: some View {
-        
         let monthlyCumulativePoint = ownerChargerViewModel.monthlyCumulativePoint
+        
         Button(
             action: {
                 ownerChargerViewModel.showProfitPointsView = true
             },
             label: {
-                Text(numberFormatter(number: monthlyCumulativePoint) + "p")
+                Text(String(monthlyCumulativePoint).pointFormatter())
                     .fontWeight(.bold)
                     .foregroundColor(Color.white)
                     .padding(.horizontal)
@@ -126,13 +130,6 @@ struct ProfitPointsViewButton: View {
                     .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
             }
         )
-    }
-    //숫자에 콤마
-    func numberFormatter(number: Int) -> String {
-        let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = .decimal
-        
-        return numberFormatter.string(from: NSNumber(value: number))!
     }
 }
 
@@ -144,7 +141,7 @@ struct OwnerChargerList: View {
     var body: some View {
         ScrollView {
             LazyVStack {
-                let searchChargers = ownerChargerViewModel.chargers
+                let searchChargers = ownerChargerViewModel.chargers //검색된 충전기 목록
                 
                 ForEach(searchChargers, id: \.self) { charger in
                 

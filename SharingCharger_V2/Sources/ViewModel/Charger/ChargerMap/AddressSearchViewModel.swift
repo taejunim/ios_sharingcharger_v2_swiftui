@@ -7,8 +7,9 @@
 
 import Foundation
 
+///주소 검색 관련 View Model
 class AddressSearchViewModel: ObservableObject {
-    private let commonAPI = CommonAPIService()
+    private let commonAPI = CommonAPIService()  //공통 API Service
     
     @Published var viewPath: String = ""    //호출 화면 경로
     
@@ -30,7 +31,7 @@ class AddressSearchViewModel: ObservableObject {
                 isSearch = false    //검색 여부 초기화
                 isLastPage = false  //마지막 페이지 여부 초기화
                 totalCount = 0  //총 검색 개수 초기화
-                page = 1
+                page = 1    //페이지 번호
             }
         }
     }
@@ -53,7 +54,6 @@ class AddressSearchViewModel: ObservableObject {
     
     //MARK: - 주소 검색 목록 호출
     func getAddressList() {
-        
         self.place.removeAll()  //검색항목 삭제
         self.places.removeAll() //검색목록 삭제
         

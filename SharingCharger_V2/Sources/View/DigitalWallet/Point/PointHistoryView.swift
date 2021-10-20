@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//MARK: - 포인트 구매 이력 화면
 struct PointHistoryView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var point = PointViewModel()
@@ -19,7 +20,7 @@ struct PointHistoryView: View {
             
             PointHistoryList(point: point)  //포인트 이력 목록
         }
-        .navigationBarTitle(Text("title.point.history".localized()), displayMode: .inline) //Navigation Bar 타이틀
+        .navigationBarTitle(Text("포인트 구매 이력"), displayMode: .inline) //Navigation Bar 타이틀
         .navigationBarBackButtonHidden(true)    //기본 Back 버튼 숨김
         .navigationBarItems(leading: BackButton(), trailing: PointSearchModalButton(point: point))  //커스텀 Back 버튼 추가
         .onAppear {
@@ -67,7 +68,7 @@ struct RemainingPoints: View {
         VStack {
             HStack {
                 Text("현재 잔여 포인트")
-                    .font(.title2)
+                    .font(.title3)
                     .fontWeight(.bold)
                 
                 Spacer()
@@ -110,15 +111,15 @@ struct PointHistoryList: View {
 
                     let date = created.replacingOccurrences(of: "T", with: " ") //생성 날짜에서 T 제거
                     
-                    VStack(alignment: .leading){
-                        HStack{
+                    VStack(alignment: .leading) {
+                        HStack {
                             Text("\(date)")
                                 .font(.footnote)
                                 .foregroundColor(.gray)
                             
                             Spacer()
                             
-                            if (typeCode == "PURCHASE" || typeCode == "PURCHASE_CANCEL" ){
+                            if (typeCode == "PURCHASE" || typeCode == "PURCHASE_CANCEL" ) {
                                 Text("승인 번호 : \(targetName)")
                                     .font(.footnote)
                                     .foregroundColor(.gray)
@@ -127,7 +128,7 @@ struct PointHistoryList: View {
                         
                         Spacer()
                         
-                        HStack{
+                        HStack {
                             Text("\(type)")
                                 .font(.headline)
                                 .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
@@ -136,7 +137,7 @@ struct PointHistoryList: View {
                             
                             Text(typeCode == "PURCHASE" || typeCode == "EXCHANGE" || typeCode == "GIVE" ? "+\(historyPoint.pointFormatter())" : historyPoint.pointFormatter())
                                 .font(.headline)
-                                .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                                .fontWeight(.bold)
                                 .foregroundColor(Color(typeColor))
                         }
                         
@@ -144,7 +145,7 @@ struct PointHistoryList: View {
                             if targetName != "" {
                                 Spacer()
                                 
-                                HStack{
+                                HStack {
                                     Text("\(targetName)")
                                         .font(.footnote)
                                         .foregroundColor(.gray)
@@ -154,11 +155,11 @@ struct PointHistoryList: View {
                     }
                     .padding(.vertical, 5)
                     .padding(.horizontal, 10)
-                    .onAppear{
+                    .onAppear {
                         //조회 시작 여부 true일 경우 실행
-                        if point.isSearchStart{
+                        if point.isSearchStart {
                             //스크롤 하단 이동 시, 마지막 이력 정보일 때 추가 조회 실행
-                            if searchPoints.last == points{
+                            if searchPoints.last == points {
                                 point.page += 1    //한 페이지씩 추가
                                 point.getPointHistory(page: point.page)   //다음 페이지 호출
                             }

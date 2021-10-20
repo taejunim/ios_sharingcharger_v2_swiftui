@@ -16,7 +16,7 @@ struct SideMenuView: View {
     @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     @ObservedObject var point: PointViewModel   //포인트 View Model
     @ObservedObject var purchase: PurchaseViewModel //포인트 구매 View Model
-    @ObservedObject var favorites: FavoritesViewModel
+    @ObservedObject var favorites: FavoritesViewModel   //즐겨찾기 View Model
     
     @State var dragOffset = CGSize.zero //Drag Offset
     
@@ -173,7 +173,7 @@ struct UserPoint: View {
         .padding(.horizontal)
         .padding(.vertical, 5)
         .onAppear {
-            point.getCurrentPoint()
+            point.getCurrentPoint() //현재 사용자 포인트 조회
         }
     }
 }
@@ -375,28 +375,26 @@ struct CustomerServiceMenuButton: View {
     }
     
     func showEmailDialog() {
-        
         let dialog = UIAlertController(title:"", message : "문의사항이 있으시면\n아래의 문의하기 버튼을 클릭해주세요.", preferredStyle: .alert)
         
-        dialog
-            .addAction(
-                UIAlertAction(title: "닫기", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
-                    return
-                }
-            )
+        dialog.addAction(
+            UIAlertAction(title: "닫기", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
+                return
+            }
+        )
         
-        dialog
-            .addAction(
-                UIAlertAction(title: "문의하기", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
-                    
-                    let bodyContent: String = "App Version : \(String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String))</br>"
+        dialog.addAction(
+            UIAlertAction(title: "문의하기", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
+                let bodyContent: String = "App Version : \(String(describing: Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String))</br>"
                     + "Model Name : \(UIDevice.modelName)</br>"
                     + "OS Version : \(UIDevice.current.systemVersion)</br>"
                     + "이메일 : \(UserDefaults.standard.string(forKey: "userId") ?? "")</br>"
-                    EmailHelper.shared.sendEmail(subject: "[몬딱충전 문의] : 제목을 입력해주세요.", body: bodyContent, to: "jichul@metisinfo.co.kr")
-                    return
-                }
-            )
+                
+                EmailHelper.shared.sendEmail(subject: "[몬딱충전 문의] : 제목을 입력해주세요.", body: bodyContent, to: "jichul@metisinfo.co.kr")
+                
+                return
+            }
+        )
         
         UIApplication.shared.windows.filter {$0.isKeyWindow}.first!.rootViewController?.present(dialog, animated: true, completion: nil)
     }

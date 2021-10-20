@@ -446,7 +446,9 @@ struct PrivacyContent: View {
             }
             else {
                 Spacer()
+                
                 Text("server.error".message()).multilineTextAlignment(.center)  //서버 에러 메시지 출력
+                
                 Spacer()
             }
             

@@ -17,7 +17,7 @@ struct ChargerMapView: View {
     @ObservedObject var point = PointViewModel()    //포인트 View Model
     @ObservedObject var purchase = PurchaseViewModel()  //포인트 구매 View Model
     @ObservedObject var charging = ChargingViewModel()  //포인트 구매 View Model
-    @ObservedObject var favorites = FavoritesViewModel()
+    @ObservedObject var favorites = FavoritesViewModel()    //즐겨찾기 View Model
     
     var body: some View {
         //로그아웃 시, 로그인 화면으로 이동
@@ -88,20 +88,24 @@ struct ChargerMapView: View {
                     )
                     .edgesIgnoringSafeArea(.all)
 
-                    //지도 프레임 화면 - 메뉴 버튼, 주소 검색 버튼, 하단 검색 조건 버튼
-                    FrameView(sideMenu: sideMenu, chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)
-                    
-                    //충전기 정보 Modal View
-                    ChargerInfoModal(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase, point: point, favorites: favorites)
-                    
-                    //로딩 표시 여부에 따라 표출
-                    if chargerMap.viewUtil.isLoading {
-                        chargerMap.viewUtil.loadingView()  //로딩 화면
+                    Group {
+                        //지도 프레임 화면 - 메뉴 버튼, 주소 검색 버튼, 하단 검색 조건 버튼
+                        FrameView(sideMenu: sideMenu, chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation)
+                        
+                        //충전기 정보 Modal View
+                        ChargerInfoModal(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation, purchase: purchase, point: point, favorites: favorites)
                     }
                     
-                    //사이드 메뉴 표시 여부에 따라 노출
-                    if sideMenu.isShowMenu {
-                        SideMenuView(sideMenu: sideMenu, chargerMap: chargerMap, reservation: reservation, point: point, purchase: purchase, favorites: favorites)    //사이드 메뉴
+                    Group {
+                        //로딩 표시 여부에 따라 표출
+                        if chargerMap.viewUtil.isLoading {
+                            chargerMap.viewUtil.loadingView()  //로딩 화면
+                        }
+                        
+                        //사이드 메뉴 표시 여부에 따라 노출
+                        if sideMenu.isShowMenu {
+                            SideMenuView(sideMenu: sideMenu, chargerMap: chargerMap, reservation: reservation, point: point, purchase: purchase, favorites: favorites)    //사이드 메뉴
+                        }
                     }
                     
                     //충전하기 버튼 클릭 시, 충전 화면 이동
@@ -177,10 +181,10 @@ struct ChargerMapView: View {
 
 //MARK: - 지도 프레임 화면
 struct FrameView: View {
-    @ObservedObject var sideMenu: SideMenuViewModel
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var chargerSearch: ChargerSearchViewModel
-    @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var sideMenu: SideMenuViewModel //사이드 메뉴 View Model
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var chargerSearch: ChargerSearchViewModel   //충전기 검색 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     
     var body: some View {
         VStack {
@@ -193,6 +197,7 @@ struct FrameView: View {
             
             HStack {
                 Spacer()
+                
                 CurrentLocationButton(chargerMap: chargerMap, chargerSearch: chargerSearch, reservation: reservation) //현재 위치 이동 버튼
             }
             .padding(.horizontal)
@@ -214,7 +219,7 @@ struct FrameView: View {
 
 //MARK: - 사이드 메뉴 버튼
 struct SideMenuButton: View {
-    @ObservedObject var sideMenu: SideMenuViewModel
+    @ObservedObject var sideMenu: SideMenuViewModel //사이드 메뉴 View Model
     
     var body: some View {
         Button(
@@ -239,7 +244,7 @@ struct SideMenuButton: View {
 
 //MARK: - 지도 주소
 struct MapAddressButton: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
     
     @State var viewPath: String = "chargerMap"
     
@@ -250,6 +255,7 @@ struct MapAddressButton: View {
             },
             label: {
                 HStack {
+                    //현재 지도 중심 주소
                     Text(chargerMap.currentAddress)
                         .font(.subheadline)
                         .foregroundColor(.black)
@@ -274,13 +280,14 @@ struct MapAddressButton: View {
 
 //MARK: - 현재 위치 이동 버튼
 struct CurrentLocationButton: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var chargerSearch: ChargerSearchViewModel
-    @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var chargerSearch: ChargerSearchViewModel   //충전기 검색 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     
     var body: some View {
         Button(
             action: {
+                //검색조건의 충전 예약 유형이 '즉시 충전'인 경우
                 if chargerSearch.selectChargeType == "Instant" {
                     chargerMap.getCurrentDate() { currentDate in
                         let calcDate: Date = Calendar.current.date(byAdding: .second, value: chargerSearch.selectChargingTime, to: currentDate)!
@@ -293,12 +300,13 @@ struct CurrentLocationButton: View {
                         chargerMap.currentLocation(chargerSearch.chargingStartDate!, chargerSearch.chargingEndDate!)
                     }
                 }
+                //검색조건의 충전 예약 유형이 '예약 충전'인 경우
                 else {
                     //현재 위치 이동 실행 - 현재 위치 이동 시, 현재 위치의 충전기 목록 조회
                     chargerMap.currentLocation(chargerSearch.chargingStartDate!, chargerSearch.chargingEndDate!)
                 }
                 
-                reservation.getUserReservation()
+                reservation.getUserReservation()    //사용자의 현재 예약 정보 호출
             },
             label: {
                 ZStack {

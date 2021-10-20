@@ -11,10 +11,6 @@ import PromisedFuture
 
 /// Alomfire를 통한 API 연동
 class APIClient {
-    //let semaphore = DispatchSemaphore(value: 0)
-    //semaphore.signal()
-    //semaphore.wait()
-    
     //MARK: - API Request 연동 (Type: JSON)
     /// JSON Response API Request 연동 - Alamofire
     /// - Parameters:
@@ -68,8 +64,9 @@ class APIClient {
             )
         }
     }
-
-//    public func request2<T: Decodable>(route: APIRouter, decoder: JSONDecoder = JSONDecoder()) -> Future<T, AFError> {
+    
+    //Return 형식 API 호출
+//    public func request<T: Decodable>(route: APIRouter, decoder: JSONDecoder = JSONDecoder()) -> Future<T, AFError> {
 //
 //        let future = Future<T, AFError> { (completion) in
 //            let request = AF.request(route)

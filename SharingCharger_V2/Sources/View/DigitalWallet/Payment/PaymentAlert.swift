@@ -9,14 +9,15 @@ import SwiftUI
 
 //MARK: - 포인트 부족 알림창
 struct PointLackAlert: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var reservation: ReservationViewModel
-    @ObservedObject var purchase: PurchaseViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
+    @ObservedObject var purchase: PurchaseViewModel //포인트 구매 View Model
     
     var body: some View {
         GeometryReader { geometryReader in
             VStack {
                 VStack(spacing: 0) {
+                    //알림창 제목
                     HStack{
                         Text("포인트 부족")
                             .font(.title2)
@@ -28,8 +29,10 @@ struct PointLackAlert: View {
                     
                     HorizontalDividerline()
                     
+                    //알림창 내용
                     VStack(spacing: 10) {
                         VStack(spacing: 5) {
+                            //잔여 포인트
                             HStack(spacing: 1) {
                                 Text("잔여 포인트 : ")
                                     .fontWeight(.bold)
@@ -40,6 +43,7 @@ struct PointLackAlert: View {
                                 Spacer()
                             }
                             
+                            //차감 포인트
                             HStack(spacing: 1) {
                                 Text("차감 포인트 : ")
                                     .fontWeight(.bold)
@@ -51,6 +55,7 @@ struct PointLackAlert: View {
                                 Spacer()
                             }
                             
+                            //부족 포인트
                             HStack(spacing: 1) {
                                 Text("부족 포인트 : ")
                                     .fontWeight(.bold)
@@ -73,6 +78,7 @@ struct PointLackAlert: View {
                     
                     Spacer()
                     
+                    //알림창 버튼
                     HStack(spacing: 5) {
                         //취소 버튼 - 알림창 닫기
                         Button(
@@ -145,6 +151,7 @@ struct PaymentInputAlert:View {
             ZStack {
                 VStack {
                     VStack(spacing: 0) {
+                        //알림창 제목
                         HStack{
                             Text("포인트 충전")
                                 .font(.title2)
@@ -158,6 +165,7 @@ struct PaymentInputAlert:View {
                         
                         Spacer()
                         
+                        //알림창 내용
                         Text("충전할 금액을 선택하거나, 직접 입력해주세요.")
                             .multilineTextAlignment(.center)
                         
@@ -214,6 +222,7 @@ struct PaymentInputAlert:View {
                         
                         Spacer()
                         
+                        //충전 금액 정보
                         VStack(spacing: 10) {
                             HStack {
                                 Spacer()
@@ -246,6 +255,7 @@ struct PaymentInputAlert:View {
                         
                         Spacer()
                         
+                        //알림창 버튼
                         HStack(spacing: 5) {
                             //취소 버튼 - 알림창 닫기
                             Button(
@@ -298,12 +308,6 @@ struct PaymentInputAlert:View {
                     purchase.paymentAmount = 0  //결제금액 초기화
                     purchase.stringPaymentAmount = "0"  //직접입력 결제금액 초기화
                 }
-//                .fullScreenCover(
-//                    isPresented: $purchase.isShowPaymentModal,
-//                    content: {
-//                        PaymentModal(purchase: purchase, point: point, reservation: reservation)    //결제 Web View 팝업
-//                    }
-//                )
                 .sheet(
                     isPresented: $purchase.isShowPaymentModal,
                     content: {
@@ -343,6 +347,7 @@ struct PaymentCompletionAlert: View {
         GeometryReader { geometryReader in
             VStack {
                 VStack(spacing: 0) {
+                    //알림창 제목
                     HStack{
                         Text("결제 완료")
                             .font(.title2)
@@ -356,10 +361,11 @@ struct PaymentCompletionAlert: View {
                     
                     Spacer()
                     
-                    Text("정상적으로 결제가 완료되었습니다.")
+                    Text("정상적으로 결제가 완료되었습니다.")  //알림창 내용
                     
                     Spacer()
                     
+                    //알림창 버튼 - 결제 완료 확인 버튼
                     Button(
                         action: {
                             /// 결제 성공 시 호출한 상위 화면에 따라 화면 업데이트
@@ -415,6 +421,7 @@ struct PaymentCompletionAlert: View {
     }
 }
 
+//MARK: - 결제 실패 알림창
 struct PaymentFailedAlert: View {
     @ObservedObject var purchase: PurchaseViewModel
     
@@ -422,6 +429,7 @@ struct PaymentFailedAlert: View {
         GeometryReader { geometryReader in
             VStack {
                 VStack(spacing: 0) {
+                    //알림창 제목
                     HStack{
                         Text("결제 실패")
                             .font(.title2)
@@ -435,12 +443,14 @@ struct PaymentFailedAlert: View {
                     
                     Spacer()
                     
+                    //알림창 내용
                     Text("결제가 실패하였습니다.다시 시도 바랍니다.\n문제가 지속될 시, 고객 센터에 문의 바랍니다.")
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 10)
                     
                     Spacer()
                     
+                    //알림창 버튼 - 결제 실패 확인 버튼
                     Button(
                         action: {
                             purchase.isShowFailedAlert = false

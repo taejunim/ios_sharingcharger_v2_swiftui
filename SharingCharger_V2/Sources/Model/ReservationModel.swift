@@ -61,23 +61,23 @@ struct ReservationContent: Codable {
 
 //MARK: - 사용자 예약 정보
 struct UserReservation: Codable {
-    let id: Int
-    let instantChargeFlag: Bool
-    let userId: Int
-    let userName: String?
-    let chargerId: Int
-    let chargerName: String?
-    let bleNumber: String?
-    let chargerAddress: String?
-    let chargerDetailAddress: String?
-    let gpsX: Double?
-    let gpxY: Double?
-    let rangeOfFee: String?
-    let expectPoint: Int?
-    let startDate: String?
-    let endDate: String?
-    let cancelDate: String?
-    let state: String?
-    let created: String?
-    let updated: String?
+    let id: Int //예약 ID
+    let instantChargeFlag: Bool //즉시 충전 여부
+    let userId: Int //사용자 ID 번호
+    let userName: String?   //사용자 ID
+    let chargerId: Int  //충전기 ID
+    let chargerName: String?    //충전기 명
+    let bleNumber: String?  //BLE 번호
+    let chargerAddress: String? //충전기 주소
+    let chargerDetailAddress: String?   //충전기 상세주소
+    let gpsX: Double?   //X 좌표
+    let gpxY: Double?   //Y 좌표
+    let rangeOfFee: String? //충전 단가
+    let expectPoint: Int?   //예상 차감 포인트
+    let startDate: String?  //예약 시작일시
+    let endDate: String?    //예약 종료일시
+    let cancelDate: String? //예약 취소일시
+    let state: String?  //예약 상태
+    let created: String?    //등록일시
+    let updated: String?    //수정일시
 }

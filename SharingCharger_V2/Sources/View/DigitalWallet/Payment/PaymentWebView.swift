@@ -9,6 +9,7 @@ import SwiftUI
 import WebKit
 import UIKit
 
+//MARK: - 결제 웹 뷰 화면
 struct PaymentWebView: UIViewRepresentable, WebViewHandlerDelegate {
     
     var loadUrl: String //호출 URL
@@ -19,7 +20,7 @@ struct PaymentWebView: UIViewRepresentable, WebViewHandlerDelegate {
         HTTPCookieStorage.shared.cookieAcceptPolicy = .always
         
         let webView = WKWebView(frame: .zero)
-        let configuration = webView.configuration
+        let configuration = webView.configuration   //웹 화면 설정
     
         webView.navigationDelegate = context.coordinator
         webView.uiDelegate = context.coordinator
@@ -42,18 +43,22 @@ struct PaymentWebView: UIViewRepresentable, WebViewHandlerDelegate {
         
     }
     
+    //MARK: - Coordinator 생성
     func makeCoordinator() -> Coordinator {
         Coordinator(uiWebView: self)
     }
     
+    //웹 뷰에서 JSON 형식 데이터 전달
     func receivedJsonValueFromWebView(value: [String : Any?]) {
         print("JSON Data: \(value)")
     }
     
+    //웹 뷰에서 String 형식 데이터 전달
     func receivedStringValueFromWebView(value: String) {
         print("String Data: \(value)")
     }
     
+    //MARK: - Coordinator
     class Coordinator : NSObject, WKNavigationDelegate {
         var webView: PaymentWebView
         var delegate: WebViewHandlerDelegate?
@@ -63,6 +68,7 @@ struct PaymentWebView: UIViewRepresentable, WebViewHandlerDelegate {
             self.delegate = webView
         }
         
+        //MARK: - 타 결제 앱 연동
         func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
             let request = navigationAction.request
             let optUrl = request.url
@@ -72,7 +78,6 @@ struct PaymentWebView: UIViewRepresentable, WebViewHandlerDelegate {
                 return decisionHandler(WKNavigationActionPolicy.cancel)
             }
 
-            debugPrint("url : \(url)")
             if(scheme != "http" && scheme != "https") {
                 if(scheme == "ispmobile" && !UIApplication.shared.canOpenURL(url)) {
                     //ISP 미설치 시
@@ -103,8 +108,8 @@ struct PaymentWebView: UIViewRepresentable, WebViewHandlerDelegate {
 }
 
 protocol WebViewHandlerDelegate {
-    func receivedJsonValueFromWebView(value: [String: Any?])
-    func receivedStringValueFromWebView(value: String)
+    func receivedJsonValueFromWebView(value: [String: Any?])    //웹 뷰에서 JSON 형식 데이터 전달
+    func receivedStringValueFromWebView(value: String)  //웹 뷰에서 String 형식 데이터 전달
 }
 
 extension PaymentWebView.Coordinator: WKUIDelegate {
@@ -130,10 +135,12 @@ extension PaymentWebView.Coordinator: WKUIDelegate {
         
     }
     
+    //MAKR: - 웹 뷰에서 JavaScript 알림 메시지 호출
     func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
         
         let encodedMessage = message.removingPercentEncoding!.replacingOccurrences(of: "+", with: " ")
         
+        //결제 진행 코드 포함 확인
         if message.contains(":") {
             let getCode = encodedMessage[..<encodedMessage.firstIndex(of: ":")!].trimmingCharacters(in: .whitespaces)
             let getContent = encodedMessage[encodedMessage.firstIndex(of: ":")!...].trimmingCharacters(in: [":"]).trimmingCharacters(in: .whitespaces)
@@ -151,10 +158,12 @@ extension PaymentWebView.Coordinator: WKUIDelegate {
         completionHandler()
     }
     
+    //MAKR: - 웹 뷰에서 JavaScript 확인 알림 메시지 호출
     func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void) {
         print("JavaScript Confirm : \(message)")
     }
     
+    //MAKR: - 웹 뷰에서 JavaScript 입력 알림 메시지 호출
     func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (String?) -> Void) {
         
         print("JavaScript Text Input : \(prompt)")

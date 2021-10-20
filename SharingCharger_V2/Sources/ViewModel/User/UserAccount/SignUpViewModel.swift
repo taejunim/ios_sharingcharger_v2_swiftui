@@ -9,6 +9,7 @@ import SwiftUI
 import Foundation
 import Combine
 
+///회원가입 관련 View Model
 class SignUpViewModel: ObservableObject {
     private let userAPI = UserAPIService()  //사용자 API Service
     @Published var viewUtil = ViewUtil() //View Util
@@ -483,7 +484,7 @@ class SignUpViewModel: ObservableObject {
         termsContent = ""    //서비스 이용약관 내용
         privacyContent = ""  //개인정보 처리방침 내용
 
-        isStartTimer = false
+        isStartTimer = false    //타이머 종료
         minutesRemaining = 3    //타이머 분 시간 설정(기본값: 3)
         secondsRemaining = 0    //타이머 초 시간 설정(기본값: 0)
     }

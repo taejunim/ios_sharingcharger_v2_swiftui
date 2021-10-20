@@ -24,10 +24,10 @@ struct PointHistory: Codable {
 
 //MARK: - 포인트 이력 내용 정보
 struct PointHistoryContent: Codable {
-    let id: Int?
-    let username: String?
-    let point: Int?
-    let type: String?
+    let id: Int?    //포인트 이력 ID
+    let username: String?   //사용자 ID
+    let point: Int? //포인트
+    let type: String?   //포인트 이력 유형
     let pointTargetId: Int?
     let targetName: String?
     let created: String?

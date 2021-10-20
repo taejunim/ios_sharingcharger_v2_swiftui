@@ -7,14 +7,15 @@
 
 import SwiftUI
 
+//MARK: 주소 검색 Modal 창
 struct AddressSearchModal: View {
     @Environment(\.presentationMode) var presentationMode
     
-    @ObservedObject var addressSearch = AddressSearchViewModel()
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var regist: ChargerRegistViewModel
+    @ObservedObject var addressSearch = AddressSearchViewModel()    //주소 검색 View Model
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var regist: ChargerRegistViewModel  //충전기 등록 View Model
     
-    @Binding var viewPath: String
+    @Binding var viewPath: String   //호출 화면
     
     var body: some View {
         VStack(spacing: 1) {
@@ -29,7 +30,7 @@ struct AddressSearchModal: View {
             Spacer()
         }
         .onAppear {
-            addressSearch.viewPath = viewPath
+            addressSearch.viewPath = viewPath   //주소 검색 Modal 창 호출 화면
             
             addressSearch.getLoacation()    //현재 사용자 위치 호출
             addressSearch.mapCenterLatitude = chargerMap.latitude   //현재 지도중심 위도
@@ -42,31 +43,33 @@ struct AddressSearchModal: View {
 struct AddressSearchWordEntryField: View {
     @Environment(\.presentationMode) var presentationMode
     
-    @ObservedObject var addressSearch: AddressSearchViewModel
+    @ObservedObject var addressSearch: AddressSearchViewModel   //주소 검색 View Model
     
     var body: some View {
         HStack(spacing: 0) {
+            //뒤로가기 버튼
             BackButton()
                 .padding(.leading)
             
+            //주소 검색 입력창
             TextField(
-                " 장소・주소・전화번호 검색",
+                "장소・주소・전화번호 검색",
                 text: $addressSearch.searchWord,
-                onEditingChanged: { _ in
-                },
+                onEditingChanged: { _ in },
                 onCommit: {
-                    addressSearch.isSearch = true
-                    addressSearch.getAddressList()
+                    addressSearch.isSearch = true   //검색 여부
+                    addressSearch.getAddressList()  //주소 검색 실행
                 }
             )
                 
             Spacer()
             
+            //검색창 초기화 버튼
             Button(
                 action: {
-                    addressSearch.searchWord = ""
-                    addressSearch.place.removeAll()
-                    addressSearch.places.removeAll()
+                    addressSearch.searchWord = ""   //검색어 초기화
+                    addressSearch.place.removeAll() //검색 정보 초기화
+                    addressSearch.places.removeAll()    //주소 정보 목록 초기화
                 },
                 label: {
                     HStack {
@@ -87,7 +90,7 @@ struct AddressSearchWordEntryField: View {
 
 //MARK: - 중심위치 선택 버튼
 struct CenterLocationSelectButton: View {
-    @ObservedObject var addressSearch: AddressSearchViewModel
+    @ObservedObject var addressSearch: AddressSearchViewModel   //주소 검색 View Model
     
     var body: some View {
         HStack(spacing: 0) {
@@ -95,7 +98,7 @@ struct CenterLocationSelectButton: View {
             Button(
                 action: {
                     addressSearch.selectCenterLocation = "user"
-                    addressSearch.getLoacation()
+                    addressSearch.getLoacation()    //위치 정보 호출
                 },
                 label: {
                     HStack(spacing: 1) {
@@ -147,9 +150,9 @@ struct CenterLocationSelectButton: View {
 struct AddressSearchList: View {
     @Environment(\.presentationMode) var presentationMode
     
-    @ObservedObject var addressSearch: AddressSearchViewModel
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var regist: ChargerRegistViewModel
+    @ObservedObject var addressSearch: AddressSearchViewModel   //주소 검색 View Model
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var regist: ChargerRegistViewModel  //충전기 등록 View Model
     
     var body: some View {
         ScrollView {
@@ -191,6 +194,7 @@ struct AddressSearchList: View {
                             action: {
                                 self.presentationMode.wrappedValue.dismiss()    //화면 닫기
 
+                                //'충전기 지도' 화면에서 호출한 경우
                                 if addressSearch.viewPath == "chargerMap" {
                                     
                                     let latitude = Double(place["latitude"]!)!  //선택한 장소의 위도
@@ -211,17 +215,20 @@ struct AddressSearchList: View {
                                         searchStartDate: chargerMap.searchStartDate!, searchEndDate: chargerMap.searchEndDate!
                                     ) { _ in }
                                 }
+                                //'충전기 등록' 화면에서 호출한 경우
                                 else if addressSearch.viewPath == "chargerRegist" {
                                     var address = ""
                                     
+                                    //도로명 주소가 있는 경우 도로명 주소
                                     if place["roadAddress"]! != "" {
                                         address = place["roadAddress"]!
                                     }
+                                    //도로명 주소가 없는 경우 지번 주소
                                     else {
                                         address = place["address"]!
                                     }
                                     
-                                    regist.address = address
+                                    regist.address = address    //충전기 주소
                                 }
                             },
                             label: {
@@ -326,7 +333,7 @@ struct AddressSearchList: View {
                             if !addressSearch.isLastPage {
                                 //스크롤의 마지막 항목인 경우에만 실행
                                 if places.last == place {
-                                    addressSearch.page = addressSearch.page + 1
+                                    addressSearch.page = addressSearch.page + 1 //조회 페이지 = 현제 페이지 + 1
                                     
                                     addressSearch.addNextAddressList()  //다음 주소 목록 추가
                                 }

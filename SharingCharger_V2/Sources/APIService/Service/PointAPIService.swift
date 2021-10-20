@@ -82,11 +82,15 @@ class PointAPIService {
     }
     
     //MARK: - 월별 수익 포인트 조회(소유주)
-    /// <#Description#>
+    /// 소유주가 보유한 총 충전기의 월별 수익 포인트 조회
     /// - Parameters:
-    ///   - userIdNo: <#userIdNo description#>
-    ///   - parameters: <#parameters description#>
-    /// - Returns: <#description#>
+    ///   - userIdNo: 사용자 ID 번호
+    ///   - parameters:
+    ///     - searchType: 조회 기준
+    ///       - DAY: 일
+    ///       - MONTH: 월
+    ///     - searchYear: 조회 연도
+    /// - Returns: Profit Point Model
     public func requestProfitPoints(userIdNo: String, parameters: [String:String]) -> Future<[ProfitPoint], AFError> {
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/dashboard/personal/\(userIdNo)/stat/point", parameters: parameters, contentType: "json"))
     }

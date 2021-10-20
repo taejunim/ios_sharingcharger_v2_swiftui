@@ -35,23 +35,23 @@ struct PointSearchModal: View {
                                     .font(.title2)
                                     .fontWeight(.bold)
                             }
+                            
                             Spacer()
                         }
+                        
                         VerticalDividerline()
+                        
                         //조회기간
                         HStack {
-                            
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("조회기간")
                                     .font(.body)
+                                
                                 PointDatePicker(point: point)
+                                
                                 HStack {
                                     //조회 시작일자
-                                    DatePicker(
-                                        "",
-                                        selection: $point.selectMonth,
-                                        displayedComponents: [.date]
-                                    )
+                                    DatePicker("", selection: $point.selectMonth, displayedComponents: [.date])
                                         .labelsHidden()
                                         .accentColor(.black)
                                         .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
@@ -63,12 +63,7 @@ struct PointSearchModal: View {
                                     Spacer()
                                     
                                     //조회 종료일자
-                                    DatePicker(
-                                        "",
-                                        selection: $point.currentDate,
-                                        displayedComponents: [.date]
-                                        
-                                    )
+                                    DatePicker("", selection: $point.currentDate, displayedComponents: [.date])
                                         .labelsHidden()
                                         .accentColor(.black)
                                         .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
@@ -80,26 +75,32 @@ struct PointSearchModal: View {
                         }
                         
                         VerticalDividerline()
+                        
                         //유형
                         HStack {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("유형")
                                     .font(.body)
+                                
                                 PointTypePicker(point: point)
                             }
+                            
                             Spacer()
                         }
+                        
                         VerticalDividerline()
+                        
                         //정렬
                         HStack {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("정렬")
                                     .font(.body)
+                                
                                 PointSortPicker(point: point)
                             }
+                            
                             Spacer()
                         }
-                        
                     }
                     .padding(.top)
                 }
@@ -125,9 +126,8 @@ struct PointDatePicker: View {
                 Text("직접 선택").tag("ownPeriod")
             }
         )
-            .padding(.vertical)
-            .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
-        
+        .padding(.vertical)
+        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
     }
 }
 //MARK: - 포인트 유형 선택 Picker
@@ -144,8 +144,9 @@ struct PointTypePicker: View {
                 Text("구매 취소").tag("PURCHASE_CANCEL")
             }
         )
-            .padding(.vertical)
-            .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+        .padding(.vertical)
+        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+        
         Picker(
             selection: $point.selectPointType, //포인트 유형 선택
             label: Text("유형 선택"),
@@ -155,8 +156,8 @@ struct PointTypePicker: View {
                 Text("포인트 회수").tag("WITHDRAW")
             }
         )
-            .padding(.vertical)
-            .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
+        .padding(.vertical)
+        .pickerStyle(SegmentedPickerStyle())    //Picker Style 변경
     }
 }
 //MARK: - 포인트 정렬 선택 Picker
@@ -173,7 +174,7 @@ struct PointSortPicker: View {
                     Text("과거순").tag("ASC")
                 }
             )
-                .pickerStyle(SegmentedPickerStyle())
+            .pickerStyle(SegmentedPickerStyle())
             
         }.padding(.vertical,25.0)
     }

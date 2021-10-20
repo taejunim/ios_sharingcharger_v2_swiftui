@@ -12,13 +12,14 @@ struct LaunchScreen: View {
     var body: some View {
         ZStack {
             VStack {
-                //시작 화면 이미지
+                //시작 화면 이미지 - 상단
                 Image("LaunchImage-Top")
                     .resizable()
                     .scaledToFit()
                 
                 Spacer()
                 
+                //시작 화면 이미지 - 하단
                 Image("LaunchImage-Bottom")
                     .resizable()
                     .scaledToFit()

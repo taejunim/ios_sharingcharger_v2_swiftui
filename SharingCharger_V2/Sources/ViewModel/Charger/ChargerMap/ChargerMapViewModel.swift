@@ -437,7 +437,7 @@ class ChargerMapViewModel: ObservableObject {
         calculateAvailableTime(availableTimeList: availableTimeList, tempReservationList: tempReservationList)
     }
     
-    //openTime, closeTime, 예약 시간 으로 이용 가능 시간 계산
+    //MARK: - openTime, closeTime, 예약 시간 으로 이용 가능 시간 계산
     func calculateAvailableTime(availableTimeList: Array<AvailableTimeModel>, tempReservationList: Array<CurrentReservationModel>) {
         
         self.availableTimeArray.removeAll()
@@ -673,7 +673,7 @@ class ChargerMapViewModel: ObservableObject {
         self.availableTimeArray = availableTimeArray
     }
     
-    //openTime, closeTime, reservation List 만들기
+    //MARK: - openTime, closeTime, reservation List 만들기
     func addItem(startDateString: String, endDateString: String, arrayType: String) {
         let startDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: startDateString)
         let endDate = "yyyy-MM-dd'T'HH:mm:ss".toDateFormatter(formatString: endDateString)
@@ -689,7 +689,7 @@ class ChargerMapViewModel: ObservableObject {
         }
     }
     
-    //예약은 전후 30분 불가능하므로 시간 재계산
+    //MARK: - 예약은 전후 30분 불가능하므로 시간 재계산
     func check30Minute(startTime: Date, endTime: Date) -> Bool {
         
         if endTime.currentTimeMillis() - startTime.currentTimeMillis() < 1800000 {
@@ -699,18 +699,19 @@ class ChargerMapViewModel: ObservableObject {
         return true
     }
     
-    //예약 시작 시간 30분 전 date 구하기
+    //MARK: - 예약 시작 시간 30분 전 date 구하기
     func recalculateBefore30Minute(originDate: Date) -> Date {
         
         return Calendar.current.date(byAdding: .minute, value: -30, to: originDate)!
     }
     
-    //예약 종료 시간 30분 후 date 구하기
+    //MARK: - 예약 종료 시간 30분 후 date 구하기
     func recalculateAfter30Minute(originDate: Date) -> Date {
         
         return Calendar.current.date(byAdding: .minute, value: 30, to: originDate)!
     }
     
+    //MARK: - 내비게이션 앱(카카오맵) 실행
     func launchNavigation() {
         var kakaoMap = "kakaomap://"
         let appCheckURL = URL(string: kakaoMap)

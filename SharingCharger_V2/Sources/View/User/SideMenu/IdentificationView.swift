@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//MARK: - 회원 증명서
 struct IdentificationView: View {
     @Environment(\.presentationMode) var presentationMode
     

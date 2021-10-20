@@ -11,8 +11,8 @@ import Foundation
 class SideMenuViewModel: ObservableObject {
     private let userAPI = UserAPIService()  //사용자 API Service
     
-    @Published var isShowToast: Bool = false
-    @Published var showMessage: String = ""
+    @Published var isShowToast: Bool = false    //Toast 호출 여부
+    @Published var showMessage: String = "" //Toast 메시지
     
     @Published var isShowMenu: Bool = false //사이드 메뉴 노출 여부
     @Published var isShowSwitchOwnerAlert: Bool = false //소유주 전환 알림창 호출 여부
@@ -22,10 +22,11 @@ class SideMenuViewModel: ObservableObject {
     @Published var isSwitch: Bool = false   //소유주 전환 여부
     @Published var isSignOut: Bool = false  //로그아웃 여부
     
+    //MARK: - 소유주 전환 실행
     func switchOwner() {
         userIdNo = UserDefaults.standard.string(forKey: "userIdNo")!    //사용자 정보에 저장된 사용자 ID 번호
         
-        //충전 시작 API 호출
+        //소유주 전환 API 호출
         let request = userAPI.requestSwitchOwner(userIdNo: userIdNo)
         request.execute(
             //API 호출 성공
@@ -54,14 +55,12 @@ class SideMenuViewModel: ObservableObject {
         )
     }
     
-    //로그아웃 실행
+    //MARK: - 로그아웃 실행
     func signOunt() {
         isSignOut = true
-        
 //        for key in UserDefaults.standard.dictionaryRepresentation().keys {
 //            UserDefaults.standard.removeObject(forKey: key.description)
 //        }
-
         UserDefaults.standard.removeObject(forKey: "password")
         UserDefaults.standard.set(false, forKey: "autoSignIn")
     }

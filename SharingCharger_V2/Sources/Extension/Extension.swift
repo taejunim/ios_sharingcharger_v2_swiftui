@@ -68,7 +68,9 @@ extension String {
     }
 }
 
+//MARK: - Integer Extention
 extension Int {
+    //MARK: 원 단위 및 콤마 표시 변환
     func amountFormatter() -> String {
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
@@ -78,6 +80,7 @@ extension Int {
         return stringNumber
     }
     
+    //MARK: - 정수형 숫자 콤마 표시 변환
     func decimalNumberFormatter() -> String {
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
@@ -199,8 +202,9 @@ extension UIDevice {
 
 }
 
-//MARK: - 시간 millisecond 가져오기
+//MARK: - Date Extension
 extension Date {
+    //MARK: - 시간 millisecond 가져오기
     func currentTimeMillis() -> Int64 {
         return Int64(self.timeIntervalSince1970 * 1000)
     }

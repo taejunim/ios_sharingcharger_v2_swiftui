@@ -50,6 +50,9 @@ class ReservationAPIService {
     /// - Parameter parameters:
     ///   - userId: 사용자 ID
     ///   - chargerId: 충전기 ID
+    ///   - instantChargeFlag: 충전 예약 유형(즉시 충전 여부)
+    ///     - true: 즉시 충전
+    ///     - false: 예약 충전
     ///   - reservationType: 예약 유형
     ///   - expectPoint: 예상 포인트
     ///   - startDate: 충전 시작일시

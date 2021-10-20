@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//MARK: - 지도
 struct MapView: UIViewRepresentable {
     @Binding var mapView: MTMapView
     @Binding var latitude: Double  //위도
@@ -35,7 +36,7 @@ struct MapView: UIViewRepresentable {
             if authStatus != "notDetermined" && authStatus != "restricted" && authStatus != "denied" {
                 guard let getAddress = MTMapReverseGeoCoder.findAddress(for: mapCenterPoint, withOpenAPIKey: apiKey) else { return }
                 
-                self.mapView.getAddress(getAddress)
+                self.mapView.getAddress(getAddress) //지도 중심 주소
             }
         }
         
@@ -92,6 +93,7 @@ struct MapView: UIViewRepresentable {
     
     //MARK: - Map UI View 업데이트
     func updateUIView(_ uiView: MTMapView, context: Context) {
+        //Charger Map View 로 기능 이동
 //        var poiItem: MTMapPOIItem?
 //        var poiItems: [MTMapPOIItem] = []
 //        var mapPoint: MTMapPoint?

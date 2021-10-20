@@ -10,6 +10,7 @@ import Foundation
 import Combine
 import ExytePopupView
 
+/// View Utility
 class ViewUtil: ObservableObject {
     @Environment(\.presentationMode) var presentationMode
     
@@ -72,6 +73,10 @@ class ViewUtil: ObservableObject {
         .cornerRadius(10)   //모서리 둥글게 처리
     }
     
+    //MARK: - Toast Message 팝업
+    /// 함수에 Message 변수 바로 호출
+    /// - Parameter message: 출력할 메시지
+    /// - Returns: Toast Popup View
     func toastPopup(message: String) -> some View {
         HStack(alignment: .top, spacing: 10) {
             Text(message)

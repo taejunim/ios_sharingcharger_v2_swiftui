@@ -9,14 +9,15 @@ import SwiftUI
 
 //MARK: - 충전 진행 알림창
 struct ChargingAlert: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var chargerSearch: ChargerSearchViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var chargerSearch: ChargerSearchViewModel   //충전기 검색 View Model
     @ObservedObject var reservation: ReservationViewModel
     
     var body: some View {
         GeometryReader { geometryReader in
             VStack {
                 VStack(spacing: 0) {
+                    //알림창 제목
                     HStack{
                         Text("충전하기")
                             .font(.title2)
@@ -28,7 +29,9 @@ struct ChargingAlert: View {
                     
                     HorizontalDividerline()
                     
+                    //알림창 내용
                     VStack(spacing: 10) {
+                        //충전기 명
                         HStack {
                             Text(chargerMap.chargerName)
                                 .font(.title3)
@@ -37,6 +40,7 @@ struct ChargingAlert: View {
                             Spacer()
                         }
                         
+                        //충전 기간
                         VStack(spacing: 5) {
                             HStack(spacing: 2) {
                                 Text("충전 시작일시 :")
@@ -69,6 +73,7 @@ struct ChargingAlert: View {
                     
                     Spacer()
                     
+                    //알림창 버튼
                     HStack(spacing: 5) {
                         //취소 버튼 - 알림창 닫기
                         Button(
@@ -170,14 +175,15 @@ struct ChargingAlert: View {
 struct ReservationConfirmAlert: View {
     @Environment(\.presentationMode) var presentationMode
     
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var chargerSearch: ChargerSearchViewModel
-    @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var chargerSearch: ChargerSearchViewModel   //충전기 검색 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     
     var body: some View {
         GeometryReader { geometryReader in
             VStack {
                 VStack(spacing: 0) {
+                    //알림창 타이틀
                     HStack{
                         Text("예약하기")
                             .font(.title2)
@@ -189,7 +195,9 @@ struct ReservationConfirmAlert: View {
                     
                     HorizontalDividerline()
                     
+                    //알림창 내용
                     VStack(spacing: 10) {
+                        //충전기 명
                         HStack {
                             Text(chargerMap.chargerName)
                                 .font(.title3)
@@ -198,6 +206,7 @@ struct ReservationConfirmAlert: View {
                             Spacer()
                         }
                         
+                        //예약 기간
                         VStack(spacing: 5) {
                             HStack(spacing: 2) {
                                 Text("예약 시작일시 :")
@@ -230,11 +239,12 @@ struct ReservationConfirmAlert: View {
                     
                     Spacer()
                     
+                    //알림창 버튼
                     HStack(spacing: 5) {
                         //취소 버튼 - 알림창 닫기
                         Button(
                             action: {
-                                reservation.isShowConfirmAlert = false
+                                reservation.isShowConfirmAlert = false  //현재 알림창 닫기
                             },
                             label: {
                                 Text("취소")
@@ -251,6 +261,7 @@ struct ReservationConfirmAlert: View {
                         //예약 버튼
                         Button(
                             action: {
+                                //예약 실행
                                 reservation.reservation(
                                     chargerId: chargerMap.selectChargerId,  //충전기 ID
                                     chargeReservationType: "Scheduled", //충전 예약 유형
@@ -310,13 +321,14 @@ struct ReservationConfirmAlert: View {
 
 //MARK: - 예약 취소 알림창
 struct CancelReservationAlert: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     
     var body: some View {
         GeometryReader { geometryReader in
             VStack {
                 VStack(spacing: 0) {
+                    //알림창 제목
                     HStack{
                         Text("예약 취소")
                             .font(.title2)
@@ -328,12 +340,17 @@ struct CancelReservationAlert: View {
                     
                     HorizontalDividerline()
                     
-                    Spacer()
-                    
-                    Text("해당 충전기 예약 건을 취소하시겠습니까?")
                     
                     Spacer()
                     
+                    //알림창 내용
+                    VStack {
+                        Text("해당 충전기 예약 건을 취소하시겠습니까?")
+                    }
+                    
+                    Spacer()
+                    
+                    //알림창 버튼
                     HStack(spacing: 5) {
                         //취소 버튼 - 알림창 닫기
                         Button(
@@ -431,14 +448,15 @@ struct CancelReservationAlert: View {
 
 //MARK: - 충전 결과 알림창
 struct ChargingResultAlert: View {
-    @ObservedObject var charging: ChargingViewModel
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     
     var body: some View {
         GeometryReader { geometryReader in
             VStack {
                 VStack(spacing: 0) {
+                    //알림창 제목
                     HStack{
                         Text("충전 종료")
                             .font(.title2)
@@ -452,6 +470,7 @@ struct ChargingResultAlert: View {
                     
                     Spacer()
                     
+                    //알림창 내용
                     VStack(spacing: 20) {
                         ChargingPointDetail(charging: charging)
                         
@@ -465,8 +484,8 @@ struct ChargingResultAlert: View {
                     Button(
                         action: {
                             withAnimation {
-                                charging.isShowChargingResult = false
-                                chargerMap.isShowChargingView = false
+                                charging.isShowChargingResult = false   //충전 결과 알림창 닫기
+                                chargerMap.isShowChargingView = false   //충전 화면 닫기
                             }
                             
                             reservation.getUserReservation()    //사용자의 예약 정보 재호출
@@ -511,10 +530,11 @@ struct ChargingResultAlert: View {
 
 //MARK: - 충전 포인트 내역
 struct ChargingPointDetail: View {
-    @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
     
     var body: some View {
         VStack(spacing: 0) {
+            //포인트 내역 제목
             HStack {
                 Text("포인트 내역")
                     .fontWeight(.bold)
@@ -525,7 +545,9 @@ struct ChargingPointDetail: View {
             
             Dividerline()
             
+            //포인트 내역
             VStack(spacing: 5) {
+                //예약 차감 포인트
                 HStack {
                     Text("예약 차감 포인트")
                     
@@ -535,6 +557,7 @@ struct ChargingPointDetail: View {
                         .foregroundColor(Color("#C0392B"))
                 }
                 
+                //예상 환불 포인트
                 HStack {
                     Text("예상 환불 포인트")
                     
@@ -546,6 +569,7 @@ struct ChargingPointDetail: View {
                 
                 Dividerline()
                 
+                //실제 차감 포인트
                 HStack {
                     Text("실제 차감 포인트")
                         .fontWeight(.semibold)
@@ -568,10 +592,11 @@ struct ChargingPointDetail: View {
 
 //MARK: - 충전 시간 결과
 struct ChargingTimeResult: View {
-    @ObservedObject var charging: ChargingViewModel
+    @ObservedObject var charging: ChargingViewModel //충전 View Model
     
     var body: some View {
         VStack(spacing: 0) {
+            //충전 시간 정보 제목
             HStack {
                 Text("충전 시간 정보")
                     .fontWeight(.bold)
@@ -582,7 +607,9 @@ struct ChargingTimeResult: View {
             
             Dividerline()
             
+            //충전 시간 정보
             VStack(spacing: 5) {
+                //예약 시간
                 VStack(spacing: 5) {
                     HStack {
                         Text("예약 시작 시간")
@@ -601,6 +628,7 @@ struct ChargingTimeResult: View {
                     }
                 }
                 
+                //충전 시간
                 Spacer().frame(height: 1)
                 
                 VStack(spacing: 5) {
@@ -623,6 +651,7 @@ struct ChargingTimeResult: View {
                 
                 Dividerline()
                 
+                //실제 충전 시간
                 HStack {
                     Text("실제 충전 시간")
                         .fontWeight(.semibold)

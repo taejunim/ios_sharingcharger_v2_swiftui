@@ -10,7 +10,7 @@ import Combine
 import CoreBluetooth
 import EvzBLEKit
 
-///충전 View Model
+///충전 관련 View Model
 class ChargingViewModel: NSObject, ObservableObject {
     private let chargeAPI = ChargeAPIService()  //충전 API Service
     private let reservationAPI = ReservationAPIService()    //예약 API Service

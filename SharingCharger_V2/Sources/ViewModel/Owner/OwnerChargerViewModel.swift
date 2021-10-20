@@ -7,8 +7,8 @@
 
 import Foundation
 
+///소유주 충전기 View Model
 class OwnerChargerViewModel: ObservableObject {
-    
     private let chargerAPI = ChargerAPIService()  //사용자 API Service
     private let pointAPIService = PointAPIService()  //포인트 API Service
     
@@ -30,6 +30,7 @@ class OwnerChargerViewModel: ObservableObject {
     @Published var totalPages: Int = 0  //총 페이지 수
     @Published var page: Int = 1   //페이지 번호
     
+    //MARK: - 소유주 충전기 목록 조회
     func requestOwnerChargerList() {
         viewUtil.isLoading = true   //로딩 시작
         
@@ -120,6 +121,7 @@ class OwnerChargerViewModel: ObservableObject {
         )
     }
     
+    //MARK: - 충전기 요약 정보 조회
     func requestOwnerSummaryInfo() {
         
         //소유자 충전기 요약 정보 조회 API 호출
@@ -146,7 +148,7 @@ class OwnerChargerViewModel: ObservableObject {
             )
     }
     
-    //월별 수익 포인트
+    //MARK: - 월별 수익 포인트 조회
     func requestProfitPoints() {
         
         let userIdNo:String = UserDefaults.standard.string(forKey: "userIdNo") ?? ""   //저장된 사용자 ID 번호

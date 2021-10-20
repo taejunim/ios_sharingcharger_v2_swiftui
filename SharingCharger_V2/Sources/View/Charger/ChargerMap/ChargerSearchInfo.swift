@@ -10,9 +10,9 @@ import SwiftUI
 
 //MARK: - 충전기 검색 정보 화면 (충전기 지도 하단 영역)
 struct ChargerSearchInfo: View {
-    @ObservedObject var chargerMap: ChargerMapViewModel
-    @ObservedObject var chargerSearch: ChargerSearchViewModel
-    @ObservedObject var reservation: ReservationViewModel
+    @ObservedObject var chargerMap: ChargerMapViewModel //충전기 지도 View Model
+    @ObservedObject var chargerSearch: ChargerSearchViewModel   //충전기 검색 View Model
+    @ObservedObject var reservation: ReservationViewModel   //예약 View Model
     
     var body: some View {
         GeometryReader { (geometry) in

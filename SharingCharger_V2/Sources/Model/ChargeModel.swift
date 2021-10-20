@@ -9,21 +9,21 @@ import Foundation
 
 //MARK: - 충전 정보
 struct ChargeInfo: Codable {
-    let id: Int
-    let chargerId: Int
-    let chargerName: String?
-    let username: String?
-    let reservationId: Int
-    let reservationStartDate: String?
-    let reservationEndDate: String?
-    let reservationPoint: Int?
-    let startRechargeDate: String?
-    let endRechargeDate: String?
-    let rechargePoint: Int?
-    let refundPoint: Int?
-    let ownerPoint: Int?
-    let created: String?
-    let updated: String?
+    let id: Int //충전 정보 ID
+    let chargerId: Int  //충전기 ID
+    let chargerName: String?    //충전기 명
+    let username: String?   //사용자 ID
+    let reservationId: Int  //예약 ID
+    let reservationStartDate: String?   //예약 시작일시
+    let reservationEndDate: String? //예약 종료일시
+    let reservationPoint: Int?  //예약 차감 포인트
+    let startRechargeDate: String?  //충전 시작일시
+    let endRechargeDate: String?    //충전 종료일시
+    let rechargePoint: Int? //충전 차감 포인트
+    let refundPoint: Int?   //환불 포인트
+    let ownerPoint: Int?    //소유주 포인트
+    let created: String?    //등록일시
+    let updated: String?    //수정일시
 }
 
 //MARK: - 충전 이력 정보
@@ -43,18 +43,18 @@ struct ChargingHistory: Codable {
 
 //MARK: - 충전 이력 정보 내용
 struct ChargingHistoryContent: Codable {
-    let id: Int
-    let chargerId: Int
-    let chargerName: String
-    let username: String
-    let reservationStartDate: String
-    let reservationEndDate: String
-    let startRechargeDate: String?
-    let endRechargeDate: String?
-    let ownerPoint: Int?
-    let reservationPoint: Int?
-    let rechargePoint: Int?
-    let refundPoint: Int?
-    let created: String
-    let updated: String
+    let id: Int //충전 이력 ID
+    let chargerId: Int  //충전기 ID
+    let chargerName: String //충전기 명
+    let username: String    //사용자 ID
+    let reservationStartDate: String    //예약 시작일시
+    let reservationEndDate: String  //예약 종료일시
+    let startRechargeDate: String?  //충전 시작일시
+    let endRechargeDate: String?    //충전 종료일시
+    let ownerPoint: Int?    //소유주 포인트
+    let reservationPoint: Int?  //예약 차감 포인트
+    let rechargePoint: Int? //충전 차감 포인트
+    let refundPoint: Int?   //환불 포인트
+    let created: String //등록일시
+    let updated: String //수정일시
 }

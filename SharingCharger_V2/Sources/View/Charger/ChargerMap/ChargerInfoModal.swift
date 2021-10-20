@@ -108,6 +108,7 @@ struct ChargerSummaryInfo: View {
                 }
                 
                 Text(chargerMap.chargerAddress) //충전기 주소
+                
                 Text(chargerMap.chargerDetailAddress) //충전기 상세주소
                     .foregroundColor(Color.gray)
             }
@@ -127,24 +128,27 @@ struct ChargerFavoritesButton: View {
     var body: some View {
         Button(
             action: {
+                //즐겨찾기 항목 정보
                 let favoriteItme: [String:Any] = [
-                    "chargerId": chargerMap.selectChargerId,
-                    "chargerName": chargerMap.chargerName,
-                    "address": chargerMap.chargerAddress,
-                    "detailAddress": chargerMap.chargerDetailAddress,
-                    "latitude": chargerMap.chargerLatitude!,
-                    "longitude": chargerMap.chargerLongitude!
+                    "chargerId": chargerMap.selectChargerId,    //충전기 ID
+                    "chargerName": chargerMap.chargerName,  //충전기 명
+                    "address": chargerMap.chargerAddress,   //주소
+                    "detailAddress": chargerMap.chargerDetailAddress,   //상세주소
+                    "latitude": chargerMap.chargerLatitude!,    //위도
+                    "longitude": chargerMap.chargerLongitude!   //경도
                 ]
                 
-                
+                //즐겨찾기가 아닌 경우
                 if !favorites.isFavorite {
-                    favorites.addFavorites(item: favoriteItme)
+                    favorites.addFavorites(item: favoriteItme)  //즐겨찾기 추가
                 }
+                //즐겨찾기인 경우
                 else {
-                    favorites.deleteFavorites(chargerId: chargerMap.selectChargerId)
+                    favorites.deleteFavorites(chargerId: chargerMap.selectChargerId)    //즐겨찾기 삭제
                 }
             },
             label: {
+                //즐겨찾기 여부에 따라 즐겨찾기 이미지 변경
                 Image(!favorites.isFavorite ? "Charger-Favorite" : "Charger-Favorite-Fill")
                     .resizable()
                     .scaledToFit()
@@ -164,7 +168,7 @@ struct ChargerNavigationButton: View {
     var body: some View {
         Button(
             action: {
-                chargerMap.launchNavigation()
+                chargerMap.launchNavigation()   //내비게이션 앱(카카오맵) 연결
             },
             label: {
                 ZStack {
@@ -292,7 +296,7 @@ struct ChargingProgressButton: View {
                     Button(
                         action: {
                             reservation.getCurrentDate() { (currentDate) in
-                                
+                                //현재 일시가 예약 시작일시가 지난 경우
                                 if currentDate > reservation.reservationStartDate! {
                                     withAnimation {
                                         chargerMap.isShowChargingView = true  //충전 화면 활성화

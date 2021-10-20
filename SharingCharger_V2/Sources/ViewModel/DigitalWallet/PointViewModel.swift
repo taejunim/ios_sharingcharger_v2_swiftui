@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+///포인트 관련 View Model
 class PointViewModel: ObservableObject {
     public var didChange = PassthroughSubject<PointViewModel, Never>()
     
@@ -62,12 +63,9 @@ class PointViewModel: ObservableObject {
         )
     }
     
-    
     //MARK: - 사용자 포인트 이력 조회
     func getPointHistory(page: Int) {
-        
         let userIdNo: String = UserDefaults.standard.string(forKey: "userIdNo") ?? ""   //저장된 사용자 ID 번호
-        
         let endDate: String = "yyyy-MM-dd".dateFormatter(formatDate: currentDate)   // 종료일자
       
         let parameters = [
@@ -155,9 +153,7 @@ class PointViewModel: ObservableObject {
         )
     }
     
-    
     //MARK: - 검색조건 설정 초기화
-    
     func resetPointSearchCondition() {
         chooseDate = "oneMonth"
         selectPointType = "ALL"
@@ -165,24 +161,23 @@ class PointViewModel: ObservableObject {
         selectMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date())! 
         currentDate = Date()
     }
+    
     //MARK: - 조회기간 선택에 따른 날짜 변화
     func showSelectMonth(){
-        if chooseDate == "ownPeriod"{
+        if chooseDate == "ownPeriod" {
             selectMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date())!
         }
-        else if chooseDate == "oneMonth"{
+        else if chooseDate == "oneMonth" {
             selectMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date())!
             currentDate = Date()
         }
-        else if chooseDate == "threeMonth"{
+        else if chooseDate == "threeMonth" {
             selectMonth = Calendar.current.date(byAdding: .month, value: -3, to: Date())!
             currentDate = Date()
         }
-        else if chooseDate == "sixMonth"{
+        else if chooseDate == "sixMonth" {
             selectMonth = Calendar.current.date(byAdding: .month, value: -6, to: Date())!
             currentDate = Date()
         }
-        
     }
-    
 }

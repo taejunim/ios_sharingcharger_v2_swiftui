@@ -7,6 +7,6 @@
 
 //MARK: - 충전기의 이용 가능 시간 정보 (이용 가능 시간 라벨 계산 용도)
 class AvailableTimeModel: NSObject {
-    var openTime: String?
-    var closeTime: String?
+    var openTime: String?   //오픈 시간
+    var closeTime: String?  //종료 시간
 }

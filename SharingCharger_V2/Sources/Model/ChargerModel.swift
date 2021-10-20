@@ -88,34 +88,34 @@ struct OwnerCharger: Codable {
 
 //MARK: - 소유주 충전기 요약 정보
 struct OwnerChargerSummary: Codable {
-    let ownChargerCount: Int
-    let currentChargerCount: Int
-    let currentPoint: Int
-    let monthlyReserveCount: Int
-    let monthlyRechargeCount: Int
-    let monthlyRechargeKwh: Double
-    let monthlyChargerErrorCount: Int
-    let monthlyCumulativePoint: Int
+    let ownChargerCount: Int    //소유주 총 충전기 개수
+    let currentChargerCount: Int    //현재 충전기 개수
+    let currentPoint: Int   //현재 수익 포인트
+    let monthlyReserveCount: Int    //월별 예약 건 수
+    let monthlyRechargeCount: Int   //월별 충전 건 수
+    let monthlyRechargeKwh: Double  //월별 충전 kWh
+    let monthlyChargerErrorCount: Int   //월별 충전기 오류 건 수
+    let monthlyCumulativePoint: Int //월별 누적 포인트
 }
 
 //MARK: - 충전기 충전 단가 정보
 struct ChargerUnitPrice: Codable {
-    let id: Int
-    let hour: String
-    let fee: Int
+    let id: Int //단가 ID
+    let hour: String    //시간 대
+    let fee: Int    //가격
 }
 
 //MARK: - 충전기 이용시간 정보
 struct ChargerUsageTime: Codable {
-    let id: Int
-    let chargerId: Int
-    let chargerName: String
-    let openTime: String
-    let closeTime: String
-    let previousOpenTime: String
-    let previousCloseTime: String
-    let created: String
-    let updated: String
+    let id: Int //이용시간 ID
+    let chargerId: Int  //충전기 ID
+    let chargerName: String //충전기 명
+    let openTime: String    //오픈 시간
+    let closeTime: String   //클로즈 시간
+    let previousOpenTime: String    //이전 오픈 시간
+    let previousCloseTime: String   //이전 클로즈 시간
+    let created: String //생성일자
+    let updated: String //수정일자
 }
 
 //MARK: - 할당된 충전기 정보

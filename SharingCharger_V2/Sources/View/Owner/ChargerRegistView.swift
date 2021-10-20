@@ -7,12 +7,13 @@
 
 import SwiftUI
 
+//MARK: - 충전기 등록 화면
 struct ChargerRegistView: View {
     @Environment(\.presentationMode) var presentationMode
-    
     @ObservedObject var viewUtil = ViewUtil()
-    @ObservedObject var regist = ChargerRegistViewModel()
-    @ObservedObject var bluetooth = ChargingViewModel()
+    
+    @ObservedObject var regist = ChargerRegistViewModel()   //충전기 등록 View Model
+    @ObservedObject var bluetooth = ChargingViewModel() //충전 View Model - Bluetooth 기능 사용
     
     var body: some View {
         ZStack {
@@ -94,7 +95,7 @@ struct RegistStepGuide: View {
                 ZStack {
                     Circle()
                         .foregroundColor(regist.currentStep > 1 ? Color("#8E44AD") : Color("#674EA7"))
-                    
+
                     if regist.currentStep == 1 {
                         Text("1")
                             .font(.title2)
@@ -291,9 +292,9 @@ struct FindChargerBLEModal: View {
                                 //충전기 BLE 별 선택 버튼
                                 Button(
                                     action: {
-                                        regist.registChargerId = chargerBLE["chargerId"]!
-                                        regist.selectBLENumber = chargerBLE["bleNumber"]!
-                                        regist.providerId = chargerBLE["providerId"]!
+                                        regist.registChargerId = chargerBLE["chargerId"]!   //충전기 ID
+                                        regist.selectBLENumber = chargerBLE["bleNumber"]!   //충전기 BLE 번호
+                                        regist.providerId = chargerBLE["providerId"]!   //충전기 제공업체 ID
                                     },
                                     label: {
                                         HStack {
@@ -348,9 +349,9 @@ struct FindChargerBLEModal: View {
                         //취소 버튼 - 알림창 닫기
                         Button(
                             action: {
-                                bluetooth.isSearch = false
-                                regist.isShowBLEModal = false
-                                regist.selectBLENumber = regist.tempSelectBLENumber
+                                bluetooth.isSearch = false  //BLE 검색 여부 초기화
+                                regist.isShowBLEModal = false   //충전기 BLE Modal 창 닫기
+                                regist.selectBLENumber = regist.tempSelectBLENumber //선택한 BLE 번호 초기화
                             },
                             label: {
                                 Text("취소")
@@ -367,9 +368,9 @@ struct FindChargerBLEModal: View {
                         //확인 버튼 - 모달 창에서 선택한 충전기 BLE로 변경
                         Button(
                             action: {
-                                bluetooth.isSearch = false
-                                regist.isShowBLEModal = false
-                                regist.tempSelectBLENumber = regist.selectBLENumber
+                                bluetooth.isSearch = false  //BLE 검색 여부 초기화
+                                regist.isShowBLEModal = false   //충전기 BLE Modal 창 닫기
+                                regist.tempSelectBLENumber = regist.selectBLENumber //선택한 BLE 번호로 변경
                             },
                             label: {
                                 Text("확인")
@@ -410,7 +411,9 @@ struct ChargerBasicInfo: View {
     
     var body: some View {
         VStack(spacing: 20) {
+            //충전기 명
             VStack(spacing: 3) {
+                //충전기 명 타이틀
                 HStack(spacing: 10) {
                     Image("Label-Charger")
                         .resizable()
@@ -423,6 +426,7 @@ struct ChargerBasicInfo: View {
                     Spacer()
                 }
                 
+                //충전기 명 입력창
                 HStack(spacing: 10) {
                     Spacer().frame(width: 30)
                     
@@ -438,7 +442,9 @@ struct ChargerBasicInfo: View {
                 }
             }
             
+            //상세 설명
             VStack(spacing: 3) {
+                //상세 설명 타이틀
                 HStack(spacing: 10) {
                     Image("Label-Document")
                         .resizable()
@@ -452,6 +458,7 @@ struct ChargerBasicInfo: View {
                     Spacer()
                 }
                 
+                //상세 설명 입력창
                 HStack(spacing: 10) {
                     Spacer().frame(width: 30)
                     
@@ -480,7 +487,9 @@ struct ChargerAdditionalInfo: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                //주소
                 VStack(spacing: 3) {
+                    //주소 타이틀
                     HStack(spacing: 10) {
                         Image("Label-Location")
                             .resizable()
@@ -494,10 +503,12 @@ struct ChargerAdditionalInfo: View {
                         Spacer()
                     }
                     
+                    //주소 검색 버튼 및 상세 주소 입력창
                     HStack(spacing: 10) {
                         Spacer().frame(width: 30)
                         
                         VStack {
+                            //주소 검색 버튼
                             Button(
                                 action: {
                                     regist.isShowAddressModal = true
@@ -516,10 +527,11 @@ struct ChargerAdditionalInfo: View {
                             .sheet(
                                 isPresented: $regist.isShowAddressModal,
                                 content: {
-                                    AddressSearchModal(chargerMap: ChargerMapViewModel(), regist: regist, viewPath: $viewPath)
+                                    AddressSearchModal(chargerMap: ChargerMapViewModel(), regist: regist, viewPath: $viewPath)  //주소 검색 모달창
                                 }
                             )
                             
+                            //상세 주소 입력창
                             TextField("상세주소", text: $regist.detailAddress)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
@@ -533,7 +545,9 @@ struct ChargerAdditionalInfo: View {
                     }
                 }
                 
+                //운영 유형
                 VStack(spacing: 3) {
+                    //운영 유형 타이틀
                     HStack(spacing: 10) {
                         Image("Label-Clock")
                             .resizable()
@@ -546,6 +560,7 @@ struct ChargerAdditionalInfo: View {
                         Spacer()
                     }
                     
+                    //운영 유형 선택 Picker
                     HStack(spacing: 10) {
                         Spacer().frame(width: 30)
                         
@@ -564,7 +579,9 @@ struct ChargerAdditionalInfo: View {
                     }
                 }
                 
+                //케이블 보유 여부
                 VStack(spacing: 3) {
+                    //케이블 보유 타이틀
                     HStack(spacing: 10) {
                         ZStack {
                             Image("Label-Cable")
@@ -581,6 +598,7 @@ struct ChargerAdditionalInfo: View {
                         Spacer()
                     }
                     
+                    //케이블 보유 선택 Picker
                     HStack(spacing: 10) {
                         Spacer().frame(width: 30)
                         
@@ -599,7 +617,9 @@ struct ChargerAdditionalInfo: View {
                     }
                 }
                 
+                //충전 타입
                 VStack(spacing: 3) {
+                    //충전 타입 타이틀
                     HStack(spacing: 10) {
                         ZStack {
                             Image("Label-Battery")
@@ -616,6 +636,7 @@ struct ChargerAdditionalInfo: View {
                         Spacer()
                     }
                     
+                    //충전 타입 선택 Picker
                     HStack(spacing: 10) {
                         Spacer().frame(width: 30)
                         
@@ -634,7 +655,9 @@ struct ChargerAdditionalInfo: View {
                     }
                 }
                 
+                //주차 요금
                 VStack(spacing: 3) {
+                    //주차 요금 타이틀
                     HStack(spacing: 10) {
                         Image("Label-Car")
                             .resizable()
@@ -647,6 +670,7 @@ struct ChargerAdditionalInfo: View {
                         Spacer()
                     }
                     
+                    //주차 요금 선택 Picker
                     HStack(spacing: 10) {
                         Spacer().frame(width: 30)
                         
@@ -665,7 +689,9 @@ struct ChargerAdditionalInfo: View {
                     }
                 }
                 
+                //주차 요금 설명
                 VStack(spacing: 3) {
+                    //주차 요금 설명 타이틀
                     HStack(spacing: 10) {
                         Image("Label-Document")
                             .resizable()
@@ -679,6 +705,7 @@ struct ChargerAdditionalInfo: View {
                         Spacer()
                     }
                     
+                    //주차 요금 설명 입력창
                     HStack(spacing: 10) {
                         Spacer().frame(width: 30)
                         
@@ -707,7 +734,7 @@ struct RegistPreviousButton: View {
     var body: some View {
         Button(
             action: {
-                regist.currentStep -= 1
+                regist.currentStep -= 1 //현재 단계 - 1
             },
             label: {
                 Text("이전")
@@ -731,7 +758,6 @@ struct RegistNextButton: View {
     var body: some View {
         Button(
             action: {
-                //regist.currentStep += 1 //임시
                 viewUtil.dismissKeyboard()  //키보드 닫기
                 regist.checkNextStep()  //다음 단계 이동 전 입력값 확인
             },
@@ -760,23 +786,24 @@ struct ChargerRegistButton: View {
             action: {
                 viewUtil.dismissKeyboard()  //키보드 닫기
                 
+                //충전기 등록 가능 확인 후 등록 진행
                 if regist.checkRegistStep() {
                     regist.isLoading = true
                     
-//                    regist.registCharger() { result in
-//                        if result == "success" {
-//                            regist.toastMessage(message: "정상적으로 충전기 등록이 완료되었습니다.")
-//
-//                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-//                                regist.isLoading = false
-//                                self.presentationMode.wrappedValue.dismiss()
-//                            }
-//                        }
-//                        else if result == "error" {
-//                            regist.isLoading = false
-//                            regist.toastMessage(message: "server.error".message())
-//                        }
-//                    }
+                    regist.registCharger() { result in
+                        if result == "success" {
+                            regist.toastMessage(message: "정상적으로 충전기 등록이 완료되었습니다.")
+
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                regist.isLoading = false
+                                self.presentationMode.wrappedValue.dismiss()
+                            }
+                        }
+                        else if result == "error" {
+                            regist.isLoading = false
+                            regist.toastMessage(message: "server.error".message())
+                        }
+                    }
                 }
             },
             label: {
@@ -789,14 +816,6 @@ struct ChargerRegistButton: View {
                     .background(Color("#674EA7"))
             }
         )
-    }
-}
-
-struct ChargerRegistConfirmAlert: View {
-    var body: some View {
-        VStack {
-            
-        }
     }
 }
 

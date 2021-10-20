@@ -47,7 +47,6 @@ struct PaymentModal: View {
                             purchase.isShowPaymentInputAlert = false //포인트 충전 알림창 닫기
                             
                             withAnimation {
-                                //self.presentationMode.wrappedValue.dismiss()    //현재 화면 닫기
                                 purchase.isShowCompletionAlert = true
                             }
                         }

@@ -8,32 +8,32 @@
 import SwiftUI
 import Combine
 
-//소유주 충전기 상세 메인
+//MARK: - 소유주 충전기 상세 메인
 struct OwnerChargerDetailMain: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
-    @State var chargerId:String
     
+    @State var chargerId:String
     @State var timer: Timer.TimerPublisher = Timer.publish(every: 0.5, on: .main, in: .common)
     
     var body: some View {
-        
         VStack(alignment: .leading, spacing: 15) {
-        
             let charger = chargerDetailViewModel.charger
-            let name: String = charger["name"] ?? ""
-            let bleNumber: String = charger["bleNumber"] ?? ""
-            let providerCompanyName: String = charger["providerCompanyName"] ?? ""
-            let address: String = charger["address"] ?? ""
-            let detailAddress: String = charger["detailAddress"] ?? ""
-            let parkingFeeFlag: String = charger["parkingFeeFlag"] ?? ""
-            let parkingFeeDescription: String = charger["parkingFeeDescription"] ?? ""
-            let description: String = charger["description"] ?? ""
+            let name: String = charger["name"] ?? ""    //충전기 명
+            let bleNumber: String = charger["bleNumber"] ?? ""  //BLE 번호
+            let providerCompanyName: String = charger["providerCompanyName"] ?? ""  //충전기 제공업체 명
+            let address: String = charger["address"] ?? ""  //주소
+            let detailAddress: String = charger["detailAddress"] ?? ""  //상세 주소
+            let parkingFeeFlag: String = charger["parkingFeeFlag"] ?? ""    //주차 요금 여부
+            let parkingFeeDescription: String = charger["parkingFeeDescription"] ?? ""  //주차 요금 설명
+            let description: String = charger["description"] ?? ""  //충전기 설명
             
+            //충전기 명
             Text(name)
                 .font(.title2)
                 .fontWeight(.bold)
             
             VStack(spacing: 15) {
+                //BLE 번호
                 HStack(spacing: 10){
                     Image("Label-Bluetooth")
                         .resizable()
@@ -42,11 +42,12 @@ struct OwnerChargerDetailMain: View {
                         .frame(width: 30, height: 30)
                         .foregroundColor(Color("#8E44AD"))
                     
-                    Text(bleNumber)
+                    Text(bleNumber) //BLE 번호
                     
                     Spacer()
                 }
                 
+                //충전기 제공업체 명
                 HStack(spacing: 10){
                     Image("Label-Building")
                         .resizable()
@@ -55,11 +56,12 @@ struct OwnerChargerDetailMain: View {
                         .frame(width: 30, height: 30)
                         .foregroundColor(Color("#8E44AD"))
                     
-                    Text(providerCompanyName)
+                    Text(providerCompanyName)   //충전기 제공업체 명
                     
                     Spacer()
                 }
                 
+                //주소
                 VStack(spacing: 3) {
                     HStack(spacing: 10) {
                         Image("Label-Map")
@@ -80,8 +82,9 @@ struct OwnerChargerDetailMain: View {
                         Spacer().frame(width: 30)
                         
                         VStack(alignment: .leading) {
-                            Text(address)
+                            Text(address)   //주소
                             
+                            //상세 주소
                             Text(detailAddress != "" ? detailAddress : "-")
                                 .foregroundColor(Color.gray)
                         }
@@ -91,6 +94,7 @@ struct OwnerChargerDetailMain: View {
                     }
                 }
                 
+                //주차 요금
                 VStack(spacing: 3) {
                     HStack(spacing: 10){
                         Image("Label-Car")
@@ -112,10 +116,10 @@ struct OwnerChargerDetailMain: View {
                         Spacer().frame(width: 30)
                         
                         VStack(alignment: .leading) {
-                            Text(parkingFeeFlag)
+                            Text(parkingFeeFlag)    //주차 요금 여부
                             
                             if parkingFeeDescription != "" {
-                                Text(parkingFeeDescription)
+                                Text(parkingFeeDescription) //주차 요금 설명
                             }
                         }
                                 
@@ -123,6 +127,7 @@ struct OwnerChargerDetailMain: View {
                     }
                 }
                 
+                //충전기 설명
                 VStack(spacing: 3) {
                     HStack(spacing: 10){
                         Image("Label-Document")
@@ -151,9 +156,10 @@ struct OwnerChargerDetailMain: View {
             .padding(.horizontal, 10)
         }
         .padding()
-        .onAppear{
+        .onAppear {
             startTimer()
-        }.onReceive(timer) { _ in
+        }
+        .onReceive(timer) { _ in
             chargerDetailViewModel.requestOwnerCharger(chargerId: chargerId)
             stopTimer()
         }
@@ -169,7 +175,7 @@ struct OwnerChargerDetailMain: View {
     }
 }
 
-//소유주 충전기 단가 설정
+//MARK: - 소유주 충전기 단가 설정
 struct OwnerChargerPriceSetting: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
     @ObservedObject var viewUtil = ViewUtil()
@@ -243,7 +249,7 @@ struct OwnerChargerPriceSetting: View {
             
             Spacer()
             
-            ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "price", chargerId: chargerId, viewUtil: viewUtil)
+            ChangeButton(viewUtil: viewUtil, chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "price", chargerId: chargerId)
         }
         .popup(
             isPresented: $viewUtil.isShowToast,   //팝업 노출 여부
@@ -260,7 +266,7 @@ struct OwnerChargerPriceSetting: View {
     }
 }
 
-//소유주 충전기 운영 시간 설정
+//MARK: - 소유주 충전기 운영 시간 설정
 struct OwnerChargerOperateTimeSetting: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
     @ObservedObject var viewUtil = ViewUtil()
@@ -330,7 +336,6 @@ struct OwnerChargerOperateTimeSetting: View {
                 }
                 .padding(.horizontal, 10)
                 
-                
                 HStack {
                     Text("* 시간 변경시 2일 후 적용됩니다.")
                         .font(.subheadline)
@@ -345,7 +350,7 @@ struct OwnerChargerOperateTimeSetting: View {
             
             Spacer()
             
-            ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "time", chargerId: chargerId, viewUtil: viewUtil)
+            ChangeButton(viewUtil: viewUtil, chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "time", chargerId: chargerId)
         }
         .popup(
             isPresented: $viewUtil.isShowToast,   //팝업 노출 여부
@@ -362,14 +367,13 @@ struct OwnerChargerOperateTimeSetting: View {
     }
 }
 
-//소유주 충전기 정보 수정
+//MARK: - 소유주 충전기 정보 수정
 struct OwnerChargerInformationEdit: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
     @ObservedObject var viewUtil = ViewUtil()
     @State var chargerId:String
     
     var body: some View {
-    
         VStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
@@ -447,7 +451,7 @@ struct OwnerChargerInformationEdit: View {
             
             Spacer()
             
-            ChangeButton(chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "information", chargerId: chargerId, viewUtil: viewUtil)
+            ChangeButton(viewUtil: viewUtil, chargerDetailViewModel: chargerDetailViewModel, chargerDetailPage: "information", chargerId: chargerId)
         }
         .popup(
             isPresented: $viewUtil.isShowToast,   //팝업 노출 여부
@@ -464,9 +468,10 @@ struct OwnerChargerInformationEdit: View {
     }
 }
 
-//소유주 충전 이력
+//MARK: - 소유주 충전 이력
 struct OwnerChargerHistory: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
+    
     @State var chargerId:String
     
     var body: some View {
@@ -647,10 +652,12 @@ struct OwnerChargerHistory: View {
 
 //MARK: - 변경 버튼
 struct ChangeButton: View {
+    @ObservedObject var viewUtil: ViewUtil
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
+    
     @State var chargerDetailPage: String
     @State var chargerId:String
-    @ObservedObject var viewUtil: ViewUtil
+    
     var body: some View {
         
         Button(
@@ -768,7 +775,7 @@ struct OwnerChargerHistorySearchButton: View {
     }
 }
 
-//소유주 충전 이력 검색조건
+//MARK: - 소유주 충전 이력 검색조건
 struct OwnerChargerHistorySearchModal: View {
     @ObservedObject var chargerDetailViewModel: ChargerDetailViewModel
     @State var chargerId:String
@@ -778,7 +785,9 @@ struct OwnerChargerHistorySearchModal: View {
         VStack {
             HStack {
                 CloseButton()   //닫기 버튼
+                
                 Spacer()
+                
                 //초기화 버튼
                 RefreshButton() { (isSearchReset) in
                     chargerDetailViewModel.resetSearchCondition()
@@ -795,9 +804,12 @@ struct OwnerChargerHistorySearchModal: View {
                             .font(.title2)
                             .fontWeight(.bold)
                     }
+                    
                     Spacer()
                 }
+                
                 VerticalDividerline()
+                
                 //조회기간
                 HStack {
                     VStack(alignment: .leading, spacing: 10) {
@@ -819,41 +831,39 @@ struct OwnerChargerHistorySearchModal: View {
                         
                         HStack {
                             //조회 시작일자
-                            DatePicker(
-                             "",
-                             selection: $chargerDetailViewModel.selectMonth,
-                             displayedComponents: [.date]
-                             )
-                             .labelsHidden()
-                             .accentColor(.black)
-                             .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                            DatePicker("", selection: $chargerDetailViewModel.selectMonth, displayedComponents: [.date])
+                                .labelsHidden()
+                                .accentColor(.black)
+                                .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
                              
                             Spacer()
+                            
                             Text("-")
+                            
                             Spacer()
+                            
                             //조회 종료일자
-                            DatePicker(
-                             "",
-                             selection: $chargerDetailViewModel.currentDate,
-                             displayedComponents: [.date]
-                             )
-                             .labelsHidden()
-                             .accentColor(.black)
-                             .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
+                            DatePicker("", selection: $chargerDetailViewModel.currentDate, displayedComponents: [.date])
+                                .labelsHidden()
+                                .accentColor(.black)
+                                .environment(\.locale, Locale(identifier:"ko_KR"))  //한국어 언어 변경
                              
                         }
                         .frame(maxWidth: .infinity)
                         .disabled(chargerDetailViewModel.chooseDate != "ownPeriod" ? true : false)   //조회기간 선택에 따라 비활성화 변경
                     }
+                    
                     Spacer()
                 }
                 
                 VerticalDividerline()
+                
                 //정렬
                 HStack {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("정렬")
                             .font(.body)
+                        
                         VStack (alignment:.leading){
                             Picker(
                                 selection: $chargerDetailViewModel.selectSort, //포인트 유형 선택
@@ -864,8 +874,10 @@ struct OwnerChargerHistorySearchModal: View {
                                 }
                             )
                             .pickerStyle(SegmentedPickerStyle())
-                        }.padding(.vertical,25.0)
+                        }
+                        .padding(.vertical,25.0)
                     }
+                    
                     Spacer()
                 }
                 .padding(.top)
@@ -878,9 +890,7 @@ struct OwnerChargerHistorySearchModal: View {
     }
 }
 
-
 struct OwnerChargerDetailMain_Previews: PreviewProvider {
-    
     static var previews: some View {
         OwnerChargerDetailMain(chargerDetailViewModel: ChargerDetailViewModel(), chargerId: "")
         OwnerChargerOperateTimeSetting(chargerDetailViewModel: ChargerDetailViewModel(), chargerId: "107")

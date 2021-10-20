@@ -43,7 +43,7 @@ struct SignInView: View {
                             HStack {
                                 Spacer()
 
-                                FindAccountViewButton(signInViewModel: signInViewModel)
+                                FindAccountViewButton(signInViewModel: signInViewModel) //아이디 찾기 버튼
 
                                 Text("/")
                                     .font(.subheadline)
@@ -84,7 +84,7 @@ struct SignInView: View {
                     }
                 )
                 .onAppear {
-                    location.startLocation()
+                    location.startLocation()    //위치 정보 시작
                 }
             }
         }

@@ -13,6 +13,7 @@ extension UIApplication {
     }
 }
 
+//MARK: - 슬라이드 모달 창(Custom)
 struct SlideOverModal<Content: View> : View {
     @GestureState private var dragState = DragState.inactive
     @Binding var isShown:Bool
@@ -33,15 +34,16 @@ struct SlideOverModal<Content: View> : View {
         let drag = DragGesture()
             .updating($dragState) { drag, state, transaction in
                 state = .dragging(translation: drag.translation)
-        }
-        .onEnded(onDragEnded)
+            }
+            .onEnded(onDragEnded)
         
         return Group {
             ZStack {
                 //Foreground
-                VStack{
+                VStack {
                     Spacer()
-                    ZStack{
+                    
+                    ZStack {
                         VStack {
                             RoundedRectangle(cornerRadius: handleThickness / 2.0)
                                 .frame(width: 40, height: handleThickness)

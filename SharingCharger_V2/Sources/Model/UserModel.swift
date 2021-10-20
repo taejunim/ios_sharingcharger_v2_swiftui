@@ -26,10 +26,10 @@ struct User: Codable {
 
 //MARK: - 즐겨찾기 정보
 struct Favorites: Hashable ,Codable {
-    let chargerId: String
-    let chargerName: String
-    let address: String
-    let detailAddress: String
-    let latitude: Double
-    let longitude: Double
+    let chargerId: String   //충전기 ID
+    let chargerName: String //충전기 명
+    let address: String //주소
+    let detailAddress: String   //상세주소
+    let latitude: Double    //위도
+    let longitude: Double   //경도
 }

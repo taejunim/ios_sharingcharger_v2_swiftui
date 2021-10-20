@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//MARK:- 충전 이력 화면
 struct ChargingHistoryView: View {
     @Environment(\.presentationMode) var presentationMode
     
@@ -98,9 +99,9 @@ struct ChargingHistoryList: View {
                 ChargingHistoryRow(chargingHistory: chargingHistory, history: history)
                     .onAppear {
                         if chargingHistory.page <= chargingHistory.totalPages {
+                            //현재 페이지의 이력이 마지막인 경우
                             if histories.last == history {
                                 chargingHistory.page += 1
-                                
                                 chargingHistory.getChargingHistory()
                             }
                         }

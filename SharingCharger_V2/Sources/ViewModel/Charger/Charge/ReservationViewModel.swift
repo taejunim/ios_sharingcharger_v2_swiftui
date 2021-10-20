@@ -259,19 +259,14 @@ class ReservationViewModel: ObservableObject {
                 "endDate": endDate  //충전 종료일시
             ]
             
-            print(parameters)
-            
             let request = self.reservationAPI.requestReservation(parameters: parameters)
             request.execute(
                 //API 호출 성공
                 onSuccess: { (reservation) in
                     completion("success", reservation)
-                    
-                    print(reservation)
                 },
                 //API 호출 실패
                 onFailure: { (error) in
-                    print(error)
                     switch error {
                     case .responseSerializationFailed:
                         completion("fail", nil)
@@ -292,8 +287,8 @@ class ReservationViewModel: ObservableObject {
         request.execute(
             //API 호출 성공
             onSuccess: { (result) in
-                self.textReservationDate = ""
-                self.reservedChargerName = ""
+                self.textReservationDate = ""   //예약 일자 초기화
+                self.reservedChargerName = ""   //예약 충전기 명 초기화
                 
                 completion("success")
             },
@@ -317,8 +312,8 @@ class ReservationViewModel: ObservableObject {
         request.execute(
             //API 호출 성공
             onSuccess: { (result) in
-                self.textReservationDate = ""
-                self.reservedChargerName = ""
+                self.textReservationDate = ""   //예약 일자 초기화
+                self.reservedChargerName = ""   //예약 충전기 명 초기화
                 
                 completion("success")
             },

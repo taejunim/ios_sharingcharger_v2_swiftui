@@ -69,6 +69,7 @@ class ChargerDetailViewModel: ObservableObject {
     @Published var pageSize: String = "10"
     @Published var totalPage: Int = 0
     
+    //MARK: - 소유주 충전기 조회
     func requestOwnerCharger(chargerId: String) {
         
         viewUtil.isLoading = true   //로딩 시작
@@ -140,152 +141,152 @@ class ChargerDetailViewModel: ObservableObject {
         )
     }
     
+    //MARK; - 충전기 정보 수정
     func requestUpdateCharger(chargerId:String, completion: @escaping (String) -> Void) {
         
         let dialog = UIAlertController(title:"", message : "입력하신 정보로 수정하시겠습니까?", preferredStyle: .alert)
         
-        dialog
-            .addAction(
-                UIAlertAction(title: "취소", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
-                    return
-                }
-            )
-        dialog
-            .addAction(
-                UIAlertAction(title: "확인", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
+        dialog.addAction(
+            UIAlertAction(title: "취소", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
+                return
+            }
+        )
+        
+        dialog.addAction(
+            UIAlertAction(title: "확인", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
+                
+                let userType:String = UserDefaults.standard.string(forKey: "userType")!   //저장된 사용자 ID 번호
+                let ownerName:String = UserDefaults.standard.string(forKey: "userId")!   //저장된 사용자 ID 번호
                     
-                    let userType:String = UserDefaults.standard.string(forKey: "userType")!   //저장된 사용자 ID 번호
-                    let ownerName:String = UserDefaults.standard.string(forKey: "userId")!   //저장된 사용자 ID 번호
+                let parameters = [
+                    "address": self.address,
+                    "bleNumber": self.bleNumber,
+                    "cableFlag": self.cableFlag,
+                    "chargerType": self.chargerType,
+                    "currentStatusType": self.currentStatusType,
+                    "description": self.description,
+                    "detailAddress": self.detailAddress,
+                    "gpsX": self.gpsX,
+                    "gpsY": self.gpsY,
+                    "middlewareIp": self.middlewareIp,
+                    "name": self.chargerName,
+                    "ownerName": ownerName,
+                    "ownerType": userType,
+                    "parkingFeeDescription": self.parkingFeeDescription,
+                    "parkingFeeFlag": self.parkingFeeFlag,
+                    "providerCompanyId": self.providerCompanyId,
+                    "sharedType": self.sharedType,
+                    "supplyCapacity": self.supplyCapacity
+                ] as [String : Any]
                     
-                    let parameters = [
-                        "address": self.address,
-                        "bleNumber": self.bleNumber,
-                        "cableFlag": self.cableFlag,
-                        "chargerType": self.chargerType,
-                        "currentStatusType": self.currentStatusType,
-                        "description": self.description,
-                        "detailAddress": self.detailAddress,
-                        "gpsX": self.gpsX,
-                        "gpsY": self.gpsY,
-                        "middlewareIp": self.middlewareIp,
-                        "name": self.chargerName,
-                        "ownerName": ownerName,
-                        "ownerType": userType,
-                        "parkingFeeDescription": self.parkingFeeDescription,
-                        "parkingFeeFlag": self.parkingFeeFlag,
-                        "providerCompanyId": self.providerCompanyId,
-                        "sharedType": self.sharedType,
-                        "supplyCapacity": self.supplyCapacity
-                    ] as [String : Any]
-                    
-                    let request = self.chargerAPI.requestUpdateCharger(chargerId: chargerId, parameters: parameters)
-                    request.execute(onSuccess:{(ownerCharger) in
+                let request = self.chargerAPI.requestUpdateCharger(chargerId: chargerId, parameters: parameters)
+                request.execute(
+                    onSuccess: { (ownerCharger) in
                         completion("success")
-                    }, onFailure: { (error) in
+                    },
+                    onFailure: { (error) in
                         completion("failure")
-                        print(error)
-                    })
-                }
-            )
+                    }
+                )
+            }
+        )
         
         UIApplication.shared.windows.filter {$0.isKeyWindow}.first!.rootViewController?.present(dialog, animated: true, completion: nil)
-        
-        
     }
     
+    //MARK: - 충전 단가 수정
     func requestUpdateUnitPrice(chargerId:String, completion: @escaping (String) -> Void) {
         
         let dialog = UIAlertController(title:"", message : "설정한 단가로 변경하시겠습니까?\n 단가 정보 변경시 기존 예약건에 대해서는 적용되지 않고 신규 예약건에 대해서만 반영됩니다.\n 변경하시겠습니까?", preferredStyle: .alert)
         
-        dialog
-            .addAction(
-                UIAlertAction(title: "취소", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
-                    return
-                }
-            )
-        dialog
-            .addAction(
-                UIAlertAction(title: "확인", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
+        dialog.addAction(
+            UIAlertAction(title: "취소", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
+                return
+            }
+        )
+        
+        dialog.addAction(
+            UIAlertAction(title: "확인", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
+                
+                let userId:Int = Int(UserDefaults.standard.string(forKey: "userIdNo")!)!   //저장된 사용자 ID 번호
+                let unitPrice:Int = self.unitPrice
+                
+                let parameters = [
+                    "price": unitPrice,
+                    "userId": userId
+                ]
                     
-                    let userId:Int = Int(UserDefaults.standard.string(forKey: "userIdNo")!)!   //저장된 사용자 ID 번호
-                    let unitPrice:Int = self.unitPrice
-                    
-                    let parameters = [
-                        "price": unitPrice,
-                        "userId": userId
-                    ]
-                    
-                    let request = self.chargerAPI.requestUpdateUnitPrice(chargerId: chargerId, parameters: parameters)
-                    request.execute(onSuccess:{(chargerUnitPrice) in
+                let request = self.chargerAPI.requestUpdateUnitPrice(chargerId: chargerId, parameters: parameters)
+                request.execute(
+                    onSuccess: { (chargerUnitPrice) in
                         completion("success")
-                        
-                    }, onFailure: { (error) in
+                    },
+                    onFailure: { (error) in
                         completion("failure")
-                        print(error)
-                    })
-                    
-                }
-            )
+                    }
+                )
+            }
+        )
         
         UIApplication.shared.windows.filter {$0.isKeyWindow}.first!.rootViewController?.present(dialog, animated: true, completion: nil)
-        
     }
     
+    //MARK: - 운영 시간 수정
     func requestUpdateUsageTime(chargerId: String, completion: @escaping (String) -> Void) {
-        
         
         let dialog = UIAlertController(title:"", message : "충전기 운영 시간 수정시 기존 예약건에 대해서는 적용되지 않고 신규 예약건에 대해서만 반영됩니다.\n수정하시겠습니까?", preferredStyle: .alert)
         
-        dialog
-            .addAction(
-                UIAlertAction(title: "취소", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
-                    return
-                }
-            )
-        dialog
-            .addAction(
-                UIAlertAction(title: "확인", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
-                    let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "HH:mm:ss"
+        dialog.addAction(
+            UIAlertAction(title: "취소", style: UIAlertAction.Style.destructive) { (action:UIAlertAction) in
+                return
+            }
+        )
         
-                    let parameters = [
-                        "openTime": dateFormatter.string(from: self.openTime),
-                        "closeTime": dateFormatter.string(from: self.closeTime)
-                    ]
+        dialog.addAction(
+            UIAlertAction(title: "확인", style: UIAlertAction.Style.default) { (action:UIAlertAction) in
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "HH:mm:ss"
         
-                    let request = self.chargerAPI.requestUpdateUsageTime(chargerId: chargerId, parameters: parameters)
-                    request.execute(onSuccess:{(chargerUsageTime) in
+                let parameters = [
+                    "openTime": dateFormatter.string(from: self.openTime),
+                    "closeTime": dateFormatter.string(from: self.closeTime)
+                ]
+        
+                let request = self.chargerAPI.requestUpdateUsageTime(chargerId: chargerId, parameters: parameters)
+                request.execute(
+                    onSuccess: { (chargerUsageTime) in
                         completion("success")
-                        
-                    }, onFailure: { (error) in
+                    },
+                    onFailure: { (error) in
                         completion("failure")
-                        print(error)
-                    })
-                }
-            )
-        UIApplication.shared.windows.filter {$0.isKeyWindow}.first!.rootViewController?.present(dialog, animated: true, completion: nil)
-            
-    }
-    
-    func requestUsageTime(chargerId: String){
+                    }
+                )
+            }
+        )
         
-        let request = chargerAPI.requestUsageTime(chargerId: chargerId)
-        request.execute(onSuccess:{(chargerUsageTime) in
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "HH:mm:ss"
-            
-            self.previousOpenTime = dateFormatter.date(from : chargerUsageTime.previousOpenTime)!
-            self.previousCloseTime = dateFormatter.date(from : chargerUsageTime.previousCloseTime)!
-            self.openTime = dateFormatter.date(from : chargerUsageTime.previousOpenTime)!
-            self.closeTime = dateFormatter.date(from : chargerUsageTime.previousCloseTime)!
-            
-
-        }, onFailure: { (error) in
-            print(error)
-        })
+        UIApplication.shared.windows.filter {$0.isKeyWindow}.first!.rootViewController?.present(dialog, animated: true, completion: nil)
     }
     
+    //MARK: - 운영시간 조회
+    func requestUsageTime(chargerId: String) {
+        let request = chargerAPI.requestUsageTime(chargerId: chargerId)
+        request.execute(
+            onSuccess: {(chargerUsageTime) in
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "HH:mm:ss"
+            
+                self.previousOpenTime = dateFormatter.date(from : chargerUsageTime.previousOpenTime)!
+                self.previousCloseTime = dateFormatter.date(from : chargerUsageTime.previousCloseTime)!
+                self.openTime = dateFormatter.date(from : chargerUsageTime.previousOpenTime)!
+                self.closeTime = dateFormatter.date(from : chargerUsageTime.previousCloseTime)!
+            },
+            onFailure: { (error) in
+                print(error)
+            }
+        )
+    }
+    
+    //MARK: - 소유주 충전 이력 조회
     func requestOwnerChargeHistory(chargerId : String) {
         
         if page == 1 {
@@ -307,15 +308,11 @@ class ChargerDetailViewModel: ObservableObject {
         let request = chargeAPI.requestOwnerChargeHistory(userIdNo: userIdNo, parameters: parameters)
         request.execute(
             onSuccess: { (chargingHistory) in
-        
-                print(chargingHistory)
                 let histories = chargingHistory.content //충전 이력 목록 추출
                 self.totalCount = chargingHistory.totalElements //총 개수
-                
                 self.totalPage = chargingHistory.totalPages
                 
                 for index in 0..<histories.count {
-                        
                     let searchHistory = histories[index]
                     var history: [String:String] = [:]
                     
@@ -387,6 +384,7 @@ class ChargerDetailViewModel: ObservableObject {
         )
     }
     
+    //MARK: - 검색 조건 초기화
     func resetSearchCondition() {
         page = 1
         totalPage = 0
@@ -408,6 +406,7 @@ class ChargerDetailViewModel: ObservableObject {
         }
     }
     
+    //MARK: - 직접입력 확인
     func checkIsDirectInput() {
         if stringUnitPrice != "2,000" && stringUnitPrice != "1,500" && stringUnitPrice != "1,000"{
             isDirectlyInput = true

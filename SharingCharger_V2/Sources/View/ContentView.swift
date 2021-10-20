@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//MARK: - Content View
 struct ContentView: View {
     @ObservedObject var viewUtil = ViewUtil()   //View Utility
     private var signInViewModel = SignInViewModel() //로그인 View Model
