@@ -120,7 +120,7 @@ struct AccountEntryField: View {
             content: {
                 VStack {
                     HStack {
-                        defaultTextField(comment: "comment.phone.number".localized(), text: $signUpViewModel.phoneNumber, type: .phonePad)
+                        defaultTextField(comment: "comment.phone.number".localized(), text: $signUpViewModel.phoneNumber, type: .numberPad)
                         
                         AuthRequestButton(signUpViewModel: signUpViewModel) //인증 요청 버튼
                     }

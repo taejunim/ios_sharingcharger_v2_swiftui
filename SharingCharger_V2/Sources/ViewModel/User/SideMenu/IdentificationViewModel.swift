@@ -11,13 +11,13 @@ import Foundation
 class IdentificationViewModel: ObservableObject {
     private let userAPI = UserAPIService()  //사용자 API Service
     
-    @Published var userIdNo: String = UserDefaults.standard.string(forKey: "userIdNo")!
-    @Published var userId: String = ""  //사용자 ID 번호
+    @Published var userIdNo: String = UserDefaults.standard.string(forKey: "userIdNo")! //사용자 ID 번호
+    @Published var userId: String = ""  //사용자 ID(이메일)
     @Published var userName: String = ""    //사용자 명
     @Published var did: String = "" //DID 번호
     @Published var issueDate: String = ""   //발급일자
     
-    //DID 정보 호출
+    //MARK: - DID 정보 호출
     func getUserDID() {
         let userIdNo = userIdNo
         

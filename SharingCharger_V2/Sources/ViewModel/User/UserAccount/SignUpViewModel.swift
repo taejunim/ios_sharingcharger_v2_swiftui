@@ -146,9 +146,9 @@ class SignUpViewModel: ObservableObject {
                 secondsRemaining = 0    //타이머 초 시간 초기화
 
                 //인증번호 API 호출 후 인증 시작
-                getAuthNumber(completion: { (authNumber) in
+                getAuthNumber() { (result, authNumber) in
                     //인증번호 호출 성공
-                    if authNumber != "error" {
+                    if result == "success" {
                         self.isStartTimer = true    //인증 타이머 시작
                         self.isAuthRequest = true   //인증 시작
                         self.receivedAuthNumber = authNumber    //API 호출을 통해 받은 인증번호
@@ -156,9 +156,15 @@ class SignUpViewModel: ObservableObject {
                     //인증번호 호출 실패
                     else {
                         self.isShowToast = true
-                        self.viewUtil.showToast(isShow: self.isShowToast, message: "server.error".message())    //에러 메시지 호출
+                        
+                        if result == "duplicate" {
+                            self.viewUtil.showToast(isShow: self.isShowToast, message: "이미 가입된 회원 정보가 있습니다.")
+                        }
+                        else if result == "error" {
+                            self.viewUtil.showToast(isShow: self.isShowToast, message: "server.error".message())    //에러 메시지 호출
+                        }
                     }
-                })
+                }
             }
             else {
                 isShowToast = true
@@ -172,16 +178,21 @@ class SignUpViewModel: ObservableObject {
     }
     
     //MARK: - 인증번호 API 호출
-    func getAuthNumber(completion: @escaping (String) -> Void) {
+    func getAuthNumber(completion: @escaping (String, String) -> Void) {
         //SMS 인증번호 API 호출
-        let request = userAPI.requestSMSAuth(phoneNumber: phoneNumber)
+        let request = userAPI.requestJoinSMSAuth(phoneNumber: phoneNumber)
         request.execute(
-            onSuccess: { (authNumber) in
-                completion(authNumber)
-                print(authNumber)
+            onSuccess: { (result) in
+                
+                if result == "User phone is duplicated." {
+                    completion("duplicate", "")
+                }
+                else {
+                    completion("success", result)
+                }
             },
             onFailure: { (error) in
-                completion("error")
+                completion("error", "")
             }
         )
     }

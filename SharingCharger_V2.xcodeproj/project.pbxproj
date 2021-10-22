@@ -1120,7 +1120,7 @@
 				CODE_SIGN_ENTITLEMENTS = SharingCharger_V2/SharingCharger_V2.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.3;
+				CURRENT_PROJECT_VERSION = 1.0.4;
 				DEVELOPMENT_ASSET_PATHS = "\"SharingCharger_V2/Preview Content\"";
 				DEVELOPMENT_TEAM = C494MTPTA3;
 				ENABLE_PREVIEWS = YES;
@@ -1154,7 +1154,7 @@
 				CODE_SIGN_ENTITLEMENTS = SharingCharger_V2/SharingCharger_V2.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1.0.3;
+				CURRENT_PROJECT_VERSION = 1.0.4;
 				DEVELOPMENT_ASSET_PATHS = "\"SharingCharger_V2/Preview Content\"";
 				DEVELOPMENT_TEAM = C494MTPTA3;
 				ENABLE_PREVIEWS = YES;

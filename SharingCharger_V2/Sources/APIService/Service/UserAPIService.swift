@@ -62,6 +62,14 @@ class UserAPIService {
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/find/email", parameters: parameters, contentType: "json"))
     }
     
+    //MARK: - 회원가입 인증번호 요청 API 호출
+    /// 회원가입 시, 회원정보 중복 확인 및 SMS 인증번호 요청 API 호출
+    /// - Parameter phoneNumber: 휴대전화번호
+    /// - Returns:인증번호 (String) / 중복 시, 400 Error
+    public func requestJoinSMSAuth(phoneNumber: String) -> Future<String, AFError> {
+        return apiClient.requestText(route: APIRouter.get(useApi: "base", path: "/join/sms/\(phoneNumber)", parameters: [:], contentType: "text"))
+    }
+    
     //MARK: - 인증번호 요청 API 호출
     /// SMS 인증번호 요청 API 호출
     /// - Parameter phoneNumber: 휴대전화번호
@@ -122,6 +130,9 @@ class UserAPIService {
     }
     
     //MARK: - 회원 신원증명(DID) API 호출
+    /// 회원 신원증명 및 회원 정보 API 호출
+    /// - Parameter userIdNo: 사용자 ID 번호
+    /// - Returns: User Model
     public func requestDID(userIdNo: String) -> Future<User, AFError> {
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/managers/\(userIdNo)", parameters: [:], contentType: "json"))
     }
