@@ -20,6 +20,7 @@ struct User: Codable {
     let companyName: String?    //회사 명
     let servicePolicyFlag: Bool?    //서비스 이용약관 동의 여부
     let privacyPolicyFlag: Bool?    //개인정보 처리방침 동의 여부
+    let did: String?    //DID
     let created: String?    //생성 일자
     let updated: String?    //갱신 일자
 }

@@ -76,6 +76,7 @@
 		2B9499B42706A19800403F8C /* ChargingHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9499B32706A19800403F8C /* ChargingHistoryView.swift */; };
 		2B95038526D8BFD800DA4281 /* ChargerInfoModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B95038426D8BFD800DA4281 /* ChargerInfoModal.swift */; };
 		2B9603AA26F3344F002A4152 /* ChargingAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9603A926F3344F002A4152 /* ChargingAlertView.swift */; };
+		2B9648CF27228C9200CCAD22 /* IdentificationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9648CE27228C9200CCAD22 /* IdentificationViewModel.swift */; };
 		2B96762126C0BAEC00400FF9 /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B96762026C0BAEC00400FF9 /* ChangePasswordView.swift */; };
 		2B96762326C0BF5700400FF9 /* UserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B96762226C0BF5700400FF9 /* UserInfoViewModel.swift */; };
 		2B96763C26C0F94A00400FF9 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B96763B26C0F94A00400FF9 /* Extension.swift */; };
@@ -220,6 +221,7 @@
 		2B9499B32706A19800403F8C /* ChargingHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargingHistoryView.swift; sourceTree = "<group>"; };
 		2B95038426D8BFD800DA4281 /* ChargerInfoModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargerInfoModal.swift; sourceTree = "<group>"; };
 		2B9603A926F3344F002A4152 /* ChargingAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChargingAlertView.swift; sourceTree = "<group>"; };
+		2B9648CE27228C9200CCAD22 /* IdentificationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentificationViewModel.swift; sourceTree = "<group>"; };
 		2B96762026C0BAEC00400FF9 /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordView.swift; sourceTree = "<group>"; };
 		2B96762226C0BF5700400FF9 /* UserInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoViewModel.swift; sourceTree = "<group>"; };
 		2B96763B26C0F94A00400FF9 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
@@ -572,6 +574,7 @@
 				2B85151B26CF660A00B6AD0E /* SideMenuViewModel.swift */,
 				2B9499B12706A12C00403F8C /* ChargingHistoryViewModel.swift */,
 				2B8BFBE026CE861100C9CB65 /* FavoritesViewModel.swift */,
+				2B9648CE27228C9200CCAD22 /* IdentificationViewModel.swift */,
 			);
 			path = SideMenu;
 			sourceTree = "<group>";
@@ -918,6 +921,7 @@
 				2B96762126C0BAEC00400FF9 /* ChangePasswordView.swift in Sources */,
 				2BA1C74426E61003005EF19D /* ChargerSearchViewModel.swift in Sources */,
 				2B8DB32926BA54ED0032B596 /* LaunchScreen.swift in Sources */,
+				2B9648CF27228C9200CCAD22 /* IdentificationViewModel.swift in Sources */,
 				2B9679EB26F41E8600CFDC3A /* ChargeAPIService.swift in Sources */,
 				2BBF2AEF27105397005140FB /* ChargerDetailContentVIew.swift in Sources */,
 				2B92BC572700AA260082E5EE /* ReservationView.swift in Sources */,

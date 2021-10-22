@@ -298,6 +298,8 @@ class ChargingViewModel: NSObject, ObservableObject {
         
         //충전기 사용 인증
         authChargerUse() { (result, currentDate)  in
+            print("충전 시작 진행: 인증 시작")
+            
             let chargingSeconds: String = self.setChargingTime(currentDate: currentDate)    //충전 시간 - 시간 단위
             let chargingMinutes: String = String(Int(chargingSeconds)! / 60)    //충전 시간 - 분 단위
             
@@ -306,6 +308,7 @@ class ChargingViewModel: NSObject, ObservableObject {
             //사용 인증 성공
             if result == "success" {
                 BleManager.shared.bleChargerStart(useTime: chargingMinutes)    //충전기 BLE에 충전 시작 요청
+                print("충전 시작 진행: 인증 성공")
             }
             else {
                 self.isLoading = false  //로딩 화면 종료
@@ -323,6 +326,8 @@ class ChargingViewModel: NSObject, ObservableObject {
                 else if result == "error" {
                     self.toastMessage(message: "server.error".message())
                 }
+                
+                print("충전 시작 진행: 인증 실패")
             }
         }
     }
@@ -333,15 +338,17 @@ class ChargingViewModel: NSObject, ObservableObject {
         
         //충전기 BLE - 충전 시작 성공
         if isChargingStart {
-            
+            print("충전 시작 진행: 시작 성공")
             //충전 시작 정보 호출
             getChargingStartInfo() { (result, chargeInfo) in
+                print("충전 시작 진행: 충전 정보 호출")
                 //충전 정보 호출 성공
                 if result == "success" {
                     self.chargeId = String(format: "%013d", Int(chargeInfo["chargeId"]!)!)  //충전 정보 ID
                     UserDefaults.standard.set(self.chargeId, forKey: "chargeId")
                     
                     self.setTag(tagId: self.chargeId) //태그 정보 설정
+                    print("충전 시작 진행: 충전 정보 호출 성공")
                 }
                 else {
                     self.isLoading = false  //로딩 화면 종료
@@ -356,6 +363,8 @@ class ChargingViewModel: NSObject, ObservableObject {
                     else if result == "error" {
                         self.toastMessage(message: "server.error".message())
                     }
+                    
+                    print("충전 시작 진행: 충전 정보 호출 실패")
                 }
             }
         }
@@ -369,6 +378,8 @@ class ChargingViewModel: NSObject, ObservableObject {
                 BleManager.shared.bleDisConnect()   //차후 문제 발생 여지로 블루투스 연결 해제 처리
                 toastMessage(message: "충전기 플러그가 연결되지 않았습니다.\n플러그 연결 확인 후, 다시 시도 바랍니다.")
             }
+            
+            print("충전 시작 진행: 시작 실패")
         }
     }
     
@@ -380,15 +391,19 @@ class ChargingViewModel: NSObject, ObservableObject {
     
     //MARK: 충전 종료
     func endCharging() {
+        print("충전 종료 진행: 충전 종료 시작")
         //충전기 BLE에 충전 종료 요청 성공
         if isChargingStop {
             getTag()    //태그 정보 호출
+            print("충전 종료 진행: 충전 종료 요청 성공")
         }
         //충전기 BLE에 충전 종료 요청 실패
         else {
             if endType == "normal" {
                 toastMessage(message: "충전 종료 진행에 실패하였습니다.\n다시 시도 바랍니다.\n문제가 지속될 시, 고객 센터에 문의 바랍니다.")
             }
+            
+            print("충전 종료 진행: 충전 종료 요청 실패")
         }
     }
 
@@ -414,6 +429,7 @@ class ChargingViewModel: NSObject, ObservableObject {
             isStartTimer = true //타이머 시작
             
             toastMessage(message: "정상적으로 충전이 시작되었습니다.\n충전을 진행하는 동안 플러그를 분리하지 마세요.")
+            print("충전 시작 진행: 충전 시작 완료")
         }
         //태그 설정 실패
         else {
@@ -424,6 +440,7 @@ class ChargingViewModel: NSObject, ObservableObject {
             BleManager.shared.bleChargerStop()  //충전기 BLE에 충전 종료 요청
             
             toastMessage(message: "충전 시작 진행 중에 문제가 발생하였습니다.\n다시 시도 바랍니다.\n문제가 지속될 시, 고객 센터에 문의 바랍니다.")
+            print("충전 시작 진행: 충전 시작 실패")
         }
     }
     
@@ -437,6 +454,7 @@ class ChargingViewModel: NSObject, ObservableObject {
     func postGetTag() {
         //태그 정보 호출 성공
         if isGetTag {
+            print("충전 종료 진행: 태그 정보 호출 성공")
             //충전기 태그 정보가 0개 이상인 경우
             if bleTagList.count > 0 {
                 //충전기 BLE 태그 목록만큼 반복
@@ -461,6 +479,8 @@ class ChargingViewModel: NSObject, ObservableObject {
                                 
                                 //충전 정상 종료 API 호출
                                 putChargingEndInfo(tagInfo: tagInfo) { (result, endInfo) in
+                                    print("충전 종료 진행: 충전 종료 정보 호출")
+                                    
                                     //충전 종료 성공
                                     if result == "success" {
                                         let reservationStartDate = endInfo["reservationStartDate"]! //예약 시작일시 추출
@@ -484,6 +504,8 @@ class ChargingViewModel: NSObject, ObservableObject {
                                         self.totalChargingTime = "\(String(format: "%02d", chargingHour)):\(String(format: "%02d", chargingMinute))"    //총 충전 시간
                                         
                                         self.deleteTag(chargeId: tagId) //해당 충전 정보의 태그 정보 삭제
+                                        
+                                        print("충전 종료 진행: 충전 종료 정보 호출 성공")
                                     }
                                     //충전 종료 실패
                                     else {
@@ -496,6 +518,8 @@ class ChargingViewModel: NSObject, ObservableObject {
                                         else if result == "error" {
                                             self.toastMessage(message: "server.error".message())
                                         }
+                                        
+                                        print("충전 종료 진행: 충전 종료 정보 호출 실패")
                                     }
                                 }
                             }
@@ -566,6 +590,7 @@ class ChargingViewModel: NSObject, ObservableObject {
     func postDeleteTag() {
         //태그 정보 삭제 성공
         if isDeleteTag {
+            print("충전 종료 진행: 태그 정보 삭제 성공")
             bleTagList.remove(at: bleTagList.firstIndex(where: { $0.tagNumber == deleteTagId})!)    //호출한 태그 목록에서 삭제된 태그 정보 삭제
             
             //태그 목록이 0인 경우
@@ -582,12 +607,15 @@ class ChargingViewModel: NSObject, ObservableObject {
                     isStartTimer = false    //충전 타이머 종료
                     disconnetChargerBLE()   //충전기 BLE 연결 해제
                     isShowChargingResult = true //충전 결과 팝업 창 호출
+                    
+                    print("충전 종료 진행: 충전 종료 완료")
                 }
             }
         }
         //태그 정보 삭제 실패
         else {
             getTag()    //태그 정보 재호출
+            print("충전 종료 진행: 태그 정보 삭제 실패")
         }
     }
     
@@ -637,7 +665,7 @@ class ChargingViewModel: NSObject, ObservableObject {
         
         hoursRemaining = hours  //남은 시간
         minutesRemaining = minutes  //남은 분
-        secondsRemaining = seconds  //남은 ㅊ
+        secondsRemaining = seconds  //남은 초
         
         self.chargingTime = String(chargingTime - 1)    //충전 시간 1초씩 감소
     }

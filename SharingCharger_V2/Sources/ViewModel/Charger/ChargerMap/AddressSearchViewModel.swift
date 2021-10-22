@@ -166,7 +166,6 @@ class AddressSearchViewModel: ObservableObject {
         request.execute(
             //API 호출 성공
             onSuccess: { (address) in
-                print(address)
                 self.totalCount = address.meta.totalCount
                 self.isLastPage = address.meta.isEnd
                 

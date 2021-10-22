@@ -120,4 +120,9 @@ class UserAPIService {
         
         return apiClient.request(route: APIRouter.post(useApi: "base", path: "/userType/Personal/\(userIdNo)", parameters: [:], contentType: "json"))
     }
+    
+    //MARK: - 회원 신원증명(DID) API 호출
+    public func requestDID(userIdNo: String) -> Future<User, AFError> {
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/managers/\(userIdNo)", parameters: [:], contentType: "json"))
+    }
 }

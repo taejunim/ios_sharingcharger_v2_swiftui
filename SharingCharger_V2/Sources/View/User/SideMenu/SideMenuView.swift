@@ -314,23 +314,8 @@ struct IdentificationMenuButton: View {
     @State var isShowAlert: Bool = false
     
     var body: some View {
-//        NavigationLink(
-//            destination: IdentificationView(),  //회원 증명서 화면
-//            label: {
-//                HStack {
-//                    Text("회원 증명서")
-//
-//                    Spacer()
-//                }
-//                .foregroundColor(Color.black)
-//                .frame(maxWidth: .infinity, minHeight: 40)
-//                .padding(.vertical, 5)
-//            }
-//        )
-        Button(
-            action: {
-                isShowAlert = true
-            },
+        NavigationLink(
+            destination: IdentificationView(),  //회원 증명서 화면
             label: {
                 HStack {
                     Text("회원 증명서")
@@ -342,16 +327,31 @@ struct IdentificationMenuButton: View {
                 .padding(.vertical, 5)
             }
         )
-        .alert(
-            isPresented: $isShowAlert,
-            content: {
-                Alert(
-                    title: Text("서비스 이용 불가"),
-                    message: Text("해당 기능은 추후 서비스 지원될 예정입니다.\n자세한 사항은 고객 센터에 문의 바랍니다."),
-                    dismissButton: .destructive(Text("확인"))
-                )
-            }
-        )
+//        Button(
+//            action: {
+//                isShowAlert = true
+//            },
+//            label: {
+//                HStack {
+//                    Text("회원 증명서")
+//
+//                    Spacer()
+//                }
+//                .foregroundColor(Color.black)
+//                .frame(maxWidth: .infinity, minHeight: 40)
+//                .padding(.vertical, 5)
+//            }
+//        )
+//        .alert(
+//            isPresented: $isShowAlert,
+//            content: {
+//                Alert(
+//                    title: Text("서비스 이용 불가"),
+//                    message: Text("해당 기능은 추후 서비스 지원될 예정입니다.\n자세한 사항은 고객 센터에 문의 바랍니다."),
+//                    dismissButton: .destructive(Text("확인"))
+//                )
+//            }
+//        )
     }
 }
 

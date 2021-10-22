@@ -38,6 +38,10 @@ struct ChargingView: View {
                 }
                 else {
                     charging.isCharging = false //충전 상태 초기화
+                    
+                    charging.hoursRemaining = 0  //남은 시간
+                    charging.minutesRemaining = 0  //남은 분
+                    charging.secondsRemaining = 0  //남은 초
                 }
                 
                 charging.searchChargerBLE() //충전기 검색
