@@ -674,7 +674,7 @@ struct ChangeButton: View {
                             case "failure" :
                                 viewUtil.showToast(isShow: true, message: "충전기 단가 정보 변경에 실패하셨습니다. 다시 시도하여 주십시오.")
                             break
-                            default : break
+                        default : break
                         }
                     }
                     break
@@ -689,18 +689,17 @@ struct ChangeButton: View {
                                 case "failure" :
                                     viewUtil.showToast(isShow: true, message: "충전기 운영 시간 변경에 실패하셨습니다. 다시 시도하여 주십시오.")
                                 break
-                                default : break
+                            default : break
                             }
                         }
                     }
                     break
                 case "information" :
-                    
                     if(chargerDetailViewModel.chargerName == "" ) { viewUtil.showToast(isShow: true, message: "충전기명을 입력하여 주십시오.") }
                     else if(chargerDetailViewModel.address == "") { viewUtil.showToast(isShow: true, message: "충전기 주소를 입력하여 주십시오.") }
                     else {
                         chargerDetailViewModel.requestUpdateCharger(chargerId: chargerId) { (completion) in
-                            switch(completion){
+                            switch(completion) {
                                 case "success" :
                                     viewUtil.showToast(isShow: true, message: "충전기 정보 변경에 성공하셨습니다.")
                                     break
@@ -711,8 +710,9 @@ struct ChangeButton: View {
                             }
                         }
                     }
+                    
                     break
-                    default : break
+                default : break
                 }
             },
             label: {

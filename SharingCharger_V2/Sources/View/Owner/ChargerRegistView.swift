@@ -210,7 +210,7 @@ struct FindChargerBLE: View {
                             .padding(.horizontal)
                             .padding(.vertical, 10)
                             .frame(width: 200)
-                            .background(regist.chargerBLEList == [] ? Color("#F2F2F2") : Color("#8E44AD"))
+                            .background(regist.selectBLENumber == "" ? Color("#F2F2F2") : Color("#8E44AD"))
                             .cornerRadius(5.0)
                             .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
                     }
@@ -431,11 +431,10 @@ struct ChargerBasicInfo: View {
                     Spacer().frame(width: 30)
                     
                     TextField("", text: $regist.chargerName)
-                        .padding(.horizontal, 10)
+                        .autocapitalization(.none)    //첫 문자 항상 소문자
                         .padding(.vertical, 5)
                         .frame(maxWidth: .infinity)
-                        .background(Color("#F2F2F2"))
-                        .cornerRadius(5.0)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                         .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
                             
                     Spacer()
@@ -463,10 +462,10 @@ struct ChargerBasicInfo: View {
                     Spacer().frame(width: 30)
                     
                     TextEditor(text: $regist.chargerDescription)
+                        .autocapitalization(.none)    //첫 문자 항상 소문자
                         .frame(maxWidth: .infinity, maxHeight: 120)
                         .cornerRadius(5.0)
-                        .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
-                        .colorMultiply(Color("#F2F2F2"))
+                        .shadow(color: .gray, radius: 2, x: 1.5, y: 1.5)
                     
                     Spacer()
                 }
@@ -515,11 +514,10 @@ struct ChargerAdditionalInfo: View {
                                 },
                                 label: {
                                     TextField("\(Image(systemName: "magnifyingglass")) 장소・주소 검색", text: $regist.address)
-                                        .padding(.horizontal, 10)
+                                        .autocapitalization(.none)    //첫 문자 항상 소문자
                                         .padding(.vertical, 5)
                                         .frame(maxWidth: .infinity)
-                                        .background(Color("#F2F2F2"))
-                                        .cornerRadius(5.0)
+                                        .textFieldStyle(RoundedBorderTextFieldStyle())
                                         .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
                                         .disabled(true)
                                 }
@@ -533,11 +531,10 @@ struct ChargerAdditionalInfo: View {
                             
                             //상세 주소 입력창
                             TextField("상세주소", text: $regist.detailAddress)
-                                .padding(.horizontal, 10)
+                                .autocapitalization(.none)    //첫 문자 항상 소문자
                                 .padding(.vertical, 5)
                                 .frame(maxWidth: .infinity)
-                                .background(Color("#F2F2F2"))
-                                .cornerRadius(5.0)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
                                 .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
                         }
                     
@@ -710,11 +707,10 @@ struct ChargerAdditionalInfo: View {
                         Spacer().frame(width: 30)
                         
                         TextField("", text: $regist.parkingFeeDescription)
-                            .padding(.horizontal, 10)
+                            .autocapitalization(.none)    //첫 문자 항상 소문자
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
                             .padding(.vertical, 5)
                             .frame(maxWidth: .infinity)
-                            .background(!regist.selectParkingFeeFlg ? Color("#BDBDBD") : Color("#F2F2F2"))
-                            .cornerRadius(5.0)
                             .shadow(color: .gray, radius: 1, x: 1.5, y: 1.5)
                             .disabled(!regist.selectParkingFeeFlg ? true : false)
                         
