@@ -53,7 +53,6 @@ class OwnerChargerViewModel: ObservableObject {
         request.execute(
             //API 호출 성공
             onSuccess: { (chargers) in
-                print(chargers)
                 self.totalCount = chargers.totalElements
                 self.totalPages = chargers.totalPages
                 
@@ -104,7 +103,6 @@ class OwnerChargerViewModel: ObservableObject {
                     searchChargers.append(searchCharger)
                 }
                 
-                print(searchChargers)
                 self.chargers.append(contentsOf: searchChargers)
             },
             //API 호출 실패
@@ -172,8 +170,6 @@ class OwnerChargerViewModel: ObservableObject {
                 let currentDate = Date()
                 
                 for profitPointObject in profitPoint.reversed() {
-                    print("month : \(profitPointObject.day)")
-                    print("point : \(profitPointObject.point)")
                     
                     if currentDate >= "yyyy-MM".toDateFormatter(formatString: profitPointObject.day)! {
                         //포인트 이력 정보
@@ -181,6 +177,7 @@ class OwnerChargerViewModel: ObservableObject {
                             "month": profitPointObject.day,
                             "point": String(profitPointObject.point)
                         ]
+                        
                         searchPoints.append(searchPoint)    //조회 포인트 목록 추가
                     }
                 }

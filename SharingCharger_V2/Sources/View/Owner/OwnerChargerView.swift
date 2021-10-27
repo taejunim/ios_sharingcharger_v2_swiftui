@@ -205,14 +205,11 @@ struct OwnerChargerList: View {
                         }
                     )
                     .onAppear {
-                        
                         if ownerChargerViewModel.page <= ownerChargerViewModel.totalPages {
                             if searchChargers.last == charger {
-                                //ownerChargerViewModel.page += 1
+                                ownerChargerViewModel.page += 1
                                 
-                                //ownerChargerViewModel.requestOwnerChargerList()
-                                
-                                print(ownerChargerViewModel.page)
+                                ownerChargerViewModel.requestOwnerChargerList()
                             }
                         }
                     }

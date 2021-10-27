@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-	<array>
-		<string>kr.co.metisinfo.monttak</string>
-	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -81,12 +77,10 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>충전기 사용을 위해 블루투스를 사용하여 충전기와 연결을 합니다.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>충전기 사용을 위해 블루투스를 사용하여 충전기와 연결을 합니다.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>사용자 주변의 충전기 위치를 조회하기 위해 위치 정보를 사용합니다.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>충전기 사용을 위해 블루투스를 사용하여 충전기와 연결을 합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>사용자 주변의 충전기 위치를 조회하기 위해 위치 정보를 사용합니다.</string>
 	<key>UIApplicationSceneManifest</key>
@@ -96,12 +90,6 @@
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
-		<string>location</string>
-		<string>processing</string>
-	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UIRequiredDeviceCapabilities</key>
