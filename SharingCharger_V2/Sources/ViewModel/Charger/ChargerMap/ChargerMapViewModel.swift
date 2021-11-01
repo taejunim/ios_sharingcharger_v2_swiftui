@@ -19,8 +19,8 @@ class ChargerMapViewModel: ObservableObject {
     //MARK: - 위치 정보 변수
     @Published var location = Location()   //위치 정보 서비스
     @Published var authStatus = Location().getAuthStatus()  //위치 정보 권한 상태
-    @Published var latitude: Double = 33.447357177734375//37.566407799201336    //위도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
-    @Published var longitude: Double = 126.56743190587527//126.97787363088995   //경도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정
+    @Published var latitude: Double = 37.566407799201336    //위도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정    33.447357177734375
+    @Published var longitude: Double = 126.97787363088995   //경도 - 위치 서비스 권한이 없거나 비활성인 경우 기본 값 설정    126.56743190587527
     @Published var zoomLevel: Int = 0   //Zoom Level
     @Published var currentAddress: String = ""  //현재 위치 주소 - 지도 중심 위치
     @Published var isCurrentLocation: Bool = false  //현재 위치 이동 여부
@@ -95,6 +95,13 @@ class ChargerMapViewModel: ObservableObject {
         if authStatus == "authorized" || authStatus == "authorizedAlways" || authStatus == "authorizedWhenInUse" {
             latitude = location.latitude!    //위도
             longitude = location.longitude!  //경도
+            
+            
+            //현재 위치 지도 중심으로 이동
+            mapView.setMapCenter(
+                MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
+                animated: true
+            )
         }
     }
     
@@ -109,10 +116,10 @@ class ChargerMapViewModel: ObservableObject {
         getLoacation()  //현재 위치 정보 호출
         
         //현재 위치 지도 중심으로 이동
-        mapView.setMapCenter(
-            MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
-            animated: true
-        )
+//        mapView.setMapCenter(
+//            MTMapPoint(geoCoord: MTMapPointGeo(latitude: latitude, longitude: longitude)),
+//            animated: true
+//        )
         
         mapView.setZoomLevel(MTMapZoomLevel(0), animated: true)   //Zoom Level 설정
         

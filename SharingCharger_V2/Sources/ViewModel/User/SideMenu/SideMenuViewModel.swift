@@ -5,6 +5,7 @@
 //  Created by KJ on 2021/08/20.
 //
 
+import SwiftUI
 import Foundation
 
 ///사이드 메뉴 View Model
@@ -21,6 +22,19 @@ class SideMenuViewModel: ObservableObject {
     @Published var userIdNo: String = ""    //사용자 ID 번호
     @Published var isSwitch: Bool = false   //소유주 전환 여부
     @Published var isSignOut: Bool = false  //로그아웃 여부
+    
+    func toastPopup(message: String) -> some View {
+        HStack(alignment: .top, spacing: 10) {
+            Text(message)
+                .foregroundColor(Color.white)
+                .fontWeight(.bold)
+                .multilineTextAlignment(.center)
+        }
+        .padding(15)
+        .background(Color.black.opacity(0.5))   //배경 색상 및 투명도
+        .cornerRadius(10)   //모서리 둥글게 처리
+        .padding(.horizontal)
+    }
     
     //MARK: - 소유주 전환 실행
     func switchOwner() {

@@ -262,7 +262,6 @@ class UserInfoViewModel: ObservableObject {
         request.execute(
             onSuccess: { (authNumber) in
                 completion(authNumber)
-                print(authNumber)
             },
             onFailure: { (error) in
                 completion("error")

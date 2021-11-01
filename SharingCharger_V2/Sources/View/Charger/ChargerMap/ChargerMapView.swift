@@ -152,10 +152,10 @@ struct ChargerMapView: View {
             .onAppear {
                 chargerMap.location.startLocation()    //위치 서비스 시작
                 chargerMap.getLoacation()   //현재 위치 정보 호출
-                
+
                 chargerMap.radius = chargerSearch.selectRadius  //충전기 조회 반경범위
                 chargerSearch.changeStartTimeRange()    //충전기 조회 - 충전 시작 시간 범위 설정
-                
+
                 //현재 시간 호출 후 충전기 목록 조회 호출
                 chargerSearch.getCurrentDate() { (currentDate) in
                     let calcDate: Date = Calendar.current.date(byAdding: .second, value: chargerSearch.selectChargingTime, to: currentDate)!
@@ -164,7 +164,7 @@ struct ChargerMapView: View {
                     chargerSearch.chargingEndDate = calcDate    //충전 종료일시
                     chargerMap.searchStartDate = currentDate    //조회 시작일시
                     chargerMap.searchEndDate = calcDate //조회 종료일시
-
+                    
                     //충전기 목록 조회
                     chargerMap.getChargerList(
                         zoomLevel: 0,   //Zoom Level

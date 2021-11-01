@@ -179,7 +179,6 @@ struct ChangeCompleteButton: View {
                                     userInfo.viewReset()            //비밀번호 변경화면 초기화
                                     userInfo.changePwViewReset()    //새 비밀번호 입력화면 초기화
                                     self.presentationMode.wrappedValue.dismiss()
-                                    self.presentationMode.wrappedValue.dismiss()
                                 }
                             }
                         }

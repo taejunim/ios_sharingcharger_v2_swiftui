@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UserSettingView: View {
     @Environment(\.presentationMode) var presentationMode   //Back 버튼 기능 추가에 필요
-    @ObservedObject var viewUtil = ViewUtil()   //화면 유틸리티
+
     @ObservedObject var sideMenu: SideMenuViewModel
     
     var body: some View {
@@ -44,7 +44,7 @@ struct UserSettingView: View {
                 closeOnTap: false,
                 closeOnTapOutside: false,
                 view: {
-                    viewUtil.toastPopup(message: sideMenu.showMessage)
+                    sideMenu.toastPopup(message: sideMenu.showMessage)
                 }
             )
             
@@ -67,15 +67,16 @@ struct UserSettingView: View {
 
 //MARK: - 비밀번호 변경 화면 이동 버튼
 struct ChangePasswordViewButton: View {
+    
     var body: some View {
         NavigationLink(
             destination: ChangePasswordView(isSigned: true),    //비밀번호 변경 화면
             label: {
                 HStack {
                     Text("비밀번호 변경")
-                    
+
                     Spacer()
-                    
+
                     Image(systemName: "chevron.right")
                 }
                 .foregroundColor(Color.black)
