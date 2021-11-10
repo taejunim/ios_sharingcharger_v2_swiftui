@@ -55,7 +55,6 @@ class FavoritesViewModel: ObservableObject {
     
     //MARK: - 즐겨찾기 추가
     func addFavorites(item: [String:Any]) {
-        
         isFavorite = true
         
         //추가할 즐겨찾기 항목 정보

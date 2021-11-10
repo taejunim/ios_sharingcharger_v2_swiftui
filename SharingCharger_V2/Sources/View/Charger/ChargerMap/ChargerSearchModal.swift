@@ -94,6 +94,7 @@ struct ChargerSearchModal: View {
             chargerSearch.showChargingDate = false  //충전 시작일자 선택 항목 닫기
             chargerSearch.showChargingTime = false  //충전 시간 선택 항목 닫기
             chargerSearch.showRadius = false    //조회 반경범위 선택 항목 닫기
+            chargerMap.isShowSearchModal = false
         }
     }
 }
@@ -170,20 +171,23 @@ struct ChargingDatePicker: View {
                                 
                                 //시작 시간 최소 범위와 같거나 큰 경우만
                                 if chargerSearch.startTimeMinRange <= second {
-                                    Text(timeLabel).tag(time).font(.subheadline)
+                                    Text(timeLabel).tag(time)
                                 }
                             }
                             else {
                                 //시작 시간 최대 범위와 같거나 작은 경우만
                                 if chargerSearch.startTimeMaxRange >= second {
-                                    Text(timeLabel).tag(time).font(.subheadline)
+                                    Text(timeLabel).tag(time)
                                 }
                             }
                         }
                     }
-                    .frame(width: 150, height: 70)
-                    .clipped()
+                    .padding(.vertical, 2)
+                    .padding(.horizontal, 40)
+                    .background(Color("#EFEFF0"))
+                    .cornerRadius(7)
                 }
+                .padding(.vertical, 10)
             },
             label: {
                 Button(
@@ -241,8 +245,10 @@ struct ChargingTimePicker: View {
                             }
                         }
                     }
+                    .pickerStyle(.wheel)
                     .frame(width: 250, height: 70)
                     .clipped()
+                    .padding(.vertical, 10)
                 },
                 label: {
                     Button(
@@ -282,8 +288,10 @@ struct RadiusPicker: View {
                             Text("40km").tag("40").font(.subheadline)
                         }
                     )
+                    .pickerStyle(.wheel)
                     .frame(width: 250, height: 70)
                     .clipped()
+                    .padding(.vertical, 10)
                 },
                 label: {
                     Button(

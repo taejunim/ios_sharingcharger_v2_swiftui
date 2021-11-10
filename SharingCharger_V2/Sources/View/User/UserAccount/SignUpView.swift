@@ -412,12 +412,14 @@ struct TermsContent: View {
 
 //MARK: - 서비스 이용약관 동의 버튼
 struct TermsAgreeButton: View {
+    @Environment(\.presentationMode) var presentationMode
     @ObservedObject var signUpViewModel: SignUpViewModel
     
     var body: some View {
         Button(
             action: {
                 signUpViewModel.isTermsAgree = true //서비스 이용약관 동의 여부
+                self.presentationMode.wrappedValue.dismiss()
             },
             label: {
                 Text("button.agree".localized())
@@ -462,12 +464,14 @@ struct PrivacyContent: View {
 
 //MARK: - 개인정보 처리방침 동의 버튼
 struct PrivacyAgreeButton: View {
+    @Environment(\.presentationMode) var presentationMode
     @ObservedObject var signUpViewModel: SignUpViewModel
     
     var body: some View {
         Button(
             action: {
                 signUpViewModel.isPrivacyAgree = true   //개인정보 처리방침 동의 여부
+                self.presentationMode.wrappedValue.dismiss()
             },
             label: {
                 Text("button.agree".localized())
