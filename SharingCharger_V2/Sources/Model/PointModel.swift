@@ -7,6 +7,13 @@
 
 import Foundation
 
+//MARK: - 전자지갑 포인트 정보
+struct WalletPoint: Codable {
+    let point: Int  //총합 포인트
+    let cashPoint: Int  //구매 포인트(결재 포인트)
+    let systemPoint: Int    //시스템 포인트(지급 포인트)
+}
+
 //MARK: - 포인트 이력 정보
 struct PointHistory: Codable {
     let content: [PointHistoryContent?]

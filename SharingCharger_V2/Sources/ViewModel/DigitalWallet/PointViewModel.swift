@@ -12,19 +12,28 @@ import Combine
 class PointViewModel: ObservableObject {
     public var didChange = PassthroughSubject<PointViewModel, Never>()
     
-    private let pointAPI = PointAPIService()        //포인트 API Service
+    private let pointAPI = PointAPIService()    //포인트 API Service
+    private let userAPI = UserAPIService()  //사용자 API Service
     
     @Published var showSearchModal: Bool = false    //검색조건 Modal 활성 여부
-    @Published var isSearchReset: Bool = false{     //검색조건 초기화 여부
+    @Published var isSearchReset: Bool = false {     //검색조건 초기화 여부
         didSet {
             resetPointSearchCondition()             //검색조건 초기화 실행
         }
     }
     @Published var isSearchStart: Bool = true       //조회 시작 여부
     
-    //MARK: - 포인트 이력 파라미터
+    @Published var userIdNo: String = UserDefaults.standard.string(forKey: "userIdNo")! //사용자 ID 번호
+    @Published var userDID: String = "" //사용자 DID 번호
+    
+    //MARK: - 전자지갑 포인트 변수
+    @Published var totalPoint: Int = 0  //총 포인트
+    @Published var cashPoint: Int = 0   //캐시 포인트 - 구매 포인트
+    @Published var systemPoint: Int = 0 //시스템 포인트
+    
+    //MARK: - 포인트 이력 변수
     @Published var currentPoint: String = ""            //현재 잔여 포인트
-    @Published var chooseDate: String = "oneMonth"{     //조회기간 선택
+    @Published var chooseDate: String = "oneMonth" {     //조회기간 선택
         didSet {
             showSelectMonth()
         }
@@ -39,9 +48,27 @@ class PointViewModel: ObservableObject {
     @Published var point: [String:Any] = [:]
     @Published var searchPoints: [[String:String]] = [] //조회환 포인트 정보 목록
     
+    //MARK: - DID 정보 호출
+    func getUserDID() {
+        let userIdNo = userIdNo
+        
+        //사용자의 DID 조회 API 호출
+        let request = userAPI.requestDID(userIdNo: userIdNo)
+        request.execute(
+            //API 호출 성공
+            onSuccess: { (user) in
+                self.userDID = user.did ?? "-"
+            },
+            //API 호출 실패
+            onFailure: { (error) in
+                print(error)
+            }
+        )
+    }
+    
     //MARK: - 현재 사용자 포인트 조회
     func getCurrentPoint() {
-        let userIdNo: String = UserDefaults.standard.string(forKey: "userIdNo") ?? ""   //저장된 사용자 ID 번호
+        let userIdNo = userIdNo
         //현재 사용자 포인트 API 호출
         let request = pointAPI.requestCurrentDate(userIdNo: userIdNo)
         request.execute(
@@ -63,9 +90,36 @@ class PointViewModel: ObservableObject {
         )
     }
     
+    //MARK: - 전자지갑 포인트 조회
+    func getWalletPoint() {
+        let userIdNo = userIdNo
+        
+        let request = pointAPI.requestWalletPoint(userIdNo: userIdNo)
+        request.execute(
+            //API 호출 성공
+            onSuccess: { (walletPoint) in
+                print(walletPoint)
+                self.totalPoint = walletPoint.point //총 포인트
+                self.cashPoint = walletPoint.cashPoint  //캐시 포인트(구매 포인트)
+                self.systemPoint = walletPoint.systemPoint  //시스템 포인트(지급 포인트)
+            },
+            //API 호출 실패
+            onFailure: { (error) in
+                switch error {
+                case .responseSerializationFailed:
+                    print(error)
+                    //일시적인 서버 오류 및 네트워크 오류
+                default:
+                    print(error)
+                    break
+                }
+            }
+        )
+    }
+    
     //MARK: - 사용자 포인트 이력 조회
     func getPointHistory(page: Int) {
-        let userIdNo: String = UserDefaults.standard.string(forKey: "userIdNo") ?? ""   //저장된 사용자 ID 번호
+        let userIdNo = userIdNo
         let endDate: String = "yyyy-MM-dd".dateFormatter(formatDate: currentDate)   // 종료일자
       
         let parameters = [

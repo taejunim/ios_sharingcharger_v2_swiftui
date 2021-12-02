@@ -12,7 +12,6 @@ import PromisedFuture
 class PointAPIService {
     let apiClient = APIClient() //API Client - 공통 API 호출
     
-    //MARK: - [포인트 조회 관련 API]
     //MARK: - 현재 사용자 포인트 조회 API 호출
     /// 로그인한 사용자의 현재 잔여 포인트 조회
     /// - Parameter userIdNo: 사용자 ID 번호
@@ -42,6 +41,15 @@ class PointAPIService {
     public func requestPointHistory(userIdNo: String, parameters: [String:String]) -> Future<PointHistory, AFError> {
         
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/point/users/\(userIdNo)/history", parameters: parameters, contentType: "json"))
+    }
+    
+    //MARK: - 사용자 전자지갑 포인트 조회 API 호출
+    /// 사용자의 총 포인트, 구매 포인트(결제 포인트), 시스템 포인트(지급 포인트) 조회
+    /// - Parameter userIdNo: 사용자 ID 번호
+    /// - Returns: Wallet Point Model
+    public func requestWalletPoint(userIdNo: String) -> Future<WalletPoint, AFError> {
+        
+        return apiClient.request(route: APIRouter.get(useApi: "base", path: "/point/users/electronicWallet/\(userIdNo)", parameters: [:], contentType: "json"))
     }
     
     //MARK: - 사용자 전자지갑 이력 조회 API 호출

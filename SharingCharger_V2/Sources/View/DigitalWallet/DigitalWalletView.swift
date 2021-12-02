@@ -27,7 +27,7 @@ struct DigitalWalletView: View {
                                     .fontWeight(.bold)
                                 
                                 //전자지갑 번호
-                                Text("000-00-0000")
+                                Text(point.userDID)
                                     .font(.callout)
                             }
                             
@@ -49,6 +49,33 @@ struct DigitalWalletView: View {
                         }
                         
                         HStack {
+                            Spacer()
+                            
+                            Text("충전")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                            
+                            Text(String(point.cashPoint).pointFormatter())
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                            
+                            Divider()
+                                .frame(width: 1, height: 18)
+                                .background(Color.gray)
+                                .padding(.horizontal, 5)
+                            
+                            Text("지급")
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                            
+                            Text(String(point.systemPoint).pointFormatter())
+                                .font(.subheadline)
+                                .fontWeight(.bold)
+                            
+                            Spacer()
+                        }
+                        
+                        HStack {
                             PointTransferMenuButton()   //포인트 이체 버튼
                             
                             Divider()
@@ -58,7 +85,6 @@ struct DigitalWalletView: View {
                             
                             PointHistoryMenuButton()    //포인트 구매 이력 버튼
                         }
-                        .padding(.top)
                     }
                     .padding()
                 }
@@ -91,6 +117,8 @@ struct DigitalWalletView: View {
         .navigationBarItems(leading: BackButton())  //커스텀 Back 버튼 추가
         .onAppear {
             point.getCurrentPoint() //현재 사용자 포인트 조회
+            point.getWalletPoint()  //사용자의 전자지갑 포인트 조회
+            point.getUserDID()  //사용자 DID 번호 조회
         }
     }
 }
