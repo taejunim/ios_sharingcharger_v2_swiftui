@@ -70,7 +70,7 @@ class SideMenuViewModel: ObservableObject {
     }
     
     //MARK: - 로그아웃 실행
-    func signOunt() {
+    func signOut() {
         isSignOut = true
 //        for key in UserDefaults.standard.dictionaryRepresentation().keys {
 //            UserDefaults.standard.removeObject(forKey: key.description)

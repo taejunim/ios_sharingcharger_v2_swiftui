@@ -21,7 +21,6 @@ class Location: ObservableObject {
     //MARK: - 위치 서비스 시작
     func startLocation() {
         let authStatus = getAuthStatus()    //위치 서비스 권한 상태
-        //print("Autorization Status : \(authStatus)")
         
         if authStatus == "notDetermined" || authStatus == "restricted" || authStatus == "denied" {
             self.locationManager.requestWhenInUseAuthorization()    //위치정보 권한 요청

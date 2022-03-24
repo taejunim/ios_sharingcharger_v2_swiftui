@@ -16,7 +16,6 @@ enum APIRouter: URLRequestConvertible {
     case put(useApi: String, path: String, parameters: [String:Any])   //PUT
     case patch(useApi: String, path: String, parameters: [String:Any])   //PATCH
 
-    
     //static let baseApiUrl: String = "http://211.253.37.97:52340/api/v1"   //전기차 공유 충전기 개발 API URL
     static let baseApiUrl: String = "https://monttak.co.kr/api/v1"   //전기차 공유 충전기 운영 API URL
     static let addressApiUrl: String = "https://dapi.kakao.com/v2/local"    //주소 검색 API - Kakao API

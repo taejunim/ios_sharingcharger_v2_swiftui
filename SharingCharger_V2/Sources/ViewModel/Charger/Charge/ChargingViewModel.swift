@@ -117,7 +117,7 @@ class ChargingViewModel: NSObject, ObservableObject {
     @Published var endType: String = "" //종료 유형
     
     @Published var isStartTimer: Bool = false   //타이머 시작 여부
-    @Published var hoursRemaining: Int = 0    //타이머 분 시간 설정(기본값: 0)
+    @Published var hoursRemaining: Int = 0    //타이머 시 시간 설정(기본값: 0)
     @Published var minutesRemaining: Int = 0    //타이머 분 시간 설정(기본값: 0)
     @Published var secondsRemaining: Int = 0    //타이머 초 시간 설정(기본값: 0)
     

@@ -276,7 +276,7 @@ struct SignOutConfirmAlert: View {
                         Button(
                             action: {
                                 withAnimation(.easeInOut(duration: 1.0)) {
-                                    sideMenu.signOunt() //로그아웃 실행
+                                    sideMenu.signOut() //로그아웃 실행
                                 }
                             },
                             label: {

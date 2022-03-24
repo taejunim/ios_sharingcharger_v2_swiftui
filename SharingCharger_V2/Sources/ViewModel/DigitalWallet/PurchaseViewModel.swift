@@ -82,7 +82,7 @@ class PurchaseViewModel: ObservableObject {
             isShowPaymentModal = true //결제 Web View 팝업창 호출
             
             //포인트 구매 API 실행
-//            purchacePoint() { (result) in
+//            purchasePoint() { (result) in
 //                self.viewUtil.isLoading = false //로딩 종료
 //                
 //                if result == "success" {
@@ -101,7 +101,7 @@ class PurchaseViewModel: ObservableObject {
     
     //MARK: - 포인트 구매 API 호출 - 결제 웹 뷰 연동으로 사용 X
     /// - Parameter completion: 포인트 구매 결과(String)
-    func purchacePoint(completion: @escaping (String) -> Void) {
+    func purchasePoint(completion: @escaping (String) -> Void) {
         
         let userIdNo = UserDefaults.standard.string(forKey: "userIdNo")!
         

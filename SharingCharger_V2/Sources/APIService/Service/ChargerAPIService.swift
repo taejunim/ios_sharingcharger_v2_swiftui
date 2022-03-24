@@ -70,7 +70,6 @@ class ChargerAPIService {
         return apiClient.request(route: APIRouter.get(useApi: "base", path: "/chargers/owner/\(ownerIdNo)/\(ownerType)", parameters: parameters, contentType: "json"))
     }
     
-    
     //MARK: - 소유자 충전기별 상세 조회 API 호출
     /// 소유자의 충전기 개별 조회
     /// - Parameter chargerId: 충전기 ID 번호
