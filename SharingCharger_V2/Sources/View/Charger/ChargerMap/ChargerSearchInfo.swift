@@ -313,9 +313,11 @@ struct SearchChargerList: View {
                                                 //충전기 주소
                                                 Text(address)
                                                     .font(.subheadline)
+                                                    .multilineTextAlignment(.leading)
                                                 //충전기 상세주소
                                                 Text(detailAddress)
                                                     .font(.subheadline)
+                                                    .multilineTextAlignment(.leading)
                                             }
                                             .foregroundColor(Color.gray)
                                             .frame(maxWidth: .infinity, alignment: .leading)

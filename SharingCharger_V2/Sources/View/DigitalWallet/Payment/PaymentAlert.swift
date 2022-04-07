@@ -219,6 +219,7 @@ struct PaymentInputAlert:View {
                         }
                         .padding(.top, 10)
                         .padding(.horizontal)
+                        .frame(maxWidth: .infinity)
                         
                         Spacer()
                         

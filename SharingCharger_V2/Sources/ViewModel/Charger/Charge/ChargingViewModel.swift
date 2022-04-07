@@ -128,7 +128,6 @@ class ChargingViewModel: NSObject, ObservableObject {
         showMessage = message   //보여줄 메시지
     }
     
-    
     //------------------------------
     //MARK: - [Function - 블루투스]
     //------------------------------
@@ -499,7 +498,7 @@ class ChargingViewModel: NSObject, ObservableObject {
                                         
                                         let totalTime: Int = Int(self.chargingEndDate.timeIntervalSince(self.chargingStartDate))    //총 충전 시간
                                         let chargingHour = Int(totalTime / (60 * 60))   //충전 시간 시 단위
-                                        let chargingMinute = totalTime - (chargingHour * 60 * 60)   //충전 시간 분 단위
+                                        let chargingMinute = (totalTime - (chargingHour * 60 * 60)) / 60   //충전 시간 분 단위
                                         
                                         self.totalChargingTime = "\(String(format: "%02d", chargingHour)):\(String(format: "%02d", chargingMinute))"    //총 충전 시간
                                         

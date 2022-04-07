@@ -167,16 +167,18 @@ struct ChargingHistoryRow: View {
                         .scaledToFit()
                         .frame(width: 23, height: 23)
                     
-                    //충전 일시
-                    Text(history["startDate"]!)
-                        .font(.subheadline)
-                    
-                    if history["endDate"]! != "" {
-                        Text("~")
+                    HStack(spacing: 1) {
+                        //충전 일시
+                        Text(history["startDate"]!)
                             .font(.subheadline)
                         
-                        Text(history["endDate"]!)
-                            .font(.subheadline)
+                        if history["endDate"]! != "" {
+                            Text("~")
+                                .font(.subheadline)
+                            
+                            Text(history["endDate"]!)
+                                .font(.subheadline)
+                        }
                     }
                     
                     Spacer()
