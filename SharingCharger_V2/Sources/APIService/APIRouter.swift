@@ -17,7 +17,7 @@ enum APIRouter: URLRequestConvertible {
     case patch(useApi: String, path: String, parameters: [String:Any])   //PATCH
 
     //static let baseApiUrl: String = "http://211.253.37.97:52340/api/v1"   //전기차 공유 충전기 개발 API URL
-    static let baseApiUrl: String = "https://monttak.co.kr/api/v1"   //전기차 공유 충전기 운영 API URL
+    static let baseApiUrl: String = "http://dev.jinwoosi.co.kr:8080/api/v1"   //전기차 공유 충전기 운영 API URL
     static let addressApiUrl: String = "https://dapi.kakao.com/v2/local"    //주소 검색 API - Kakao API
     static let kakaoAPIKey: String = "KakaoAK e359ee2a5e8ae5f3acaf9ba722165520" //Kakao API Key
     
